@@ -2,7 +2,377 @@
   "schema": "msa-feed/1",
   "publisher": "MOLT Security Advisories",
   "homepage": "https://github.com/AlgortimoTD/molt-security-advisories",
-  "updated": null,
-  "advisories": [],
-  "rejected": []
+  "updated": "2026-11-03",
+  "advisories": [
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0001",
+      "title": "Chrome before 156.0.8078.73: four critical bugs reachable from a web page; agent browsers without the sandbox are most exposed",
+      "summary": "Google's Chrome stable update of 2026-10-27 fixed four bugs that Chromium rates Critical: memory corruption in FileSystem that can run code outside the sandbox (CVE-2026-118306), and three that can run code inside the renderer sandbox (FileAPI, Skia and Layout). All are triggered by a crafted HTML page and affect Google Chrome before 156.0.8078.73. Browsers launched by automation without the Chromium sandbox, which is the Playwright library and test-runner default, lose the containment that normally stops the three renderer bugs at the sandbox. No stable Playwright release pins a fixed Chrome for Testing build yet.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "cve": [
+        "CVE-2026-118306",
+        "CVE-2026-118331",
+        "CVE-2026-118348",
+        "CVE-2026-118344"
+      ],
+      "severity": {
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "A web page alone can trigger all four bugs, and CVE-2026-118306 can run code outside the sandbox. Agents open pages unattended, so the user-interaction precondition is met without a person, and automation browsers often run without the sandbox, which removes containment for the other three. No exploitation is known."
+      },
+      "vendor_severity": [
+        {
+          "source": "Chromium security severity (Chrome Releases)",
+          "value": "Critical",
+          "applies_to": "all four CVEs"
+        },
+        {
+          "source": "NVD, CISA ADP CVSS 3.1",
+          "value": "9.6 Critical",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+          "applies_to": "CVE-2026-118306"
+        },
+        {
+          "source": "NVD, CISA ADP CVSS 3.1",
+          "value": "8.8 High",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+          "applies_to": "CVE-2026-118331, CVE-2026-118348, CVE-2026-118344"
+        }
+      ],
+      "exploitation": {
+        "status": "none-known",
+        "kev": false,
+        "note": "Not in CISA KEV catalog version 2026.10.30; CISA SSVC on the NVD records marks exploitation as none; the Chrome release notes do not report exploitation."
+      },
+      "affected": [
+        {
+          "product": "Google Chrome (desktop)",
+          "fixed": "156.0.8078.73",
+          "note": "Linux 156.0.8078.73; Windows and Mac 156.0.8078.73/.74."
+        },
+        {
+          "product": "Chrome for Testing",
+          "fixed": "156.0.8078.73",
+          "note": "Same browser builds as Chrome; check the executable's --version."
+        },
+        {
+          "product": "Playwright pinned Chromium (npx playwright install)",
+          "ecosystem": "npm",
+          "note": "Playwright 1.64.0 and 1.64.1 pin Chrome for Testing 156.0.8078.4 (revision 1248); 1.63.0 pins 153.0.8010.12 (revision 1243). No stable release pins a fixed build as of 2026-11-03."
+        }
+      ],
+      "exposure": "Most exposed: browsers driven by agents, scrapers or scripts that visit pages you do not control, especially when launched without the Chromium sandbox (Playwright's chromium.launch() and launchPersistentContext() add --no-sandbox unless chromiumSandbox is true; channel 'chrome' alone does not change that). Exposed: any Google Chrome or Chrome for Testing before 156.0.8078.73 used to browse. Lower exposure: Playwright's pinned test builds used only against your own trusted application. Playwright MCP and the Playwright CLI default to the installed Chrome with the sandbox on, so in that default configuration they are covered once Chrome is updated; on Linux, Playwright MCP disables the sandbox by default for downloaded Chromium channels, and both accept sandbox overrides, so check the actual executable, version and flags of any non-default setup.",
+      "detectors": [
+        {
+          "type": "chromium-browser-version",
+          "params": {
+            "product": "chrome",
+            "fixed": "156.0.8078.73"
+          },
+          "context": "any",
+          "note": "Classify a browser as test-only only when it is confirmed to process solely the owner's trusted application; otherwise treat it as browsing. A cache path such as ms-playwright does not establish context."
+        },
+        {
+          "type": "running-process-flag",
+          "params": {
+            "family": "chromium",
+            "flag": "--no-sandbox"
+          },
+          "context": "browsing",
+          "note": "A running unsandboxed browser below the fixed version is the most severe finding."
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update installed browsers",
+          "details": "Update Google Chrome, Chromium or Edge to a build that includes the 2026-10-27 fixes (Chrome 156.0.8078.73 or later) and restart every running instance; a running process keeps the old code until it restarts.",
+          "risk": "Low. Restarting closes open tabs and may interrupt automation sessions that are running.",
+          "applies_to": "Any machine"
+        },
+        {
+          "action": "Agent and scraper browsers launched with the Playwright library",
+          "details": "Launch the patched installed Chrome with the sandbox on: chromium.launch({ channel: 'chrome', chromiumSandbox: true }). Do not point Playwright's downloaded builds or Chrome for Testing at untrusted pages: Google states Chrome for Testing should only be used to consume trustworthy content. Branded Chrome removed the command-line flags for side-loading unpacked extensions, so automation that needs an unpacked extension cannot use this path and should not browse untrusted pages with an unsandboxed or test build instead. On Linux distributions that restrict unprivileged user namespaces with AppArmor, a downloaded Chromium build refuses to start with the sandbox on unless a root-owned setuid sandbox helper (CHROME_DEVEL_SANDBOX) or an AppArmor profile is installed, which is safer than falling back to --no-sandbox.",
+          "risk": "Medium. Switching browser build can change behavior of existing profiles and extensions; test the automation flows after the change.",
+          "applies_to": "Automation that visits untrusted pages"
+        },
+        {
+          "action": "Playwright test suites",
+          "details": "Keep pinned test browsers for your own trusted application only, and upgrade Playwright when a release pins a Chrome for Testing build at or above 156.0.8078.73. Do not point them at third-party sites.",
+          "risk": "Low.",
+          "applies_to": "End-to-end test runners"
+        }
+      ],
+      "verification": [
+        "Run each Google Chrome and Chrome for Testing executable used to browse with --version and confirm 156.0.8078.73 or later. Edge, Brave and other Chromium derivatives use their own version numbers: confirm the fix in that vendor's security release notes.",
+        "Open chrome://sandbox in the automation browser and confirm it reports that you are adequately sandboxed.",
+        "List running processes and confirm no Chromium-family browser used for browsing runs with --no-sandbox.",
+        "Re-run the automation flows that depend on the browser (sign-in profiles, extensions) and confirm they still work."
+      ],
+      "sources": [
+        {
+          "url": "https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop_0562499947.html",
+          "publisher": "Google Chrome Releases",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation"
+          ],
+          "quote": "The Stable channel has been updated to 156.0.8078.73/.74 for Windows and Mac and 156.0.8078.73 to Linux"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-118306",
+          "publisher": "CVE Program",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "cve",
+            "affected",
+            "summary"
+          ]
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-118331",
+          "publisher": "CVE Program",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "cve",
+            "affected",
+            "summary"
+          ]
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-118348",
+          "publisher": "CVE Program",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "cve",
+            "affected",
+            "summary"
+          ]
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-118344",
+          "publisher": "CVE Program",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "cve",
+            "affected",
+            "summary"
+          ]
+        },
+        {
+          "url": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-118306",
+          "publisher": "NIST NVD",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "vendor_severity",
+            "exploitation"
+          ]
+        },
+        {
+          "url": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-118331",
+          "publisher": "NIST NVD",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "vendor_severity",
+            "exploitation"
+          ]
+        },
+        {
+          "url": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-118348",
+          "publisher": "NIST NVD",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "vendor_severity",
+            "exploitation"
+          ]
+        },
+        {
+          "url": "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2026-118344",
+          "publisher": "NIST NVD",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "vendor_severity",
+            "exploitation"
+          ]
+        },
+        {
+          "url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+          "publisher": "CISA",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "exploitation"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/microsoft/playwright/v1.64.1/packages/playwright-core/browsers.json",
+          "publisher": "Microsoft Playwright",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/microsoft/playwright/v1.63.0/packages/playwright-core/browsers.json",
+          "publisher": "Microsoft Playwright",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/microsoft/playwright/v1.64.1/packages/playwright-core/src/server/chromium/chromium.ts",
+          "publisher": "Microsoft Playwright",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "exposure"
+          ],
+          "quote": "chromeArguments.push('--no-sandbox');"
+        },
+        {
+          "url": "https://playwright.dev/docs/api/class-browsertype",
+          "publisher": "Microsoft Playwright",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "exposure"
+          ]
+        },
+        {
+          "url": "https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md",
+          "publisher": "Chromium",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "remediation"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/microsoft/playwright/v1.64.0/packages/playwright-core/browsers.json",
+          "publisher": "Microsoft Playwright",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected"
+          ]
+        },
+        {
+          "url": "https://api.github.com/repos/microsoft/playwright/releases/latest",
+          "publisher": "Microsoft Playwright (GitHub releases)",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "summary"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/microsoft/playwright/v1.64.1/packages/playwright-core/src/tools/mcp/config.ts",
+          "publisher": "Microsoft Playwright",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "exposure"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/microsoft/playwright-mcp/main/README.md",
+          "publisher": "Microsoft Playwright",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "exposure"
+          ]
+        },
+        {
+          "url": "https://developer.chrome.com/blog/chrome-for-testing",
+          "publisher": "Google Chrome Developers",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "remediation"
+          ],
+          "quote": "It should only be used to consume trustworthy content."
+        },
+        {
+          "url": "https://playwright.dev/docs/chrome-extensions",
+          "publisher": "Microsoft Playwright",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "remediation"
+          ]
+        },
+        {
+          "url": "https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnotes-security",
+          "publisher": "Microsoft",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "verification"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/IvanPerezF_/status/2117538195348803644",
+          "kind": "social",
+          "seen": "2026-11-03",
+          "note": "Alert post; directionally right for library and test-runner use, overstated for Playwright MCP and CLI."
+        },
+        {
+          "url": "https://x.com/playwrightweb/status/2117638981454291252",
+          "kind": "social",
+          "seen": "2026-11-03",
+          "note": "Playwright's official account; scope clarification consistent with the tier 1 sources."
+        }
+      ],
+      "related": [
+        "MSR-2026-0001"
+      ],
+      "review": {
+        "author_model": "claude-opus-5-5",
+        "reviewer_model": "gpt-6.1-sol",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Re-read the cited primary sources. All prior findings are resolved: MCP/CLI defaults and Linux exceptions, detector context, vendor-specific version checks, trusted-content guidance, extension flags, exact quote and release evidence. No unsupported or misleading claim requiring changes remains. Validation reports only the eight expected review-placeholder problems."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial publication."
+        }
+      ]
+    }
+  ],
+  "rejected": [
+    {
+      "id": "MSR-2026-0001",
+      "claim": "Every tool that drives Playwright (Claude Code, Cursor, Codex, Playwright MCP) runs an unpatched browser without a sandbox, so any agent that browses is exposed and Playwright should be removed or pinned away from @latest.",
+      "verdict": "exaggerated",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "related": [
+        "MSA-2026-0001"
+      ],
+      "url": "https://github.com/AlgortimoTD/molt-security-advisories/blob/main/rejected/2026/MSR-2026-0001.json"
+    }
+  ]
 }
