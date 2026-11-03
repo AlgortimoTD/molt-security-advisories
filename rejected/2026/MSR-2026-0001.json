@@ -1,0 +1,79 @@
+{
+  "schema": "msr/1",
+  "id": "MSR-2026-0001",
+  "claim": "Every tool that drives Playwright (Claude Code, Cursor, Codex, Playwright MCP) runs an unpatched browser without a sandbox, so any agent that browses is exposed and Playwright should be removed or pinned away from @latest.",
+  "verdict": "exaggerated",
+  "explanation": "Partly true: Playwright's library API and test runner use a pinned Chrome for Testing build (156.0.8078.4 in Playwright 1.64.1) that predates the 2026-10-27 fixes, and they launch it without the sandbox unless chromiumSandbox is true. But Playwright packages do not contain a browser, and Playwright MCP and the Playwright CLI default to the installed stable Chrome with the sandbox on, so in that default configuration they are covered once Chrome is updated. Non-default setups (a downloaded Chromium channel, which Playwright MCP runs without the sandbox on Linux by default, or explicit sandbox overrides) need their executable, version and flags checked. Pinning the MCP package alone does not patch its browser. Removing Playwright is unnecessary for the default configuration once its installed browser is patched and sandboxed. See MSA-2026-0001.",
+  "published": "2026-11-03",
+  "updated": "2026-11-03",
+  "discovery": [
+    {
+      "url": "https://x.com/IvanPerezF_/status/2117538195348803644",
+      "kind": "social",
+      "seen": "2026-11-03"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/microsoft/playwright/v1.64.1/packages/playwright-core/browsers.json",
+      "publisher": "Microsoft Playwright",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "explanation"
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/microsoft/playwright/v1.64.1/packages/playwright-core/src/server/chromium/chromium.ts",
+      "publisher": "Microsoft Playwright",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "explanation"
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/microsoft/playwright/v1.64.1/packages/playwright-core/src/tools/mcp/config.ts",
+      "publisher": "Microsoft Playwright",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "explanation"
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/microsoft/playwright-mcp/main/README.md",
+      "publisher": "Microsoft Playwright",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "explanation"
+      ]
+    },
+    {
+      "url": "https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop_0562499947.html",
+      "publisher": "Google Chrome Releases",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "explanation"
+      ]
+    }
+  ],
+  "related": [
+    "MSA-2026-0001"
+  ],
+  "review": {
+    "author_model": "claude-opus-5-5",
+    "reviewer_model": "gpt-6.1-sol",
+    "reviewed": "2026-11-03",
+    "verdict": "approve",
+    "notes": "Re-read the cited primary sources. The explanation correctly distinguishes Playwright library defaults from MCP/CLI installed-Chrome defaults, qualifies Linux downloaded-browser behavior and overrides, and limits the removal advice to patched, sandboxed defaults. All prior findings are resolved; no further factual or reader-safety changes are required."
+  },
+  "history": [
+    {
+      "date": "2026-11-03",
+      "change": "Initial publication."
+    }
+  ]
+}
