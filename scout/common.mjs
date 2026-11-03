@@ -63,3 +63,25 @@ export function ledgerStart(file, { agent, cwd, runId = randomUUID(), now = new 
 export function ledgerEnd(file, run, { outcome, status = 'ok', modelInvoked = false, now = new Date() }) {
   fs.appendFileSync(file, JSON.stringify({ schema: 'agent-run/1', event: 'end', runId: run.runId, at: now.toISOString(), durationS: Math.max(0, (now - run.started) / 1000), status, exitCode: status === 'ok' ? 0 : 1, modelInvoked, outcome }) + '\n', { mode: 0o600 });
 }
+
+// A provider can detach into its own process group, so killing the runner's group is not enough.
+// Each model run gets its own transient systemd scope (a cgroup); after the run, successful or not,
+// the whole cgroup is killed and verified gone before the caller cleans up or releases locks.
+export class ProcessTreeSurvived extends Error {}
+export async function scopedCommand(unit, file, args, options = {}, { exec = command, sleep = ms => new Promise(r => setTimeout(r, ms)) } = {}) {
+  if (!/^[A-Za-z0-9_.:-]{1,200}$/.test(unit)) throw Error('Unsafe scope unit name');
+  const scope = `${unit}.scope`;
+  let failure;
+  try { return await exec('systemd-run', ['--user', '--scope', '--quiet', '--collect', `--unit=${unit}`, '--', file, ...args], options); }
+  catch (error) { failure = error; throw error; }
+  finally {
+    await exec('systemctl', ['--user', 'kill', '--signal=SIGKILL', scope], { allowFailure: true, timeoutMs: 10_000 });
+    let gone = false;
+    for (let i = 0; i < 50 && !gone; i++) {
+      const state = (await exec('systemctl', ['--user', 'is-active', scope], { allowFailure: true, timeoutMs: 5_000 })).stdout.trim();
+      gone = !['active', 'activating', 'deactivating', 'reloading', 'refreshing'].includes(state);
+      if (!gone) await sleep(200);
+    }
+    if (!gone) throw new ProcessTreeSurvived(`Model process tree ${scope} survived termination${failure ? ` after: ${failure.message}` : ''}`);
+  }
+}

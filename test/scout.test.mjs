@@ -4,11 +4,11 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { ROOT } from '../scripts/lib.mjs';
-import { command, parseMarker, ledgerStart, todayBogota } from '../scout/common.mjs';
+import { command, scopedCommand, ProcessTreeSurvived, parseMarker, ledgerStart, todayBogota } from '../scout/common.mjs';
 import { SOURCES, parseSource, collect, selectNew, commitCursor } from '../scout/collect.mjs';
 import { buildStep, readX } from '../scout/read-x.mjs';
 import { guardDiff, fillReview, validateReviewResult, pendingOnly, validateAuthorResult, validateAuthorPaths } from '../scout/records.mjs';
-import { noLeads, runScout, waitForChecks, loadConfig, REVIEW_TOOLS } from '../scout/run.mjs';
+import { noLeads, runScout, waitForChecks, loadConfig, AUTHOR_ARGS, REVIEW_AVAILABLE_TOOLS } from '../scout/run.mjs';
 
 const now = new Date('2026-11-03T12:00:00Z');
 const fixture = file => fs.readFileSync(new URL(`./fixtures/scout/${file}`, import.meta.url), 'utf8');
@@ -197,8 +197,16 @@ async function harness(t, { dryRun = true, decisions = ['approve'], noItems = fa
   const head = (await command('git', ['rev-parse', 'HEAD'], { cwd: repo })).stdout.trim();
   const config = { repo, worktreesDir: path.join(root, 'trees'), stateDir: path.join(root, 'state'), ledgerPath: path.join(root, 'state/runs.jsonl'), llmControlPanelPath: '/example/panel', author: { provider: 'codex', profile: '/example/codex', model: 'codex-exact', timeoutS: 10 }, reviewer: { provider: 'claude', profile: '/example/claude', model: 'claude-exact', timeoutS: 10 }, github: { remote: 'origin', base: 'main' }, notify: { agent: 'test-scout', project: 'example-feed' }, x: { enabled: false, searches: [] }, dryRun };
   const calls = []; let reviews = 0, authors = 0, lastWorktree;
+  const scopes = { started: [], killed: [] };
   const exec = async (file, args, options = {}) => {
     calls.push([file, args]);
+    // Model runs go through a transient systemd scope that is always killed afterwards.
+    if (file === 'systemd-run') {
+      const unit = args.find(a => a.startsWith('--unit=')).slice(7); scopes.started.push(unit);
+      const rest = args.slice(args.indexOf('--') + 1);
+      return exec(rest[0], rest.slice(1), options);
+    }
+    if (file === 'systemctl') { if (args[1] === 'kill') scopes.killed.push(args.at(-1)); return { stdout: 'inactive\n', code: 3 }; }
     if (file === 'git' && args[0] === 'remote') return { stdout: 'git@github.com:example/feed.git\n', code: 0 };
     if (file === 'git' && args[0] === 'fetch') return { stdout: '', code: 0 };
     if (file === 'git' && args[0] === 'rev-parse' && args[1] === 'origin/main') return { stdout: head + '\n', code: 0 };
@@ -212,11 +220,13 @@ async function harness(t, { dryRun = true, decisions = ['approve'], noItems = fa
       if (role === 'author') {
         authors++; fs.mkdirSync(path.dirname(recordFile), { recursive: true }); fs.writeFileSync(recordFile, JSON.stringify(rejectedRecord(id)));
         result = { status: 'completed', model: 'codex-exact', created: [id], updated: [], skipped: [] };
-        assert.ok(args.includes('workspace-write')); assert.ok(args.includes('sandbox_workspace_write.network_access=true'));
+        assert.deepEqual(args.slice(-AUTHOR_ARGS.length), AUTHOR_ARGS); assert.ok(args.includes('sandbox_workspace_write.network_access=false')); assert.ok(args.includes('mcp_servers={}'));
       } else {
         const verdict = decisions[Math.min(reviews++, decisions.length - 1)];
         result = { status: 'completed', model: 'claude-exact', records: [{ id, verdict, findings: verdict === 'approve' ? [] : [{ severity: 'major', field: 'explanation', issue: 'Unsupported wording', fix: 'Use the supported scope' }] }] };
-        assert.equal(args[args.indexOf('--allowedTools') + 1], REVIEW_TOOLS); assert.ok(args.includes('--strict-mcp-config'));
+        const allowed = args[args.indexOf('--allowedTools') + 1];
+        assert.doesNotMatch(allowed, /Bash|curl/); assert.match(allowed, new RegExp(`Read\\(/${options.cwd.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/\\*\\*\\)`));
+        assert.equal(args[args.indexOf('--tools') + 1], REVIEW_AVAILABLE_TOOLS); assert.ok(args.includes('--strict-mcp-config'));
       }
       const invocation = `${role}-${authors}-${reviews}`;
       fs.appendFileSync(config.ledgerPath, JSON.stringify({ schema: 'agent-run/1', event: 'start', runId: invocation, agent: `test-scout-${role}` }) + '\n' + JSON.stringify({ schema: 'agent-run/1', event: 'end', runId: invocation, status: 'ok', modelInvoked: true, model: result.model }) + '\n');
@@ -249,7 +259,7 @@ async function harness(t, { dryRun = true, decisions = ['approve'], noItems = fa
     return command(file, args, options);
   };
   const outcome = await runScout(config, { exec, now: () => now, log: () => {}, acquireLock: () => busy ? { busy: true } : { fd: fs.openSync(path.join(root, 'lock'), 'w', 0o600) }, collect: async () => ({ items: noItems ? [] : [{ source: 'test', id: 'lead' }], sourceErrors: [], nextCursor: { sources: { test: { through: now.toISOString(), seen: ['lead'] } } } }), readX: async () => ({ status: 'unavailable', reason: 'disabled', posts: [] }) });
-  return { root, repo, config, calls, outcome, authors, reviews };
+  return { root, repo, config, calls, outcome, authors, reviews, scopes };
 }
 test('offline orchestration commits only approved records locally in dry-run and removes its worktree', async t => {
   const h = await harness(t);
@@ -260,6 +270,9 @@ test('offline orchestration commits only approved records locally in dry-run and
   assert.equal(committed.review.reviewer_model, 'claude-exact'); assert.equal(committed.review.notes.includes('PENDING'), false);
   assert.equal(fs.existsSync(path.join(h.config.stateDir, 'cursor.json')), true);
   assert.equal(fs.readdirSync(h.config.worktreesDir).length, 0);
+  // Each model run was confined to its own scope, and every scope was killed afterwards.
+  assert.equal(h.scopes.started.length, 2);
+  assert.deepEqual(h.scopes.killed, h.scopes.started.map(unit => `${unit}.scope`));
 });
 test('one fix and one re-review publish only the final approved text', async t => {
   const h = await harness(t, { decisions: ['changes', 'approve'] });
@@ -350,4 +363,42 @@ test('new versus updated classification is verified against git rather than the 
   const root = await gitFixture(t), files = ['advisories/2026/MSA-2026-0001.json'];
   await validateAuthorPaths(root, { created: [], updated: ['MSA-2026-0001'] }, files, command);
   await assert.rejects(validateAuthorPaths(root, { created: ['MSA-2026-0001'], updated: [] }, files, command));
+});
+
+test('a change present only in the index is detected, restored and never staged afterwards', async t => {
+  const root = await gitFixture(t);
+  fs.writeFileSync(path.join(root, 'README.md'), 'staged secret');
+  await command('git', ['add', 'README.md'], { cwd: root });
+  // Working copy back to HEAD: `git diff HEAD` alone would see nothing.
+  fs.writeFileSync(path.join(root, 'README.md'), 'original\n');
+  fs.writeFileSync(path.join(root, 'advisories/2026/MSA-2026-0002.json'), '{}');
+  const result = await guardDiff(root, command);
+  assert.deepEqual(result.allowed, ['advisories/2026/MSA-2026-0002.json']);
+  assert.ok(result.rejected.includes('README.md'));
+  assert.equal((await command('git', ['diff', '--cached', 'HEAD', '--name-only'], { cwd: root })).stdout, '');
+});
+
+test('the supervisor stages exactly the approved files and refuses anything else', async t => {
+  const { stageExactly } = await import('../scout/records.mjs');
+  const root = await gitFixture(t);
+  fs.writeFileSync(path.join(root, 'advisories/2026/MSA-2026-0002.json'), '{}');
+  fs.writeFileSync(path.join(root, 'README.md'), 'sneaky');
+  await command('git', ['add', 'README.md'], { cwd: root });
+  assert.deepEqual(await stageExactly(root, ['advisories/2026/MSA-2026-0002.json'], command), ['advisories/2026/MSA-2026-0002.json']);
+  assert.equal((await command('git', ['diff', '--cached', 'HEAD', '--name-only'], { cwd: root })).stdout.trim(), 'advisories/2026/MSA-2026-0002.json');
+});
+
+test('scoped model runs always kill their cgroup and fail closed if it survives', async () => {
+  const seen = [];
+  const exec = async (file, args) => {
+    seen.push([file, ...args].join(' '));
+    if (file === 'systemd-run') throw Error('runner timed out');
+    if (args[1] === 'is-active') return { stdout: 'active\n', code: 0 };
+    return { stdout: '', code: 0 };
+  };
+  await assert.rejects(scopedCommand('molt-security-scout-author-x', '/bin/true', [], {}, { exec, sleep: async () => {} }), ProcessTreeSurvived);
+  assert.ok(seen.some(line => line === 'systemctl --user kill --signal=SIGKILL molt-security-scout-author-x.scope'));
+  const ok = async (file, args) => (file === 'systemctl' ? { stdout: 'inactive\n', code: 3 } : { stdout: 'done', code: 0 });
+  assert.equal((await scopedCommand('molt-security-scout-reviewer-y', '/bin/true', [], {}, { exec: ok })).stdout, 'done');
+  await assert.rejects(scopedCommand('bad unit;rm', '/bin/true', [], {}, { exec: ok }), /Unsafe scope unit/);
 });

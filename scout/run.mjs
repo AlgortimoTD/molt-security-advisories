@@ -7,11 +7,17 @@ import { pathToFileURL, fileURLToPath } from 'node:url';
 import { createHash, randomUUID } from 'node:crypto';
 import { collect, commitCursor, SOURCES } from './collect.mjs';
 import { readX } from './read-x.mjs';
-import { command, privateDir, readJson, writeJson, defaultStateDir, defaultConfigFile, todayBogota, parseMarker, ledgerStart, ledgerEnd } from './common.mjs';
-import { changedPaths, guardDiff, restorePath, assertValid, recordId, validateAuthorResult, validateAuthorPaths, validateReviewResult, fillReview, assertHistory } from './records.mjs';
+import { command, scopedCommand, ProcessTreeSurvived, privateDir, readJson, writeJson, defaultStateDir, defaultConfigFile, todayBogota, parseMarker, ledgerStart, ledgerEnd } from './common.mjs';
+import { changedPaths, guardDiff, stageExactly, restorePath, assertValid, recordId, validateAuthorResult, validateAuthorPaths, validateReviewResult, fillReview, assertHistory } from './records.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-export const REVIEW_TOOLS = 'Read,Grep,Glob,WebFetch,Bash(curl:*),Bash(git diff:*),Bash(git log:*)';
+// The author shell has no network: it cannot reach GitHub, SSH remotes or exfiltrate credentials.
+// Sources are opened through Codex's built-in web search; configured MCP servers are cleared.
+export const AUTHOR_ARGS = ['-s', 'workspace-write', '-c', 'sandbox_workspace_write.network_access=false', '-c', 'web_search="live"', '-c', 'mcp_servers={}'];
+// The reviewer gets no shell: reads are confined to the worktree and this run's private folder,
+// and sources are re-read with WebFetch only.
+export const reviewTools = (worktree, runDir) => [`Read(/${worktree}/**)`, `Read(/${runDir}/**)`, 'WebFetch'].join(',');
+export const REVIEW_AVAILABLE_TOOLS = 'Read,WebFetch';
 const absolute = value => typeof value === 'string' && path.isAbsolute(value);
 export function loadConfig(file = defaultConfigFile()) {
   const stat = fs.lstatSync(file);
@@ -73,7 +79,7 @@ export async function runScout(config, dependencies = {}) {
   } catch (error) { closeSync(held.fd); throw error; }
   let worktree, branch, baseSha, modelInvoked = false, finished = false, phase = 'preflight', repository;
   const sourceRejections = [], dropped = [], modelsById = new Map();
-  let worktreeCreated = false;
+  let worktreeCreated = false, survived = false;
   const git = (args, options = {}) => exec('git', args, { cwd: worktree || config.repo, ...options });
   const notify = async (kind, id, title, need) => {
     if (config.dryRun) { log(`dry-run: would notify ${kind}`); return; }
@@ -112,10 +118,11 @@ export async function runScout(config, dependencies = {}) {
     fs.writeFileSync(promptFile, `${template}\n\n## Supervisor context\n\nToday: ${date} (America/Bogota).\nWorktree: ${worktree}\nLeads: ${path.join(runDir, 'leads.json')}\n${context}\n`, { mode: 0o600 });
     const emptyMcp = path.join(runDir, 'mcp.json');
     writeJson(emptyMcp, { mcpServers: {} });
-    const extra = role === 'author' ? ['-s', 'workspace-write', '-c', 'sandbox_workspace_write.network_access=true'] : ['--allowedTools', REVIEW_TOOLS, '--tools', 'Read,Grep,Glob,WebFetch,Bash', '--permission-mode', 'dontAsk', '--strict-mcp-config', '--mcp-config', emptyMcp];
+    const extra = role === 'author' ? AUTHOR_ARGS : ['--allowedTools', reviewTools(worktree, runDir), '--tools', REVIEW_AVAILABLE_TOOLS, '--permission-mode', 'dontAsk', '--strict-mcp-config', '--mcp-config', emptyMcp];
     // Launching is an attempted invocation. The host runner records the observed value separately.
     modelInvoked = true;
-    const output = await exec(process.execPath, [runtimeFile, '--agent', `${config.notify.agent}-${role}`, '--ledger', config.ledgerPath, '--provider', spec.provider, '--cwd', worktree, '--prompt-file', promptFile, '--profile', spec.profile, '--model', spec.model, '--timeout', String(spec.timeoutS), '--trigger', `timer:${date}`, '--outcome-marker', marker, '--', ...extra], { cwd: worktree, timeoutMs: (spec.timeoutS + 45) * 1000 });
+    const unit = `molt-security-scout-${role}-${randomUUID()}`;
+    const output = await scopedCommand(unit, process.execPath, [runtimeFile, '--agent', `${config.notify.agent}-${role}`, '--ledger', config.ledgerPath, '--provider', spec.provider, '--cwd', worktree, '--prompt-file', promptFile, '--profile', spec.profile, '--model', spec.model, '--timeout', String(spec.timeoutS), '--trigger', `timer:${date}`, '--outcome-marker', marker, '--', ...extra], { cwd: worktree, timeoutMs: (spec.timeoutS + 45) * 1000 }, { exec });
     const result = parseMarker(output.stdout, marker);
     if (result.status !== 'completed') throw Error(`${role} did not complete`);
     // Runtime observations win over a requested alias. Codex may supply only its own exact name.
@@ -207,7 +214,10 @@ export async function runScout(config, dependencies = {}) {
       await exec('npm', ['run', 'feed'], { cwd: worktree, timeoutMs: 120_000 });
       await exec('npm', ['run', 'check'], { cwd: worktree, timeoutMs: 300_000 });
       phase = 'commit'; log('commit: approved records and generated feed');
-      await git(['add', '--', ...files, 'feed.json']);
+      await stageExactly(worktree, [...files, 'feed.json'], exec);
+      // Re-run the path guard on what is about to be committed: nothing outside records and the feed.
+      const outside = (await changedPaths(worktree, exec)).filter(file => file !== 'feed.json' && !files.includes(file));
+      if (outside.length) throw Error('Unapproved paths changed before commit');
       await git(['commit', '-m', `Scout ${date}: ${files.map(recordId).join(', ')}`], { timeoutMs: 60_000 });
       if (config.dryRun) log(`dry-run: would push ${branch}, open a PR, require green checks, and squash merge`);
       else {
@@ -244,15 +254,18 @@ export async function runScout(config, dependencies = {}) {
     ledgerEnd(config.ledgerPath, run, { outcome, modelInvoked, now: now() }); finished = true;
     return { exitCode: 0, outcome, branch, records: files.map(recordId), dropped: dropped.map(r => r.id), prUrl };
   } catch (error) {
+    if (error instanceof ProcessTreeSurvived) { survived = true; phase = 'process-cleanup'; }
     writeJson(path.join(runDir, 'failure.json'), { phase, reason: error.message });
     log(`failed: ${phase}; cursor not acknowledged`);
-    if (['github-auth', 'merge', 'browser-cleanup'].includes(phase)) {
+    if (['github-auth', 'merge', 'browser-cleanup', 'process-cleanup'].includes(phase)) {
       try { await notify('blocker', `${date}-${phase}`, 'Security scout needs attention', `Run failed during ${phase}. Review the private run evidence and host ledger. The cursor was not acknowledged.`); } catch { log('notify: failed to deliver blocker'); }
     }
     return { exitCode: 1, outcome: 'failed', phase };
   } finally {
     if (!finished) {
-      try { await cleanup(); } catch { log('cleanup: worktree removal failed; inspect the private run directory'); }
+      // A model process may still be running: leave its worktree in place for a human to inspect.
+      if (survived) log('cleanup: skipped, a model process tree survived termination');
+      else try { await cleanup(); } catch { log('cleanup: worktree removal failed; inspect the private run directory'); }
       ledgerEnd(config.ledgerPath, run, { outcome: 'failed', status: 'failed', modelInvoked, now: now() });
     }
     closeSync(held.fd);

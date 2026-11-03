@@ -10,10 +10,29 @@ export function assertValid(root, { pending = false } = {}) {
   const failures = pending ? problems.filter(p => !pendingOnly(p)) : problems;
   if (failures.length) throw Error(`Record validation failed: ${failures.join('; ')}`);
 }
+// Index and working tree are inspected separately: a change present only in the index would
+// otherwise be invisible to `git diff HEAD` and could ride along with an approved record.
 export async function changedPaths(root, exec) {
-  const tracked = await exec('git', ['diff', 'HEAD', '--no-renames', '--name-only', '-z'], { cwd: root });
+  const staged = await exec('git', ['diff', '--cached', 'HEAD', '--no-renames', '--name-only', '-z'], { cwd: root });
+  const unstaged = await exec('git', ['diff', '--no-renames', '--name-only', '-z'], { cwd: root });
   const untracked = await exec('git', ['ls-files', '--others', '-z'], { cwd: root });
-  return [...new Set((tracked.stdout + untracked.stdout).split('\0').filter(Boolean))].sort();
+  return [...new Set((staged.stdout + unstaged.stdout + untracked.stdout).split('\0').filter(Boolean))].sort();
+}
+// Models never decide what is staged. Reset the index to HEAD, keeping working files for the guard.
+export async function clearIndex(root, exec) {
+  await exec('git', ['reset', '--quiet', '--mixed', 'HEAD'], { cwd: root });
+  const left = await exec('git', ['diff', '--cached', 'HEAD', '--name-only', '-z'], { cwd: root });
+  if (left.stdout) throw Error('Index still differs from HEAD after reset');
+}
+// The supervisor stages exactly the approved files and verifies the complete staged diff.
+export async function stageExactly(root, files, exec) {
+  await clearIndex(root, exec);
+  await exec('git', ['add', '--', ...files], { cwd: root });
+  const staged = (await exec('git', ['diff', '--cached', 'HEAD', '--no-renames', '--name-only', '-z'], { cwd: root })).stdout.split('\0').filter(Boolean).sort();
+  const expected = [...new Set(files)].sort();
+  // Every staged path must be approved; an approved file may be absent only if it did not change.
+  if (!staged.length || staged.some(file => !expected.includes(file))) throw Error('Staged changes differ from the approved files');
+  return staged;
 }
 export async function restorePath(root, file, exec) {
   if (path.isAbsolute(file) || file.split('/').includes('..')) throw Error('Unsafe git path');
@@ -26,8 +45,12 @@ export async function restorePath(root, file, exec) {
   }
 }
 export async function guardDiff(root, exec) {
-  const rejected = [], allowed = [];
-  for (const file of await changedPaths(root, exec)) {
+  const before = await changedPaths(root, exec);
+  await clearIndex(root, exec);
+  const after = await changedPaths(root, exec);
+  // Changes that existed only in the index are gone now; record them as rejected for the evidence.
+  const rejected = before.filter(file => !after.includes(file)), allowed = [];
+  for (const file of after) {
     let regular = false;
     try { regular = fs.lstatSync(path.join(root, file)).isFile(); } catch { /* A deletion is never allowed. */ }
     const parts = file.split('/');
