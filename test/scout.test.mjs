@@ -8,7 +8,7 @@ import { command, scopedCommand, ProcessTreeSurvived, parseMarker, ledgerStart, 
 import { SOURCES, parseSource, collect, selectNew, commitCursor } from '../scout/collect.mjs';
 import { buildStep, readX } from '../scout/read-x.mjs';
 import { guardDiff, fillReview, validateReviewResult, pendingOnly, validateAuthorResult, validateAuthorPaths } from '../scout/records.mjs';
-import { noLeads, runScout, waitForChecks, loadConfig, AUTHOR_ARGS, REVIEW_AVAILABLE_TOOLS } from '../scout/run.mjs';
+import { noLeads, runScout, waitForChecks, loadConfig, authorArgs, AUTHOR_DISABLED_FEATURES, verifyAuthorIsolation, resolveCodexRoot, REVIEW_AVAILABLE_TOOLS } from '../scout/run.mjs';
 
 const now = new Date('2026-11-03T12:00:00Z');
 const fixture = file => fs.readFileSync(new URL(`./fixtures/scout/${file}`, import.meta.url), 'utf8');
@@ -187,7 +187,7 @@ function rejectedRecord(id = 'MSR-2026-0001') {
     review: { author_model: 'codex-exact', reviewer_model: 'PENDING', reviewed: '2026-11-03', verdict: 'approve', notes: 'PENDING' },
     history: [{ date: '2026-11-03', change: 'Initial publication.' }] };
 }
-async function harness(t, { dryRun = true, decisions = ['approve'], noItems = false, modelFailure = false, busy = false, authFailure = false } = {}) {
+async function harness(t, { dryRun = true, decisions = ['approve'], noItems = false, modelFailure = false, busy = false, authFailure = false, looseFeature = null } = {}) {
   const root = temporary(t), repo = path.join(root, 'repo'); fs.mkdirSync(repo);
   await command('git', ['init', '-b', 'main', '--quiet'], { cwd: repo });
   await command('git', ['config', 'user.email', 'test@example.invalid'], { cwd: repo });
@@ -196,7 +196,7 @@ async function harness(t, { dryRun = true, decisions = ['approve'], noItems = fa
   await command('git', ['add', '.'], { cwd: repo }); await command('git', ['commit', '--quiet', '-m', 'fixture'], { cwd: repo });
   const head = (await command('git', ['rev-parse', 'HEAD'], { cwd: repo })).stdout.trim();
   const config = { repo, worktreesDir: path.join(root, 'trees'), stateDir: path.join(root, 'state'), ledgerPath: path.join(root, 'state/runs.jsonl'), llmControlPanelPath: '/example/panel', author: { provider: 'codex', profile: '/example/codex', model: 'codex-exact', timeoutS: 10 }, reviewer: { provider: 'claude', profile: '/example/claude', model: 'claude-exact', timeoutS: 10 }, github: { remote: 'origin', base: 'main' }, notify: { agent: 'test-scout', project: 'example-feed' }, x: { enabled: false, searches: [] }, dryRun };
-  const calls = []; let reviews = 0, authors = 0, lastWorktree;
+  const calls = []; let reviews = 0, authors = 0, lastWorktree, lastRunDir;
   const scopes = { started: [], killed: [] };
   const exec = async (file, args, options = {}) => {
     calls.push([file, args]);
@@ -206,7 +206,7 @@ async function harness(t, { dryRun = true, decisions = ['approve'], noItems = fa
       const rest = args.slice(args.indexOf('--') + 1);
       return exec(rest[0], rest.slice(1), options);
     }
-    if (file === 'systemctl') { if (args[1] === 'kill') scopes.killed.push(args.at(-1)); return { stdout: 'inactive\n', code: 3 }; }
+    if (file === 'systemctl') { if (args[1] === 'kill') { scopes.killed.push(args.at(-1)); return { stdout: '', stderr: '', code: 0 }; } return { stdout: 'LoadState=not-found\nActiveState=inactive\n', code: 0 }; }
     if (file === 'git' && args[0] === 'remote') return { stdout: 'git@github.com:example/feed.git\n', code: 0 };
     if (file === 'git' && args[0] === 'fetch') return { stdout: '', code: 0 };
     if (file === 'git' && args[0] === 'rev-parse' && args[1] === 'origin/main') return { stdout: head + '\n', code: 0 };
@@ -220,7 +220,9 @@ async function harness(t, { dryRun = true, decisions = ['approve'], noItems = fa
       if (role === 'author') {
         authors++; fs.mkdirSync(path.dirname(recordFile), { recursive: true }); fs.writeFileSync(recordFile, JSON.stringify(rejectedRecord(id)));
         result = { status: 'completed', model: 'codex-exact', created: [id], updated: [], skipped: [] };
-        assert.deepEqual(args.slice(-AUTHOR_ARGS.length), AUTHOR_ARGS); assert.ok(args.includes('sandbox_workspace_write.network_access=false')); assert.ok(args.includes('mcp_servers={}'));
+        const expected = authorArgs({ runDir: lastRunDir, codexRoot: '/example/codex-root' });
+        assert.deepEqual(args.slice(-expected.length), expected); assert.ok(args.includes('--ignore-user-config')); assert.ok(args.includes('features.apps=false'));
+        assert.equal(args.includes('-s'), false); assert.ok(args.some(a => a.startsWith('permissions.scout.filesystem={":root"="deny"')));
       } else {
         const verdict = decisions[Math.min(reviews++, decisions.length - 1)];
         result = { status: 'completed', model: 'claude-exact', records: [{ id, verdict, findings: verdict === 'approve' ? [] : [{ severity: 'major', field: 'explanation', issue: 'Unsupported wording', fix: 'Use the supported scope' }] }] };
@@ -255,10 +257,13 @@ async function harness(t, { dryRun = true, decisions = ['approve'], noItems = fa
       throw Error('Unexpected GitHub command');
     }
     if (file === 'agent-approval') return { stdout: '{"id":"simulated-notice"}', code: 0 };
+    if (file === 'codex' && args[0] === 'features') return { stdout: AUTHOR_DISABLED_FEATURES.map(name => `${name}  stable  ${name === looseFeature ? 'true' : 'false'}`).join('\n'), code: 0 };
+    if (file === 'codex' && args[0] === 'mcp') { lastRunDir = path.dirname(options.env.CODEX_HOME); return { stdout: '[]', code: 0 }; }
+    if (file === 'codex' && args[0] === 'sandbox') return { stdout: '', code: 0 };
     if (file !== 'git') throw Error('Unexpected external action in offline harness');
     return command(file, args, options);
   };
-  const outcome = await runScout(config, { exec, now: () => now, log: () => {}, acquireLock: () => busy ? { busy: true } : { fd: fs.openSync(path.join(root, 'lock'), 'w', 0o600) }, collect: async () => ({ items: noItems ? [] : [{ source: 'test', id: 'lead' }], sourceErrors: [], nextCursor: { sources: { test: { through: now.toISOString(), seen: ['lead'] } } } }), readX: async () => ({ status: 'unavailable', reason: 'disabled', posts: [] }) });
+  const outcome = await runScout(config, { exec, codexRoot: '/example/codex-root', now: () => now, log: () => {}, acquireLock: () => busy ? { busy: true } : { fd: fs.openSync(path.join(root, 'lock'), 'w', 0o600) }, collect: async () => ({ items: noItems ? [] : [{ source: 'test', id: 'lead' }], sourceErrors: [], nextCursor: { sources: { test: { through: now.toISOString(), seen: ['lead'] } } } }), readX: async () => ({ status: 'unavailable', reason: 'disabled', posts: [] }) });
   return { root, repo, config, calls, outcome, authors, reviews, scopes };
 }
 test('offline orchestration commits only approved records locally in dry-run and removes its worktree', async t => {
@@ -388,17 +393,77 @@ test('the supervisor stages exactly the approved files and refuses anything else
   assert.equal((await command('git', ['diff', '--cached', 'HEAD', '--name-only'], { cwd: root })).stdout.trim(), 'advisories/2026/MSA-2026-0002.json');
 });
 
-test('scoped model runs always kill their cgroup and fail closed if it survives', async () => {
+test('scoped model runs always kill their cgroup and require positive evidence that it ended', async () => {
   const seen = [];
-  const exec = async (file, args) => {
+  const run = (kill, show) => async (file, args) => {
     seen.push([file, ...args].join(' '));
-    if (file === 'systemd-run') throw Error('runner timed out');
-    if (args[1] === 'is-active') return { stdout: 'active\n', code: 0 };
-    return { stdout: '', code: 0 };
+    if (file === 'systemd-run') return { stdout: 'done', code: 0 };
+    if (args[1] === 'kill') return kill();
+    return show();
   };
-  await assert.rejects(scopedCommand('molt-security-scout-author-x', '/bin/true', [], {}, { exec, sleep: async () => {} }), ProcessTreeSurvived);
-  assert.ok(seen.some(line => line === 'systemctl --user kill --signal=SIGKILL molt-security-scout-author-x.scope'));
-  const ok = async (file, args) => (file === 'systemctl' ? { stdout: 'inactive\n', code: 3 } : { stdout: 'done', code: 0 });
-  assert.equal((await scopedCommand('molt-security-scout-reviewer-y', '/bin/true', [], {}, { exec: ok })).stdout, 'done');
-  await assert.rejects(scopedCommand('bad unit;rm', '/bin/true', [], {}, { exec: ok }), /Unsafe scope unit/);
+  const killOk = () => ({ code: 0, stdout: '', stderr: '' });
+  const gone = () => ({ code: 0, stdout: 'LoadState=not-found\nActiveState=inactive\n' });
+  const opts = exec => ({ exec, sleep: async () => {} });
+  // A failing runner still kills the scope and reports its own error when the tree is gone.
+  const failing = async (file, args) => (file === 'systemd-run' ? Promise.reject(Error('runner timed out')) : args[1] === 'kill' ? killOk() : gone());
+  await assert.rejects(scopedCommand('molt-security-scout-author-x', '/bin/true', [], {}, opts(failing)), /runner timed out/);
+  // Positive evidence: accepted kill, or a kill that found no loaded unit, then unloaded or inactive.
+  assert.equal((await scopedCommand('molt-security-scout-reviewer-y', '/bin/true', [], {}, opts(run(killOk, gone)))).stdout, 'done');
+  assert.equal((await scopedCommand('molt-security-scout-reviewer-y', '/bin/true', [], {}, opts(run(() => ({ code: 1, stdout: '', stderr: 'Failed to kill unit u.scope: Unit u.scope not loaded.' }), () => ({ code: 0, stdout: 'LoadState=loaded\nActiveState=failed\n' }))))).stdout, 'done');
+  assert.ok(seen.includes('systemctl --user kill --signal=SIGKILL molt-security-scout-reviewer-y.scope'));
+  // Everything else fails closed, even after a successful model run.
+  const cases = [
+    run(killOk, () => ({ code: 0, stdout: 'LoadState=loaded\nActiveState=active\n' })),
+    run(killOk, () => ({ code: 0, stdout: 'LoadState=loaded\nActiveState=deactivating\n' })),
+    run(killOk, () => ({ code: 0, stdout: '' })),
+    run(killOk, () => ({ code: 1, stdout: 'LoadState=not-found\n' })),
+    run(killOk, () => { throw Error('systemctl timed out'); }),
+    run(() => ({ code: 1, stdout: '', stderr: 'Failed to connect to bus' }), gone),
+    run(() => { throw Error('systemctl could not start'); }, gone),
+  ];
+  for (const exec of cases) await assert.rejects(scopedCommand('molt-security-scout-author-z', '/bin/true', [], {}, opts(exec)), ProcessTreeSurvived);
+  await assert.rejects(scopedCommand('bad unit;rm', '/bin/true', [], {}, opts(run(killOk, gone))), /Unsafe scope unit/);
+});
+
+test('author isolation fails closed on a loose feature before any model run', async t => {
+  const h = await harness(t, { looseFeature: 'apps' });
+  assert.equal(h.outcome.outcome, 'failed'); assert.equal(h.outcome.phase, 'author-isolation');
+  assert.equal(h.authors, 0); assert.equal(h.scopes.started.length, 0);
+});
+
+test('author isolation checks features, MCP inventory and a sandbox probe with the run permissions', async t => {
+  const root = temporary(t), worktree = path.join(root, 'tree'), runDir = path.join(root, 'run');
+  fs.mkdirSync(worktree); fs.mkdirSync(runDir);
+  const answers = { features: AUTHOR_DISABLED_FEATURES.map(n => `${n} stable false`).join('\n'), mcp: '[]', sandbox: 0 };
+  const seen = [];
+  const exec = async (file, args, options) => {
+    seen.push({ args, env: options.env });
+    if (args[0] === 'features') return { stdout: answers.features, code: 0 };
+    if (args[0] === 'mcp') return { stdout: answers.mcp, code: 0 };
+    return { stdout: '', code: answers.sandbox };
+  };
+  const input = { exec, worktree, runDir, codexRoot: '/opt/codex', profile: '/home/example/.codex' };
+  assert.equal((await verifyAuthorIsolation(input)).sandbox, 'confined');
+  const sandbox = seen.find(c => c.args[0] === 'sandbox');
+  assert.ok(sandbox.args.includes('/home/example/.codex/auth.json')); assert.notEqual(sandbox.env.CODEX_HOME, '/home/example/.codex');
+  assert.equal(seen.find(c => c.args[0] === 'mcp').env.CODEX_HOME, sandbox.env.CODEX_HOME);
+  answers.features = AUTHOR_DISABLED_FEATURES.slice(1).map(n => `${n} stable false`).join('\n');
+  await assert.rejects(verifyAuthorIsolation(input), /not disabled: apps/);
+  answers.features = AUTHOR_DISABLED_FEATURES.map(n => `${n} stable false`).join('\n'); answers.mcp = '[{"name":"x"}]';
+  await assert.rejects(verifyAuthorIsolation(input), /MCP servers remain/);
+  answers.mcp = 'not json';
+  await assert.rejects(verifyAuthorIsolation(input), /unreadable/);
+  answers.mcp = '[]'; answers.sandbox = 10;
+  await assert.rejects(verifyAuthorIsolation(input), /sandbox probe failed \(exit 10\)/);
+  answers.sandbox = 0; fs.mkdirSync(path.join(worktree, '.codex'));
+  await assert.rejects(verifyAuthorIsolation(input), /project Codex configuration/);
+});
+
+test('the Codex package directory resolves through a managed shell wrapper', async t => {
+  const root = temporary(t), pkg = path.join(root, 'lib/node_modules/@openai/codex'), bin = path.join(root, 'bin');
+  fs.mkdirSync(path.join(pkg, 'bin'), { recursive: true }); fs.mkdirSync(bin);
+  fs.writeFileSync(path.join(pkg, 'package.json'), JSON.stringify({ name: '@openai/codex' }));
+  fs.writeFileSync(path.join(bin, 'codex'), `#!/bin/sh\nexec '/usr/bin/node' '${pkg}/bin/codex.js' "$@"\n`, { mode: 0o755 });
+  assert.equal(resolveCodexRoot(bin), fs.realpathSync(pkg));
+  assert.throws(() => resolveCodexRoot(path.join(root, 'none')), /not found/);
 });

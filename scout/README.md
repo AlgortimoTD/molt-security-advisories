@@ -39,8 +39,17 @@ publishing operation is part of the offline tests.
    `leads.json`. If neither source contributes any leads, finish without inference,
    remove the worktree, acknowledge the cursor and record `modelInvoked:false`.
    All official sources failing is a failed run, not a quiet day.
-6. Run the author through the configured host `scripts/agent-run.mjs`, with the
-   workspace-write sandbox and network enabled. The author may write only record JSON.
+6. Verify author isolation, model-free, and fail with a blocker notice otherwise: every
+   disabled Codex feature (account apps, plugins, browser, computer use, image tools,
+   subagent v2, goals) must be known and off, `codex mcp list` with no user configuration
+   must be empty, the worktree must carry no `.codex` folder, and a `codex sandbox` probe
+   with the run's permission profile must be unable to read the author profile's
+   credentials, resolve a host, or see secret-looking environment variables. Then run the
+   author through the configured host `scripts/agent-run.mjs` with `--ignore-user-config`,
+   those features disabled, and a permission profile whose shell reads only the worktree
+   (writable), the private run folder, system runtime paths and the Codex package, with
+   no network and a core-only environment. Sources are opened with Codex's hosted web
+   search, which never sees local files. The author may write only record JSON.
    Require a complete result marker and a successful observed invocation in the host
    ledger. Restore out-of-scope changes, including staged files, deleted published
    records, symlinks and untracked files. Record reverted paths privately. Refuse a

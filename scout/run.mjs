@@ -11,14 +11,63 @@ import { command, scopedCommand, ProcessTreeSurvived, privateDir, readJson, writ
 import { changedPaths, guardDiff, stageExactly, restorePath, assertValid, recordId, validateAuthorResult, validateAuthorPaths, validateReviewResult, fillReview, assertHistory } from './records.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-// The author shell has no network: it cannot reach GitHub, SSH remotes or exfiltrate credentials.
-// Sources are opened through Codex's built-in web search; configured MCP servers are cleared.
-export const AUTHOR_ARGS = ['-s', 'workspace-write', '-c', 'sandbox_workspace_write.network_access=false', '-c', 'web_search="live"', '-c', 'mcp_servers={}'];
+const absolute = value => typeof value === 'string' && path.isAbsolute(value);
+// The author runs Codex with the user configuration ignored (no configured MCP servers, hooks from
+// config.toml or legacy sandbox_mode), every account app, plugin, browser and image tool disabled, and
+// a permission profile whose shell can read only the worktree, this run's folder, system runtime
+// paths and the Codex package, with no network and a core-only environment. Sources are opened
+// through Codex's hosted web search, which never sees local files.
+export const AUTHOR_DISABLED_FEATURES = ['apps', 'browser_use', 'browser_use_external', 'browser_use_full_cdp_access', 'computer_use', 'goals', 'image_generation', 'in_app_browser', 'in_app_chat', 'in_app_local_automation', 'multi_agent', 'multi_agent_v2', 'plugins', 'remote_plugin', 'plugin_sharing', 'recommended_plugins', 'skill_mcp_dependency_install', 'tool_suggest', 'view_image', 'workspace_dependencies', 'realtime_conversation', 'memories', 'enable_mcp_apps', 'codex_apps_mcp_2026_07_28', 'request_permissions_tool', 'sleep_tool'];
+const toml = value => JSON.stringify(value);
+export function authorPermissionArgs({ runDir, codexRoot }) {
+  if (![runDir, codexRoot].every(absolute)) throw Error('Author readable roots must be absolute');
+  const filesystem = `{":root"="deny", ":minimal"="read", ${toml(codexRoot)}="read", ${toml(runDir)}="read", ":workspace_roots"={"."="write"}}`;
+  return ['-c', 'default_permissions="scout"', '-c', `permissions.scout.filesystem=${filesystem}`, '-c', 'shell_environment_policy.inherit="core"'];
+}
+export const authorFeatureArgs = () => AUTHOR_DISABLED_FEATURES.flatMap(name => ['-c', `features.${name}=false`]);
+export const authorArgs = ({ runDir, codexRoot }) => ['--ignore-user-config', '--ignore-rules', '-c', 'approval_policy="never"', ...authorPermissionArgs({ runDir, codexRoot }), '-c', 'web_search="live"', '-c', 'mcp_servers={}', ...authorFeatureArgs()];
+// The sandbox re-executes the Codex binary, so the package directory must stay readable.
+export function resolveCodexRoot(pathEnv = process.env.PATH || '') {
+  for (const dir of pathEnv.split(path.delimiter).filter(absolute)) {
+    const candidate = path.join(dir, 'codex');
+    let real;
+    try { fs.accessSync(candidate, fs.constants.X_OK); real = fs.realpathSync(candidate); } catch { continue; }
+    let start = path.dirname(real);
+    const head = fs.readFileSync(real).subarray(0, 4096).toString('utf8');
+    if (head.startsWith('#!')) {
+      const match = head.match(/'(\/[^']*\/@openai\/codex)\/bin\/codex\.js'/);
+      if (!match) continue;
+      start = match[1];
+    }
+    for (let current = start; current !== path.dirname(current); current = path.dirname(current)) {
+      try { if (readJson(path.join(current, 'package.json'))?.name === '@openai/codex') return fs.realpathSync(current); } catch { /* Keep walking up. */ }
+    }
+  }
+  throw Error('Codex package directory not found');
+}
+// Fail closed before any model run: every disabled feature must be known and off, no MCP server may
+// remain once the user configuration is ignored, and a model-free sandbox probe must be unable to read
+// the author's credentials, resolve a host or see secret-looking environment variables.
+export async function verifyAuthorIsolation({ exec, worktree, runDir, codexRoot, profile }) {
+  const features = await exec('codex', ['features', 'list', ...authorFeatureArgs()], { cwd: worktree, env: { ...process.env, CODEX_HOME: profile }, timeoutMs: 60_000 });
+  const state = Object.fromEntries(features.stdout.split('\n').map(line => line.trim().split(/\s+/)).filter(parts => parts.length >= 2).map(parts => [parts[0], parts.at(-1)]));
+  const loose = AUTHOR_DISABLED_FEATURES.filter(name => state[name] !== 'false');
+  if (loose.length) throw Error(`Author features not disabled: ${loose.join(', ')}`);
+  if (fs.existsSync(path.join(worktree, '.codex'))) throw Error('Worktree carries a project Codex configuration');
+  const emptyHome = privateDir(path.join(runDir, 'codex-empty-home'));
+  const mcp = await exec('codex', ['mcp', 'list', '--json'], { cwd: worktree, env: { ...process.env, CODEX_HOME: emptyHome }, timeoutMs: 60_000 });
+  let servers;
+  try { servers = JSON.parse(mcp.stdout); } catch { throw Error('Codex MCP inventory is unreadable'); }
+  if (!Array.isArray(servers) || servers.length) throw Error('Codex MCP servers remain outside the user configuration');
+  const probe = 'cat "$1" >/dev/null 2>&1 && exit 10; ls "$2" >/dev/null 2>&1 && exit 11; getent hosts example.com >/dev/null 2>&1 && exit 12; env | grep -qiE "token|secret|passw|api_?key|credential" && exit 13; exit 0';
+  const sandboxed = await exec('codex', ['sandbox', ...authorPermissionArgs({ runDir, codexRoot }), '--', '/bin/sh', '-c', probe, 'probe', path.join(profile, 'auth.json'), profile], { cwd: worktree, env: { ...process.env, CODEX_HOME: emptyHome }, timeoutMs: 60_000, allowFailure: true });
+  if (sandboxed.code !== 0) throw Error(`Author sandbox probe failed (exit ${sandboxed.code})`);
+  return { features: AUTHOR_DISABLED_FEATURES.length, mcpServers: 0, sandbox: 'confined' };
+}
 // The reviewer gets no shell: reads are confined to the worktree and this run's private folder,
 // and sources are re-read with WebFetch only.
 export const reviewTools = (worktree, runDir) => [`Read(/${worktree}/**)`, `Read(/${runDir}/**)`, 'WebFetch'].join(',');
 export const REVIEW_AVAILABLE_TOOLS = 'Read,WebFetch';
-const absolute = value => typeof value === 'string' && path.isAbsolute(value);
 export function loadConfig(file = defaultConfigFile()) {
   const stat = fs.lstatSync(file);
   if (!stat.isFile() || stat.isSymbolicLink() || (stat.mode & 0o777) !== 0o600 || stat.uid !== process.getuid()) throw Error('Configuration must be an owned regular file with mode 600');
@@ -79,7 +128,7 @@ export async function runScout(config, dependencies = {}) {
   } catch (error) { closeSync(held.fd); throw error; }
   let worktree, branch, baseSha, modelInvoked = false, finished = false, phase = 'preflight', repository;
   const sourceRejections = [], dropped = [], modelsById = new Map();
-  let worktreeCreated = false, survived = false;
+  let worktreeCreated = false, survived = false, codexRoot;
   const git = (args, options = {}) => exec('git', args, { cwd: worktree || config.repo, ...options });
   const notify = async (kind, id, title, need) => {
     if (config.dryRun) { log(`dry-run: would notify ${kind}`); return; }
@@ -118,7 +167,7 @@ export async function runScout(config, dependencies = {}) {
     fs.writeFileSync(promptFile, `${template}\n\n## Supervisor context\n\nToday: ${date} (America/Bogota).\nWorktree: ${worktree}\nLeads: ${path.join(runDir, 'leads.json')}\n${context}\n`, { mode: 0o600 });
     const emptyMcp = path.join(runDir, 'mcp.json');
     writeJson(emptyMcp, { mcpServers: {} });
-    const extra = role === 'author' ? AUTHOR_ARGS : ['--allowedTools', reviewTools(worktree, runDir), '--tools', REVIEW_AVAILABLE_TOOLS, '--permission-mode', 'dontAsk', '--strict-mcp-config', '--mcp-config', emptyMcp];
+    const extra = role === 'author' ? authorArgs({ runDir, codexRoot }) : ['--allowedTools', reviewTools(worktree, runDir), '--tools', REVIEW_AVAILABLE_TOOLS, '--permission-mode', 'dontAsk', '--strict-mcp-config', '--mcp-config', emptyMcp];
     // Launching is an attempted invocation. The host runner records the observed value separately.
     modelInvoked = true;
     const unit = `molt-security-scout-${role}-${randomUUID()}`;
@@ -171,6 +220,9 @@ export async function runScout(config, dependencies = {}) {
       const result = await noLeads({ config, cursor: collected.nextCursor, run, cleanup, log });
       finished = true; return { ...result, exitCode: 0 };
     }
+    phase = 'author-isolation'; log('author-isolation: verify tools, MCP inventory and sandbox');
+    codexRoot = dependencies.codexRoot || resolveCodexRoot();
+    writeJson(path.join(runDir, 'author-isolation.json'), await (dependencies.verifyAuthorIsolation || verifyAuthorIsolation)({ exec, worktree, runDir, codexRoot, profile: config.author.profile }));
     const authored = await modelRun('author', 'initial', 'Investigate these leads. No previous findings.');
     let files = await guard();
     let authorModel = validateAuthorResult(authored.result, files, authored.observedModel);
@@ -257,7 +309,7 @@ export async function runScout(config, dependencies = {}) {
     if (error instanceof ProcessTreeSurvived) { survived = true; phase = 'process-cleanup'; }
     writeJson(path.join(runDir, 'failure.json'), { phase, reason: error.message });
     log(`failed: ${phase}; cursor not acknowledged`);
-    if (['github-auth', 'merge', 'browser-cleanup', 'process-cleanup'].includes(phase)) {
+    if (['github-auth', 'merge', 'browser-cleanup', 'process-cleanup', 'author-isolation'].includes(phase)) {
       try { await notify('blocker', `${date}-${phase}`, 'Security scout needs attention', `Run failed during ${phase}. Review the private run evidence and host ledger. The cursor was not acknowledged.`); } catch { log('notify: failed to deliver blocker'); }
     }
     return { exitCode: 1, outcome: 'failed', phase };

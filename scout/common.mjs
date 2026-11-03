@@ -68,20 +68,32 @@ export function ledgerEnd(file, run, { outcome, status = 'ok', modelInvoked = fa
 // Each model run gets its own transient systemd scope (a cgroup); after the run, successful or not,
 // the whole cgroup is killed and verified gone before the caller cleans up or releases locks.
 export class ProcessTreeSurvived extends Error {}
+// Termination needs positive evidence: a kill that systemd accepted (or that found no loaded unit)
+// and a successful `systemctl show` reporting the scope unloaded, inactive or failed. Anything else,
+// including bus errors or empty output, is treated as a surviving process tree.
+export const scopeGone = text => {
+  const fields = Object.fromEntries(text.split('\n').filter(Boolean).map(line => line.split('=', 2)));
+  return fields.LoadState === 'not-found' || ['inactive', 'failed'].includes(fields.ActiveState);
+};
 export async function scopedCommand(unit, file, args, options = {}, { exec = command, sleep = ms => new Promise(r => setTimeout(r, ms)) } = {}) {
   if (!/^[A-Za-z0-9_.:-]{1,200}$/.test(unit)) throw Error('Unsafe scope unit name');
-  const scope = `${unit}.scope`;
-  let failure;
+  const scope = `${unit}.scope`; let failure;
   try { return await exec('systemd-run', ['--user', '--scope', '--quiet', '--collect', `--unit=${unit}`, '--', file, ...args], options); }
   catch (error) { failure = error; throw error; }
   finally {
-    await exec('systemctl', ['--user', 'kill', '--signal=SIGKILL', scope], { allowFailure: true, timeoutMs: 10_000 });
+    const problems = [];
+    let killed;
+    try { killed = await exec('systemctl', ['--user', 'kill', '--signal=SIGKILL', scope], { allowFailure: true, timeoutMs: 10_000 }); }
+    catch (error) { problems.push(`kill: ${error.message}`); }
+    if (killed && killed.code !== 0 && !/not loaded/i.test(killed.stderr ?? '')) problems.push(`kill exited ${killed.code}`);
     let gone = false;
-    for (let i = 0; i < 50 && !gone; i++) {
-      const state = (await exec('systemctl', ['--user', 'is-active', scope], { allowFailure: true, timeoutMs: 5_000 })).stdout.trim();
-      gone = !['active', 'activating', 'deactivating', 'reloading', 'refreshing'].includes(state);
+    for (let i = 0; i < 50 && !gone && !problems.length; i++) {
+      let shown;
+      try { shown = await exec('systemctl', ['--user', 'show', '-p', 'LoadState', '-p', 'ActiveState', scope], { allowFailure: true, timeoutMs: 5_000 }); }
+      catch (error) { problems.push(`show: ${error.message}`); break; }
+      gone = shown.code === 0 && scopeGone(shown.stdout ?? '');
       if (!gone) await sleep(200);
     }
-    if (!gone) throw new ProcessTreeSurvived(`Model process tree ${scope} survived termination${failure ? ` after: ${failure.message}` : ''}`);
+    if (!gone) throw new ProcessTreeSurvived(`Model process tree ${scope} was not proven terminated${problems.length ? ` (${problems.join('; ')})` : ''}${failure ? ` after: ${failure.message}` : ''}`);
   }
 }
