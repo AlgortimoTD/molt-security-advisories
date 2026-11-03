@@ -21,6 +21,8 @@ test('recorded Atom and RSS snippets normalize sources and filter relevance', ()
   assert.equal(chrome.length, 1); assert.equal(chrome[0].id, 'tag:blogger.com,1999:chrome-1');
   assert.equal(chrome[0].summary, 'Security fixes & CVE-2026-1234.');
   assert.match(chrome[0].url, /stable.html$/);
+  const plainHttp = parseSource(source('chrome'), fixture('chrome.atom').replace('href="https://chromereleases', 'href="http://chromereleases'));
+  assert.equal(plainHttp.length, 1); assert.match(plainHttp[0].url, /^https:\/\/chromereleases\.googleblog\.com\//);
   assert.equal(parseSource(source('node'), fixture('node.rss'))[0].summary, 'Fixes a vulnerability in HTTP parsing.');
   assert.equal(parseSource(source('ubuntu'), fixture('ubuntu.rss')).length, 1);
   for (const spec of SOURCES.filter(s => s.source.startsWith('release:'))) assert.equal(parseSource(spec, fixture('releases.atom')).length, 1);

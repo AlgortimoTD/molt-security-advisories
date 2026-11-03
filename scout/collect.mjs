@@ -27,7 +27,8 @@ export function parseXml(xml) {
   return [...xml.matchAll(/<(?:[\w-]+:)?(entry|item)\b[^>]*>([\s\S]*?)<\/(?:[\w-]+:)?\1>/gi)].map(([, , body]) => {
     const links = [...body.matchAll(/<(?:[\w-]+:)?link\b[^>]*>/gi)].map(m => m[0]);
     const link = links.find(l => attr(l, 'rel') === 'alternate') || links.find(l => !attr(l, 'rel'));
-    const url = attr(link || '', 'href') || decodeXml(tag(body, 'link')).trim();
+    // Blogger feeds (Chrome Releases) publish http:// links; every collected host serves https.
+    const url = (attr(link || '', 'href') || decodeXml(tag(body, 'link')).trim()).replace(/^http:\/\//i, 'https://');
     return { id: decodeXml(tag(body, 'id') || tag(body, 'guid')).trim() || url, title: plainText(tag(body, 'title')), url,
       published: plainText(tag(body, 'published') || tag(body, 'pubDate') || tag(body, 'updated') || tag(body, 'date')),
       summary: plainText(tag(body, 'content') || tag(body, 'description') || tag(body, 'summary')) };
