@@ -70,6 +70,18 @@ test('machine inventory is refused', () => {
   assert.match(problemsFor(record), /inventory/);
 });
 
+test('credentials are refused anywhere in a record, URLs included', () => {
+  // Synthetic shapes built at runtime, so this file never contains a credential-looking literal.
+  for (const fake of ['ghp_' + 'A'.repeat(36), 'AKIA' + 'B'.repeat(16), '-----BEGIN ' + 'OPENSSH PRIVATE KEY-----']) {
+    const record = advisory();
+    record.exposure += ` ${fake}`;
+    assert.match(problemsFor(record), /credential/);
+  }
+  const record = advisory();
+  record.sources[0].url += `?token=${'ghp_' + 'C'.repeat(36)}`;
+  assert.match(problemsFor(record), /credential/);
+});
+
 test('detector params are checked against the type and the affected versions', () => {
   const bad = advisory(); bad.detectors = [{ type: 'running-process-flag', params: { family: 'chromium', flag: 'no-sandbox' } }];
   assert.match(problemsFor(bad), /invalid params/);

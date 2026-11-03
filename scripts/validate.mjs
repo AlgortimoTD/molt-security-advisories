@@ -8,6 +8,8 @@ const BACKED = ['affected', 'cve', 'vendor_severity', 'exploitation', 'remediati
 // Tier 3 hosts are leads only; they may appear in `discovery`, never in `sources`.
 const LEAD_HOSTS = /(^|\.)(x\.com|twitter\.com|t\.co|reddit\.com|news\.ycombinator\.com|linkedin\.com|facebook\.com|threads\.net|bsky\.app|mastodon\.social|youtube\.com|medium\.com|substack\.com)$/i;
 // Advisories describe products, never a machine: these patterns indicate inventory.
+// Credential shapes, checked everywhere in a record including URLs: a public feed never carries one.
+const SECRETS = [/\bgh[pousr]_[A-Za-z0-9]{30,}/, /\bgithub_pat_[A-Za-z0-9_]{40,}/, /\bsk-(?:ant-|proj-)?[A-Za-z0-9_-]{20,}/, /\bAKIA[0-9A-Z]{16}\b/, /\bxox[abprs]-[A-Za-z0-9-]{10,}/, /-----BEGIN [A-Z ]*PRIVATE KEY-----/, /\bAIza[0-9A-Za-z_-]{35}\b/, /\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/];
 const INVENTORY = [/\/home\/[a-z0-9_.-]+/i, /\/Users\/[A-Za-z0-9_.-]+/, /[A-Z]:\\Users\\/i, /\b(?:\d{1,3}\.){3}\d{1,3}\b/, /\.ts\.net\b/i, /\blocalhost:\d+/i];
 const DETECTOR_PARAMS = {
   'chromium-browser-version': p => typeof p.product === 'string' && /^\d+(\.\d+)+$/.test(p.fixed ?? ''),
@@ -84,6 +86,7 @@ export function validateAll(root = ROOT) {
     // No inventory anywhere in the record.
     const text = JSON.stringify(record);
     for (const pattern of INVENTORY) if (pattern.test(text.replace(/https:\/\/[^"\s]+/g, ''))) fail(`looks like machine inventory (${pattern}); advisories describe products, not hosts`);
+    for (const pattern of SECRETS) if (pattern.test(text)) fail('looks like a credential; a public record never contains secrets');
   }
   return { problems, count: records.size };
 }
