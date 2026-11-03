@@ -20,7 +20,9 @@ export function buildStep(action) {
     await page.locator('article[data-testid="tweet"], a[href="/login"], input[autocomplete="username"]').first().waitFor({state:'visible',timeout:10000}).catch(() => {});
     return await page.evaluate(() => {
       const body = document.body.innerText;
-      const login = location.pathname.startsWith('/i/flow/login') || location.pathname === '/login' ||
+      // Any page other than the timeline or live search (login, onboarding, account checks) needs
+      // the owner in the browser; it is never an empty but healthy timeline.
+      const login = !['/home', '/search'].includes(location.pathname) ||
         !!document.querySelector('input[autocomplete="username"]') ||
         (!document.querySelector('article[data-testid="tweet"]') && /Sign in to X|Log in to X|Don.t miss what.s happening|Join X today/i.test(body));
       const posts = [...document.querySelectorAll('article[data-testid="tweet"]')].map(article => {

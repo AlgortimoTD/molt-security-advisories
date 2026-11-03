@@ -213,7 +213,7 @@ export async function runScout(config, dependencies = {}) {
     const previousHealth = readJson(xHealthFile, { signedOutRuns: 0 });
     const signedOutRuns = x.reason === 'signed-out' ? previousHealth.signedOutRuns + 1 : 0;
     writeJson(xHealthFile, { signedOutRuns });
-    if (signedOutRuns === 3) await notify('blocker', 'x-signed-out', 'Security scout X profile is signed out', 'Three consecutive runs found a login wall. Sign in using the configured browser profile. Official feeds continue.');
+    if (signedOutRuns === 3) await notify('blocker', 'x-signed-out', 'Security scout X profile is signed out', 'Three consecutive runs found a login wall or an X account screen instead of the timeline. Sign in or complete it using the configured browser profile. Official feeds continue.');
     if (x.reason === 'browser-stop-failed') { phase = 'browser-cleanup'; throw Error('Browser stop failed; profile lease needs attention'); }
     if (collected.sourceErrors.length === SOURCES.length) throw Error('All official sources failed');
     if (!collected.items.length && !x.posts?.length) {

@@ -92,6 +92,9 @@ test('X login wall returns unavailable and always stops its private text-only ru
   assert.equal(result.status, 'unavailable'); assert.equal(result.reason, 'signed-out');
   assert.equal(calls.at(-1)[0], 'stop'); assert.ok(calls.find(args => args.includes('text')));
   assert.equal(calls.some(args => args[0] === 'step' && args[1].includes('tab.click')), false);
+  // The page script treats any path other than the timeline or live search as needing the owner.
+  const read = calls.find(args => args[0] === 'step' && args[1].includes('location.pathname'))[1];
+  assert.match(read, /!\['\/home', '\/search'\]\.includes\(location\.pathname\)/);
 });
 test('missing profile never opens an anonymous browser', async () => {
   const result = await readX({ profile: '' }, { exec: () => { throw Error('must not run'); } });
