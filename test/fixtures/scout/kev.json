@@ -1,0 +1,1 @@
+{"vulnerabilities":[{"cveID":"CVE-2026-1234","vulnerabilityName":"Example code execution","dateAdded":"2026-11-02","shortDescription":"A crafted file permits code execution."},{"cveID":"CVE-2026-1235","vulnerabilityName":"Older issue","dateAdded":"2026-10-01","shortDescription":"Historical issue."}]}
