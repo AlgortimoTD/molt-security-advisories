@@ -30,6 +30,10 @@ this file only adds how agents work here.
 
 Nicolás Tobón, the owner, authorized on 2026-11-03 the security scout agent and sessions working on
 this repository to: commit to task branches, push them, open pull requests, and merge a pull
-request into `main` when its checks pass and its records carry an approval from a different
-model. Never push directly to `main`, force-push, rewrite published history, change repository
-settings, secrets or webhooks, or create tags and releases without his approval.
+request into `main` when its checks pass and it carries an approval from a model different from
+its author: for records, the `review` block; for scripts, workflows and docs, a recorded
+different-model review of the current diff. He confirmed on 2026-11-03 that this repository is
+self-managed: agents keep `main` stable and up to date themselves and never ask him to approve a
+merge. Ask him only for what this grant excludes. Never push directly to `main`, force-push,
+rewrite published history, change repository settings, secrets or webhooks, or create tags and
+releases without his approval.
