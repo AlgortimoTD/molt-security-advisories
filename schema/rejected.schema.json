@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/AlgortimoTD/molt-security-advisories/schema/rejected.schema.json",
+  "title": "Molt security rejected claim",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "id", "claim", "verdict", "explanation", "published", "updated", "discovery", "sources", "review", "history"],
+  "properties": {
+    "schema": { "const": "msr/1" },
+    "id": { "type": "string", "pattern": "^MSR-[0-9]{4}-[0-9]{4}$" },
+    "claim": { "type": "string", "minLength": 20, "maxLength": 600 },
+    "verdict": { "enum": ["false", "misleading", "exaggerated", "unverifiable"] },
+    "explanation": { "type": "string", "minLength": 40 },
+    "published": { "$ref": "advisory.schema.json#/$defs/date" },
+    "updated": { "$ref": "advisory.schema.json#/$defs/date" },
+    "discovery": { "$ref": "advisory.schema.json#/properties/discovery", "minItems": 1 },
+    "sources": { "$ref": "advisory.schema.json#/properties/sources" },
+    "related": { "$ref": "advisory.schema.json#/properties/related" },
+    "review": { "$ref": "advisory.schema.json#/properties/review" },
+    "history": { "$ref": "advisory.schema.json#/properties/history" }
+  }
+}
