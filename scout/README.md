@@ -22,8 +22,9 @@ publishing operation is part of the offline tests.
    calendar date. Existing local or remote branches get `-2`, `-3`, and so on.
 3. `collect.mjs` fetches official Chrome desktop stable/extended updates, CISA KEV,
    reviewed high/critical GitHub advisories for npm/pip/go/actions, Node vulnerability
-   notices, developer-relevant Ubuntu USNs, and security-related releases for the six
-   configured agent/developer tooling repositories. Each source has its own 20-second
+   notices, developer-relevant Ubuntu USNs, Cloudflare Radar's Zero Wire briefings (a
+   curated lead source; its links point to the vendor records the author must open), and
+   security-related releases for the six configured agent/developer tooling repositories. Each source has its own 20-second
    deadline and error boundary. GitHub pagination is followed until it crosses the
    cursor window, with a 100-page safety limit. `GITHUB_TOKEN` is optional and used only
    in the GitHub API request header, never logged or forwarded to other feed hosts.
@@ -232,7 +233,8 @@ WantedBy=timers.target
 
 `npm test` already discovers `test/scout.test.mjs` through the existing wildcard.
 `npm run check` runs these offline tests, the record validator and the deterministic
-feed check. Fixture snippets cover Atom, RSS, KEV and GitHub advisory JSON. Tests also
+feed check. Fixture snippets cover Atom, RSS (including Zero Wire's `content:encoded` items), KEV and
+GitHub advisory JSON. Tests also
 exercise cursor isolation, read-only browser step construction and cleanup, diff
 restoration, review metadata, strict markers, the full model-free path, bounded fix
 rounds, local dry-run commits, lock contention, failure cleanup and merge gates.

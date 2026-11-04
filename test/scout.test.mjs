@@ -25,6 +25,10 @@ test('recorded Atom and RSS snippets normalize sources and filter relevance', ()
   assert.equal(plainHttp.length, 1); assert.match(plainHttp[0].url, /^https:\/\/chromereleases\.googleblog\.com\//);
   assert.equal(parseSource(source('node'), fixture('node.rss'))[0].summary, 'Fixes a vulnerability in HTTP parsing.');
   assert.equal(parseSource(source('ubuntu'), fixture('ubuntu.rss')).length, 1);
+  const zeroWire = parseSource(source('zero-wire'), fixture('zero-wire.rss'));
+  assert.equal(zeroWire.length, 1); assert.equal(zeroWire[0].id, 'example-runtime-flaw@2026-11-02');
+  assert.equal(zeroWire[0].summary, "Prioritize patching. The vendor's fixed release is available.");
+  assert.equal(zeroWire[0].published, '2026-11-02T00:00:00.000Z');
   for (const spec of SOURCES.filter(s => s.source.startsWith('release:'))) assert.equal(parseSource(spec, fixture('releases.atom')).length, 1);
 });
 test('KEV JSON and reviewed GHSA filters include only configured ecosystems and severities', () => {

@@ -10,6 +10,8 @@ export const SOURCES = [
   { source: 'ghsa', format: 'ghsa', url: 'https://api.github.com/advisories?type=reviewed&per_page=100&sort=published&direction=desc' },
   { source: 'node', format: 'rss', url: 'https://nodejs.org/en/feed/vulnerability.xml' },
   { source: 'ubuntu', format: 'rss', url: 'https://ubuntu.com/security/notices/rss.xml' },
+  // Curated briefings are leads that point to vendor advisories; they never back a record field.
+  { source: 'zero-wire', format: 'rss', url: 'https://radar.cloudflare.com/security/zero-wire/rss' },
   ...RELEASES.map(repo => ({ source: `release:${repo}`, format: 'atom', url: `https://github.com/${repo}/releases.atom` })),
 ];
 const DAY = 86_400_000;
