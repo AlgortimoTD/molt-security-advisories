@@ -86,7 +86,10 @@ export function validateReviewResult(result, files, authorModel, observedModel) 
   const ids = result.records.map(r => r.id);
   if (new Set(ids).size !== ids.length || JSON.stringify(ids.slice().sort()) !== JSON.stringify(files.map(recordId).sort())) throw Error('Review does not cover exactly the changed records');
   for (const r of result.records) {
+    // Reviewers phrase the non-approval verdict differently; any of these spellings means changes.
+    if (['request_changes', 'request-changes', 'changes_requested', 'reject'].includes(r.verdict)) r.verdict = 'changes';
     if (!['approve', 'changes'].includes(r.verdict) || !Array.isArray(r.findings)) throw Error('Invalid review verdict');
+    if (r.verdict === 'changes' && !r.findings.length) throw Error('A changes verdict needs at least one finding');
     for (const f of r.findings) if (!['blocker', 'major', 'minor'].includes(f.severity) || !['field', 'issue', 'fix'].every(k => typeof f[k] === 'string' && f[k].trim())) throw Error('Invalid review finding');
     if (r.verdict === 'approve' && r.findings.length) throw Error('Approval with open findings is invalid');
   }
