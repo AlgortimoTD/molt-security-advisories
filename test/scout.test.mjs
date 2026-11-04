@@ -319,7 +319,8 @@ test('busy lock returns 75 before git, browser or model execution', async t => {
 });
 test('configuration requires private permissions and validates launch boundaries', t => {
   const root = temporary(t), file = path.join(root, 'config.json');
-  fs.writeFileSync(file, '{}', { mode: 0o644 });
+  // chmod explicitly: the scout service runs with umask 0077, which would turn a 0644 create into 0600.
+  fs.writeFileSync(file, '{}'); fs.chmodSync(file, 0o644);
   assert.throws(() => loadConfig(file), /mode 600/);
   fs.chmodSync(file, 0o600); assert.throws(() => loadConfig(file), /absolute/);
   assert.equal(todayBogota(new Date('2026-11-04T02:00:00Z')), '2026-11-03');

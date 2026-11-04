@@ -21,4 +21,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Tests, record validation and feed check
-        run: npm run check
+        # Same umask as the scout's systemd service, whose publication gate runs this check.
+        run: |
+          umask 0077
+          npm run check
