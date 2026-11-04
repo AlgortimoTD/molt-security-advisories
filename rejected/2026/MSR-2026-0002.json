@@ -1,0 +1,52 @@
+{
+  "schema": "msr/1",
+  "id": "MSR-2026-0002",
+  "claim": "Ubuntu has no patched kernel available for CVE-2026-98432.",
+  "verdict": "misleading",
+  "explanation": "The vendor distinguishes availability for testing from completed stable-channel qualification. Its November 2 notice offers fixes in proposed for Ubuntu 22.04 and newer and lists 26.10 as fixed. The November 3 CVE tracker still labels those package revisions work in progress. This is not evidence that every release and kernel flavor is fixed, but the blanket claim that no patch is available omits the testing channel. Consult the exact release and flavor before installing a fix.",
+  "published": "2026-11-03",
+  "updated": "2026-11-03",
+  "discovery": [
+    {
+      "url": "https://x.com/CobaltHere/status/2117285606086562247",
+      "kind": "social",
+      "seen": "2026-11-03"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://ubuntu.com/blog/fixes-available-in-proposed-pocket-for-cve-2026-98432",
+      "publisher": "Canonical Ubuntu",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "explanation"
+      ]
+    },
+    {
+      "url": "https://ubuntu.com/security/CVE-2026-98432",
+      "publisher": "Canonical Ubuntu",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "explanation"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-03",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-03",
+      "change": "Initial record drafted for independent review."
+    }
+  ],
+  "related": [
+    "MSA-2026-0012"
+  ]
+}

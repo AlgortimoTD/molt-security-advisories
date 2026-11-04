@@ -360,6 +360,1830 @@
           "change": "Initial publication."
         }
       ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0002",
+      "title": "praktor Telegram uploads can overwrite persistent agent instructions",
+      "summary": "A Telegram document filename can escape the uploads directory and overwrite files in the persistent agent workspace. This can plant instructions or execution configuration consumed by later agent runs.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Remote file writes reach persistent agent instructions. Messaging the bot is sufficient with the default unrestricted sender policy, making unattended agents especially exposed."
+      },
+      "affected": [
+        {
+          "product": "praktor",
+          "ecosystem": "Go",
+          "fixed": "0.9.1",
+          "note": "Affected through 0.9.0."
+        }
+      ],
+      "exposure": "Exposed when untrusted Telegram users can send documents to the bot; an empty sender allowlist permits everyone.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "Go",
+            "name": "github.com/mtzanidakis/praktor",
+            "ranges": [
+              {
+                "fixed": "0.9.1"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Upgrade to 0.9.1. Until then, restrict telegram.allow_from to trusted sender IDs.",
+          "risk": "Low. Test dependent workflows after updating."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version or revision and exercise the affected workflow with trusted inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-48v2-6jcm-fc99",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial record drafted for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-62331"
+      ],
+      "ghsa": [
+        "GHSA-48v2-6jcm-fc99"
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Reviewed Advisory Database",
+          "value": "8.2 High"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0003",
+      "title": "Elo through 1.0.0 permits code injection through source strings and programmatic ASTs",
+      "summary": "Elo has three independent injection flaws: JavaScript constructor access can execute host code, Ruby interpolation can execute commands, and unchecked AST fields can inject generated JavaScript, Ruby, Python or SQL.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "severity": {
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "Attacker-supplied Elo source can execute code through documented CLI and library paths. CI and agent pipelines that evaluate untrusted expressions expose the host runtime."
+      },
+      "affected": [
+        {
+          "product": "@enspirit/elo",
+          "ecosystem": "npm",
+          "fixed": "1.0.1",
+          "note": "All three advisories list versions through 1.0.0."
+        }
+      ],
+      "exposure": "Requires processing attacker-controlled Elo source or programmatic ASTs. Ruby injection requires executing the Ruby output; AST injection requires attacker-influenced node fields.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "npm",
+            "name": "@enspirit/elo",
+            "ranges": [
+              {
+                "fixed": "1.0.1"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Upgrade to 1.0.1 before evaluating untrusted Elo input.",
+          "risk": "Low. Test dependent workflows after updating."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version or revision and exercise the affected workflow with trusted inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-x9rp-7wh3-2rj5",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-7w38-ggh5-v542",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-33r5-xmm8-v6x5",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial record drafted for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-44265",
+        "CVE-2026-44266",
+        "CVE-2026-44267"
+      ],
+      "ghsa": [
+        "GHSA-x9rp-7wh3-2rj5",
+        "GHSA-7w38-ggh5-v542",
+        "GHSA-33r5-xmm8-v6x5"
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Reviewed Advisory Database",
+          "value": "7.4 High",
+          "applies_to": "CVE-2026-44265"
+        },
+        {
+          "source": "GitHub Reviewed Advisory Database",
+          "value": "9.8 Critical",
+          "applies_to": "CVE-2026-44266 and CVE-2026-44267"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0004",
+      "title": "Stanza 1.14.0 can execute code while loading an untrusted lemmatizer checkpoint",
+      "summary": "The lemmatizer decompresses and unpickles an inner checkpoint field without restrictions. PyTorch weights_only=True does not protect that inner stream.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "Code execution requires an attacker-controlled custom lemma checkpoint. This is a narrower model-loading configuration, rather than ordinary text inference."
+      },
+      "affected": [
+        {
+          "product": "stanza",
+          "ecosystem": "PyPI",
+          "introduced": "1.14.0",
+          "fixed": "1.15.0",
+          "note": "The advisory lists exactly 1.14.0 as affected."
+        }
+      ],
+      "exposure": "Pipelines loading caller-supplied or shared untrusted lemma checkpoints are exposed. Ordinary inference text alone is not this attack surface.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check whether stanza is exactly 1.14.0 and whether custom or shared lemma checkpoints can be untrusted."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Upgrade to 1.15.0, which fixes the unrestricted inner deserialization.",
+          "risk": "Low. Test dependent workflows after updating."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version or revision and exercise the affected workflow with trusted inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-gh9r-c94j-cmp5",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial record drafted for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-115878"
+      ],
+      "ghsa": [
+        "GHSA-gh9r-c94j-cmp5"
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Reviewed Advisory Database",
+          "value": "7.8 High"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0005",
+      "title": "Node.js Brotli decoding can corrupt memory and permit remote code execution",
+      "summary": "Malformed Brotli input can overrun an internal decoder buffer through node:zlib, causing crashes, memory disclosure or remote code execution.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "The attacker must supply Brotli data that the application decompresses. Handling remote compressed content is a common runtime exposure for developer services and agents."
+      },
+      "affected": [
+        {
+          "product": "Node.js",
+          "fixed": "22.23.4",
+          "note": "Includes end-of-life lines. The Node.js notice states that end-of-life versions are affected when a security release occurs."
+        },
+        {
+          "product": "Node.js",
+          "introduced": "23.0.0",
+          "fixed": "24.22.1",
+          "note": "Includes end-of-life lines. The Node.js notice states that end-of-life versions are affected when a security release occurs."
+        },
+        {
+          "product": "Node.js",
+          "introduced": "25.0.0",
+          "fixed": "26.12.1",
+          "note": "Includes end-of-life lines. The Node.js notice states that end-of-life versions are affected when a security release occurs."
+        }
+      ],
+      "exposure": "Relevant when Node.js applications decode attacker-controlled Brotli data with node:zlib. Check embedded runtimes separately from the command on PATH.",
+      "detectors": [
+        {
+          "type": "executable-version",
+          "params": {
+            "executable": "node",
+            "ranges": [
+              {
+                "fixed": "22.23.4"
+              },
+              {
+                "introduced": "23.0.0",
+                "fixed": "24.22.1"
+              },
+              {
+                "introduced": "25.0.0",
+                "fixed": "26.12.1"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Update supported lines to 22.23.4, 24.22.1 or 26.12.1, respectively, or a later patched release on that line. Move end-of-life installations to a supported patched line. Restart dependent processes.",
+          "risk": "Low. Test dependent workflows after updating."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version or revision and exercise the affected workflow with trusted inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://nodejs.org/en/blog/vulnerability/october-2026-security-releases",
+          "publisher": "Node.js Project",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        },
+        {
+          "url": "https://nodejs.org/en/blog/release/v22.23.4/",
+          "publisher": "Node.js Project",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "remediation"
+          ]
+        },
+        {
+          "url": "https://nodejs.org/en/blog/release/v24.22.1/",
+          "publisher": "Node.js Project",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "remediation"
+          ]
+        },
+        {
+          "url": "https://nodejs.org/en/blog/release/v26.12.1/",
+          "publisher": "Node.js Project",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "remediation"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial record drafted for independent review."
+        },
+        {
+          "date": "2026-11-03",
+          "change": "Expanded affected ranges and detector coverage to include end-of-life lines, following the Node.js security notice, and added migration guidance."
+        }
+      ],
+      "cve": [
+        "CVE-2026-111497"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Node.js Project",
+          "value": "High"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/jjjContinue/status/2113200128534417901",
+          "kind": "social",
+          "seen": "2026-11-03"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0006",
+      "title": "Langflow OSS through 1.12.8 has authentication bypass and unauthenticated code execution",
+      "summary": "IBM reports authentication bypass and unauthenticated code execution, including an MCP tool-enumeration path. The same upgrade also addresses authenticated agentic command execution and credential disclosure. All four Langflow flaws are addressed by Langflow OSS 1.13.0.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "severity": {
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "Unauthenticated remote code execution reaches the agent workflow server. No account or further user interaction is required in the published CVSS vector."
+      },
+      "affected": [
+        {
+          "product": "Langflow OSS",
+          "ecosystem": "PyPI",
+          "introduced": "1.0.0",
+          "fixed": "1.13.0",
+          "note": "IBM lists affected versions 1.0.0 through 1.12.8."
+        }
+      ],
+      "exposure": "Exposed deployments allow attacker access to Langflow, including its MCP surface. Do not assume the authentication control prevents access.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "PyPI",
+            "name": "langflow",
+            "ranges": [
+              {
+                "fixed": "1.13.0",
+                "introduced": "1.0.0"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Back up the database, secret key and uploaded files. Prepare automatic-login accounts for password sign-in, then upgrade the package or Docker deployment to 1.13.0.",
+          "risk": "Medium. Authentication changes and persistent deployment data require upgrade preparation."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version or revision and exercise the affected workflow with trusted inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://www.ibm.com/support/pages/node/7294467",
+          "publisher": "IBM",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial record drafted for independent review."
+        },
+        {
+          "date": "2026-11-03",
+          "change": "Added the two other Langflow CVEs covered by the IBM upgrade, their individual scores and their authentication conditions."
+        }
+      ],
+      "cve": [
+        "CVE-2026-93680",
+        "CVE-2026-110186",
+        "CVE-2026-110193",
+        "CVE-2026-110192"
+      ],
+      "vendor_severity": [
+        {
+          "source": "IBM",
+          "value": "9.8 Critical",
+          "applies_to": "CVE-2026-93680, CVE-2026-110186"
+        },
+        {
+          "source": "IBM",
+          "value": "8.8 High",
+          "applies_to": "CVE-2026-110193"
+        },
+        {
+          "source": "IBM",
+          "value": "6.5 Medium",
+          "applies_to": "CVE-2026-110192"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/theomlondhe/status/2117496855416160673",
+          "kind": "social",
+          "seen": "2026-11-03"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0009",
+      "title": "Strands Agents Tools environment tool lets prompt injection disable secret masking",
+      "summary": "The model-controlled masked parameter can expose environment secrets through the environment tool. Injected instructions can cause unmasked values to be returned and passed through other tools.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Untrusted content can cause credential disclosure without operator consent for reads. Credential exposure warrants a 72-hour response in agent environments."
+      },
+      "affected": [
+        {
+          "product": "strands-agents-tools",
+          "ecosystem": "PyPI",
+          "introduced": "0.1.0",
+          "fixed": "0.8.6"
+        }
+      ],
+      "exposure": "Requires an agent loading the environment tool and processing attacker-influenced content. The attack exposes secrets present in the agent process environment.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "PyPI",
+            "name": "strands-agents-tools",
+            "ranges": [
+              {
+                "fixed": "0.8.6",
+                "introduced": "0.1.0"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Upgrade to 0.8.6 or later, or remove the environment tool pending upgrade. Rotate credentials present in environments whose agents loaded this tool.",
+          "risk": "Medium. Tool removal and credential rotation can disrupt agents."
+        }
+      ],
+      "verification": [
+        "Confirm version 0.8.6 or later and that the model cannot control masking; verify credential rotation."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/strands-agents/tools/security/advisories/GHSA-qjx4-hg6g-2f34",
+          "publisher": "Strands Agents Tools",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial record drafted for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-115415"
+      ],
+      "ghsa": [
+        "GHSA-qjx4-hg6g-2f34"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Strands Agents Tools",
+          "value": "6.5 Moderate"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/Ranjan22555/status/2116008025152774161",
+          "kind": "social",
+          "seen": "2026-11-03"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0010",
+      "title": "AWS Serverless MCP Server project names can escape the deployment status directory",
+      "summary": "A manipulated project name can read JSON files outside the deployment status directory. With write access enabled it can also overwrite JSON files outside that directory.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "The attacker must influence agent tool input and the impact is limited to JSON file access. Writes additionally require write access to have been enabled."
+      },
+      "affected": [
+        {
+          "product": "awslabs.aws-serverless-mcp-server",
+          "ecosystem": "PyPI",
+          "fixed": "0.2.1"
+        }
+      ],
+      "exposure": "Exposed agents accept attacker-influenced project names containing traversal sequences or absolute paths.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "PyPI",
+            "name": "awslabs.aws-serverless-mcp-server",
+            "ranges": [
+              {
+                "fixed": "0.2.1"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Upgrade to 0.2.1 or later and patch derivative code. AWS provides no workaround.",
+          "risk": "Low. Test dependent workflows after updating."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version or revision and exercise the affected workflow with trusted inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://aws.amazon.com/security/security-bulletins/2026-164-aws/",
+          "publisher": "AWS",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        },
+        {
+          "url": "https://github.com/awslabs/mcp/security/advisories/GHSA-r6mm-377j-qg8m",
+          "publisher": "AWS",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial record drafted for independent review."
+        },
+        {
+          "date": "2026-11-03",
+          "change": "Narrowed write impact to overwriting JSON files and recorded the AWS advisory score and publisher."
+        }
+      ],
+      "cve": [
+        "CVE-2026-116635"
+      ],
+      "ghsa": [
+        "GHSA-r6mm-377j-qg8m"
+      ],
+      "vendor_severity": [
+        {
+          "source": "AWS",
+          "value": "6.1 Moderate"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/xcademialtd/status/2117589621802717677",
+          "kind": "social",
+          "seen": "2026-11-03"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0011",
+      "title": "Cursor through 2.2 can bypass the terminal allowlist through environment variables",
+      "summary": "Shell built-ins can modify environment variables without allowlist approval. Prompt injection can poison variables used by trusted commands and lead to arbitrary code execution.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Exploitation needs Auto-Run and Allowlist modes plus commands affected by environment variables. This is a practical precondition for unattended coding workflows."
+      },
+      "affected": [
+        {
+          "product": "Cursor",
+          "fixed": "2.3",
+          "note": "Vendor lists versions through 2.2 as affected."
+        }
+      ],
+      "exposure": "The vendor identifies non-default Auto-Run Mode with Allowlist mode. This is not a claim that every Cursor configuration is exposed.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check whether Cursor is version 2.2 or earlier and uses Auto-Run Mode together with Allowlist mode."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Upgrade to Cursor 2.3 or later, which improves terminal command parsing.",
+          "risk": "Low. Test dependent workflows after updating."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version or revision and exercise the affected workflow with trusted inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/cursor/cursor/security/advisories/GHSA-82wg-qcm4-fp2w",
+          "publisher": "Cursor",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial record drafted for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-22708"
+      ],
+      "ghsa": [
+        "GHSA-82wg-qcm4-fp2w"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Cursor",
+          "value": "High"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/ManiarViral/status/2116658484788027868",
+          "kind": "social",
+          "seen": "2026-11-03"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0012",
+      "title": "Linux IPv4 TCP use-after-free can permit remote code execution",
+      "summary": "The IPv4 TCP connection setup flaw can lead to remote code execution. Ubuntu describes an unreleased exploit using MPTCP and warns that the underlying flaw is not specific to MPTCP.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "severity": {
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "Remote kernel code execution threatens developer and agent hosts accepting network connections. No public or in-the-wild exploit claim is established here."
+      },
+      "affected": [
+        {
+          "product": "Linux kernel",
+          "introduced": "4.4",
+          "note": "Affected branches require vendor-specific backports. Ubuntu blog lists proposed fixes, while the current CVE tracker marks packages as work in progress; confirm the exact release and flavor."
+        }
+      ],
+      "exposure": "Relevant to exposed IPv4 TCP handling. Disabling MPTCP alone is not a complete fix for the underlying vulnerability.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Identify the running kernel, distribution release and kernel flavor; compare the exact package with the vendor CVE tracker and update channel."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Apply the distribution fix and reboot. Ubuntu offers testing fixes through proposed for 22.04 and newer; use acceptance testing and confirm current package status before installation.",
+          "risk": "Medium. Kernel replacement requires a reboot; proposed packages need local acceptance testing."
+        }
+      ],
+      "verification": [
+        "Confirm the running kernel after reboot matches a vendor-confirmed fixed package for the exact kernel flavor."
+      ],
+      "sources": [
+        {
+          "url": "https://ubuntu.com/blog/fixes-available-in-proposed-pocket-for-cve-2026-98432",
+          "publisher": "Canonical Ubuntu",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        },
+        {
+          "url": "https://ubuntu.com/security/CVE-2026-98432",
+          "publisher": "Canonical Ubuntu",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial record drafted for independent review."
+        },
+        {
+          "date": "2026-11-03",
+          "change": "Removed the unsupported laboratory qualifier from the description of the unreleased exploit."
+        }
+      ],
+      "cve": [
+        "CVE-2026-98432"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Canonical Ubuntu",
+          "value": "9.8 Critical"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/sebastavar/status/2117091612488524230",
+          "kind": "social",
+          "seen": "2026-11-03"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0013",
+      "title": "MoLing SSE mode exposes local MCP tools to malicious web pages",
+      "summary": "Unauthenticated SSE endpoints with wildcard CORS let a malicious web page obtain a session identifier and invoke MCP tools. Resulting file access or command execution depends on the configured tools.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "A page can steal the tool session credential and invoke local capabilities. SSE mode and powerful tools are required, so the impact is conditional rather than universal code execution."
+      },
+      "affected": [
+        {
+          "product": "MoLing",
+          "ecosystem": "Go",
+          "fixed": "0.5.0",
+          "note": "Affected through 0.4.0."
+        }
+      ],
+      "exposure": "Requires MoLing running in SSE mode and a browser visiting untrusted content.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check whether MoLing is version 0.4.0 or earlier and runs in SSE mode with the -l flag."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Upgrade to 0.5.0, which adds token authentication and removes wildcard CORS. Until then avoid SSE mode while exposed to untrusted web content.",
+          "risk": "Low. Test dependent workflows after updating."
+        }
+      ],
+      "verification": [
+        "Confirm version 0.5.0 or later and verify the SSE endpoint requires authentication and refuses cross-origin access."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/gojue/moling/security/advisories/GHSA-qpgh-hp5g-4vwp",
+          "publisher": "MoLing",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial record drafted for independent review."
+        },
+        {
+          "date": "2026-11-03",
+          "change": "Removed the disputed loopback statement from exposure; retained the vendor recommendation to avoid SSE mode with untrusted web content."
+        }
+      ],
+      "cve": [
+        "CVE-2026-62863"
+      ],
+      "ghsa": [
+        "GHSA-qpgh-hp5g-4vwp"
+      ],
+      "vendor_severity": [
+        {
+          "source": "MoLing",
+          "value": "9.6 Critical"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/TheHackerWire/status/2116358244960514481",
+          "kind": "social",
+          "seen": "2026-11-03"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0014",
+      "title": "simple-git argument parser misses the VISUAL editor execution path",
+      "summary": "The parser omits VISUAL from unsafe-editor detection. A consumer forwarding attacker-controlled environment values can execute an attacker-selected editor during interactive Git operations.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Code execution requires a Git operation opening an editor and control over its environment. Such job and agent input flows can defeat the default unsafe-operation guard."
+      },
+      "affected": [
+        {
+          "product": "@simple-git/argv-parser",
+          "ecosystem": "npm",
+          "fixed": "2.0.1"
+        }
+      ],
+      "exposure": "Requires an executable attacker-selected editor, suitable TERM and no higher-priority editor override. Consumers without untrusted environment forwarding are not exposed through this path.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "npm",
+            "name": "@simple-git/argv-parser",
+            "ranges": [
+              {
+                "fixed": "2.0.1"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Upgrade the parser to 2.0.1. Verify the resolved dependency in applications using simple-git.",
+          "risk": "Low. Test dependent workflows after updating."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version or revision and exercise the affected workflow with trusted inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-v5rq-49vh-5v5c",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial record drafted for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-102829"
+      ],
+      "ghsa": [
+        "GHSA-v5rq-49vh-5v5c"
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Reviewed Advisory Database",
+          "value": "Critical"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/MCPScores/status/2115350981965742129",
+          "kind": "social",
+          "seen": "2026-11-03"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0015",
+      "title": "MCP fetch server IDNA parsing mismatch bypasses the private-address guard",
+      "summary": "The fetch guard resolves an internationalized hostname differently from the HTTP connection. An attacker-controlled URL can reach internal services or cloud metadata and return responses to the agent.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Fetching attacker URLs is normal for browsing agents. Bypassing the private-address guard can expose sensitive internal responses, including cloud metadata."
+      },
+      "affected": [
+        {
+          "product": "mcp-server-fetch",
+          "ecosystem": "PyPI",
+          "introduced": "2026.10.10",
+          "fixed": "2026.10.24",
+          "note": "Advisory lists 2026.10.10 through 2026.10.19."
+        }
+      ],
+      "exposure": "Requires an agent fetching an attacker-controlled internationalized hostname. The internal services reachable depend on the server network.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "PyPI",
+            "name": "mcp-server-fetch",
+            "ranges": [
+              {
+                "fixed": "2026.10.24",
+                "introduced": "2026.10.10"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Upgrade mcp-server-fetch to 2026.10.24, which aligns the hostname used for checking and connecting.",
+          "risk": "Low. Test dependent workflows after updating."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version or revision and exercise the affected workflow with trusted inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/modelcontextprotocol/servers/security/advisories/GHSA-v38p-wf49-hx2j",
+          "publisher": "Model Context Protocol",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        },
+        {
+          "url": "https://github.com/modelcontextprotocol/servers/releases/tag/v2.1.0",
+          "publisher": "Model Context Protocol",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "remediation"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial record drafted for independent review."
+        }
+      ],
+      "ghsa": [
+        "GHSA-v38p-wf49-hx2j"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Model Context Protocol",
+          "value": "CVSS 4.0: 6.3 Moderate; CVSS 3.1 equivalent: 7.4 High"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/eapyk/status/2114942372475998505",
+          "kind": "social",
+          "seen": "2026-11-03"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0016",
+      "title": "Chrome Dawn buffer overflow can execute code outside the sandbox",
+      "summary": "The Chrome CVE record describes a Dawn buffer overflow allowing a crafted HTML page to execute arbitrary code outside the sandbox. Google ships fixes in Stable and Extended Stable channels.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "severity": {
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "A crafted web page can reach code execution outside the browser sandbox. Agents browsing untrusted pages meet the interaction requirement without human oversight."
+      },
+      "affected": [
+        {
+          "product": "Google Chrome Stable desktop",
+          "fixed": "157.0.8103.38"
+        },
+        {
+          "product": "Google Chrome Extended Stable desktop",
+          "fixed": "156.0.8078.88",
+          "note": "Windows and macOS. Use channel-specific checks; do not flag this backport solely for being below 157."
+        }
+      ],
+      "exposure": "Browsers visiting untrusted HTML are exposed before their channel-specific fix. No exploitation status is asserted.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Read the browser executable version and channel. Stable requires 157.0.8103.38 or later; Extended Stable on Windows/macOS requires 156.0.8078.88 or later."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Update Chrome to the patched release for its channel and restart all browser processes.",
+          "risk": "Low. Test dependent workflows after updating."
+        }
+      ],
+      "verification": [
+        "Confirm the running executable version and channel after restart, including automation-launched browser instances."
+      ],
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/121xxx/CVE-2026-121156.json",
+          "publisher": "CVE Program official record repository",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        },
+        {
+          "url": "https://chromereleases.googleblog.com/2026/11/extended-stable-update-for-desktop.html",
+          "publisher": "Google Chrome Releases",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation"
+          ],
+          "quote": "[567735302] Critical CVE-2026-121156"
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial record drafted for independent review."
+        },
+        {
+          "date": "2026-11-03",
+          "change": "Replaced the archive citation with the readable Extended Stable post, which explicitly lists the Dawn CVE and backport; limited Stable version detail to the CVE record."
+        }
+      ],
+      "cve": [
+        "CVE-2026-121156"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Google Chrome Releases",
+          "value": "Critical"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0017",
+      "title": "Agno PandasTools permits code execution through model-controlled function selection",
+      "summary": "PandasTools forwards model-controlled function names to getattr. Prompt injection can select pandas.read_pickle on an attacker path for code execution, or other readers for local file access.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "cve": [
+        "CVE-2026-119050"
+      ],
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Code execution requires PandasTools and attacker influence over agent tool calls. Untrusted content influencing a tool-using agent is a common exposure."
+      },
+      "affected": [
+        {
+          "product": "agno",
+          "ecosystem": "PyPI",
+          "note": "CVE record lists affected versions through 3.1.11; it specifies no fixed release."
+        }
+      ],
+      "exposure": "Exposed agents load PandasTools and allow model-selected pandas functions to process attacker-controlled paths.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check whether agno is 3.1.11 or earlier and whether PandasTools exposes model-selected pandas functions."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Contain exposure and apply a verified fix",
+          "details": "As a containment recommendation, disconnect PandasTools from untrusted workflows until a vendor-verified fix is deployed. Do not infer that the next numbered version fixes it.",
+          "risk": "Medium. Disabling the affected capability interrupts dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the version or revision and review the affected configuration before restoring untrusted input."
+      ],
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/119xxx/CVE-2026-119050.json",
+          "publisher": "CVE Program official record repository",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/Basant_Pandey/status/2116042717696610791",
+          "kind": "social",
+          "seen": "2026-11-03"
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial record drafted for independent review."
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0018",
+      "title": "Kali-GPT MCP tool parameters permit shell command injection",
+      "summary": "Unsanitized scanner parameters reach shell=True in the MCP server. An MCP client or prompt-injected agent can execute commands as the server user.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "cve": [
+        "CVE-2026-117569"
+      ],
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "An attacker must control tool arguments or influence agent calls. This common agent boundary can expose the MCP server process to arbitrary command execution."
+      },
+      "affected": [
+        {
+          "product": "Kali-GPT",
+          "note": "The CVE record identifies affected code through commit a608c74 and specifies no fixed release."
+        }
+      ],
+      "exposure": "Exposed deployments accept untrusted tool parameters, directly or through prompt-injected agent calls.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Identify the Kali-GPT checkout revision and check for the command-injection behavior described by CVE-2026-117569; version numbers alone are insufficient."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Contain exposure and apply a verified fix",
+          "details": "As a containment recommendation, disconnect the vulnerable server from untrusted workflows until a vendor-verified patch is deployed. The cited record provides no fixed release.",
+          "risk": "Medium. Disabling the affected capability interrupts dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the version or revision and review the affected configuration before restoring untrusted input."
+      ],
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/117xxx/CVE-2026-117569.json",
+          "publisher": "CVE Program official record repository",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/disismohi/status/2115864663787495759",
+          "kind": "social",
+          "seen": "2026-11-03"
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial record drafted for independent review."
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0019",
+      "title": "esp-mcp MCP tool parameters permit shell command injection",
+      "summary": "Shell metacharacters in MCP tool parameters reach asyncio.create_subprocess_shell. Prompt-injected agents can execute arbitrary commands as the MCP server user.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "cve": [
+        "CVE-2026-117567"
+      ],
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "An attacker must control tool arguments or influence agent calls. This common agent boundary can expose the MCP server process to arbitrary command execution."
+      },
+      "affected": [
+        {
+          "product": "esp-mcp",
+          "note": "The CVE record identifies affected code through commit 28afddf9ff41ada117bb45fd49b526d3bf89749e and specifies no fixed release."
+        }
+      ],
+      "exposure": "Exposed deployments accept untrusted tool parameters, directly or through prompt-injected agent calls.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Identify the esp-mcp checkout revision and check for the command-injection behavior described by CVE-2026-117567; version numbers alone are insufficient."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Contain exposure and apply a verified fix",
+          "details": "As a containment recommendation, disconnect the vulnerable server from untrusted workflows until a vendor-verified patch is deployed. The cited record provides no fixed release.",
+          "risk": "Medium. Disabling the affected capability interrupts dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the version or revision and review the affected configuration before restoring untrusted input."
+      ],
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/117xxx/CVE-2026-117567.json",
+          "publisher": "CVE Program official record repository",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/disismohi/status/2115833193387741222",
+          "kind": "social",
+          "seen": "2026-11-03"
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial record drafted for independent review."
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0020",
+      "title": "Windsurf HTML prompt injection can register an executable MCP server",
+      "summary": "The CVE record describes attacker-controlled HTML causing unauthorized MCP configuration changes and automatic registration of a malicious STDIO server. Commands then execute without further user interaction.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "cve": [
+        "CVE-2026-30615"
+      ],
+      "severity": {
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "Remote content consumed by the coding assistant can cause host command execution. The reported chain needs no further user approval after processing the HTML."
+      },
+      "affected": [
+        {
+          "product": "Windsurf",
+          "note": "CVE description identifies version 1.9544.26. It supplies no broader affected range or fixed version."
+        }
+      ],
+      "exposure": "Requires Windsurf processing attacker-controlled HTML and the reported MCP configuration-modification chain.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check whether Windsurf 1.9544.26 is used and inspect MCP configuration changes arising from untrusted HTML processing."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Contain exposure and apply a verified fix",
+          "details": "As a containment recommendation, suspend untrusted HTML processing in the affected workflow and inspect MCP registrations. Obtain vendor confirmation of a fix before restoring that input path.",
+          "risk": "Medium. Disabling the affected capability interrupts dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the version or revision and review the affected configuration before restoring untrusted input."
+      ],
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/30xxx/CVE-2026-30615.json",
+          "publisher": "CVE Program official record repository",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/0xDossier/status/2116299447483162723",
+          "kind": "social",
+          "seen": "2026-11-03"
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial record drafted for independent review."
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0021",
+      "title": "GitLab CI regular expression compilation permits unauthenticated server code execution",
+      "summary": "An integer overflow in the CI/CD regular expression compiler can, under certain conditions, allow an unauthenticated attacker to execute arbitrary code on an affected GitLab CE or EE server through a crafted regular expression.",
+      "status": "published",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "cve": [
+        "CVE-2026-97229"
+      ],
+      "severity": {
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "An unauthenticated remote attacker can execute code in CI infrastructure. The published vector requires neither privileges nor user interaction."
+      },
+      "affected": [
+        {
+          "product": "GitLab CE/EE",
+          "introduced": "19.2",
+          "fixed": "19.2.8"
+        },
+        {
+          "product": "GitLab CE/EE",
+          "introduced": "19.3",
+          "fixed": "19.3.5"
+        },
+        {
+          "product": "GitLab CE/EE",
+          "introduced": "19.4",
+          "fixed": "19.4.2"
+        }
+      ],
+      "exposure": "Relevant to affected self-managed installations. GitLab states its hosted and Dedicated environments were patched before the release notice.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Read the GitLab server version and compare its branch against the fixed floors 19.2.8, 19.3.5 and 19.4.2."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Contain exposure and apply a verified fix",
+          "details": "Upgrade using the supported GitLab upgrade path to the latest patched release on a supported branch. The listed versions are minimum fixes for this CVE, not a complete current security baseline.",
+          "risk": "Medium. Server upgrades require backups, supported upgrade steps and service validation."
+        }
+      ],
+      "verification": [
+        "Confirm the GitLab server reports 19.2.8, 19.3.5, 19.4.2 or a later patched release on its branch."
+      ],
+      "sources": [
+        {
+          "url": "https://docs.gitlab.com/releases/patches/patch-release-gitlab-19-4-2-released/",
+          "publisher": "GitLab",
+          "tier": 1,
+          "retrieved": "2026-11-03",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/MachinaRecord/status/2117137544404251036",
+          "kind": "social",
+          "seen": "2026-11-03"
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-03",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-03",
+          "change": "Initial record drafted for independent review."
+        },
+        {
+          "date": "2026-11-03",
+          "change": "Named the integer overflow in the CI/CD regular expression compiler, qualified the triggering conditions and made verification specific to the patched server version."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitLab",
+          "value": "10.0 Critical"
+        }
+      ]
     }
   ],
   "rejected": [
@@ -373,6 +2197,26 @@
         "MSA-2026-0001"
       ],
       "url": "https://github.com/AlgortimoTD/molt-security-advisories/blob/main/rejected/2026/MSR-2026-0001.json"
+    },
+    {
+      "id": "MSR-2026-0002",
+      "claim": "Ubuntu has no patched kernel available for CVE-2026-98432.",
+      "verdict": "misleading",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "related": [
+        "MSA-2026-0012"
+      ],
+      "url": "https://github.com/AlgortimoTD/molt-security-advisories/blob/main/rejected/2026/MSR-2026-0002.json"
+    },
+    {
+      "id": "MSR-2026-0003",
+      "claim": "Zod 4.6.7 never shipped following the repository compromise.",
+      "verdict": "false",
+      "published": "2026-11-03",
+      "updated": "2026-11-03",
+      "related": [],
+      "url": "https://github.com/AlgortimoTD/molt-security-advisories/blob/main/rejected/2026/MSR-2026-0003.json"
     }
   ]
 }

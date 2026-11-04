@@ -1,0 +1,81 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0020",
+  "title": "Windsurf HTML prompt injection can register an executable MCP server",
+  "summary": "The CVE record describes attacker-controlled HTML causing unauthorized MCP configuration changes and automatic registration of a malicious STDIO server. Commands then execute without further user interaction.",
+  "status": "published",
+  "published": "2026-11-03",
+  "updated": "2026-11-03",
+  "cve": [
+    "CVE-2026-30615"
+  ],
+  "severity": {
+    "level": "critical",
+    "urgency": "24h",
+    "rationale": "Remote content consumed by the coding assistant can cause host command execution. The reported chain needs no further user approval after processing the HTML."
+  },
+  "affected": [
+    {
+      "product": "Windsurf",
+      "note": "CVE description identifies version 1.9544.26. It supplies no broader affected range or fixed version."
+    }
+  ],
+  "exposure": "Requires Windsurf processing attacker-controlled HTML and the reported MCP configuration-modification chain.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check whether Windsurf 1.9544.26 is used and inspect MCP configuration changes arising from untrusted HTML processing."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Contain exposure and apply a verified fix",
+      "details": "As a containment recommendation, suspend untrusted HTML processing in the affected workflow and inspect MCP registrations. Obtain vendor confirmation of a fix before restoring that input path.",
+      "risk": "Medium. Disabling the affected capability interrupts dependent workflows."
+    }
+  ],
+  "verification": [
+    "Confirm the version or revision and review the affected configuration before restoring untrusted input."
+  ],
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/30xxx/CVE-2026-30615.json",
+      "publisher": "CVE Program official record repository",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "affected",
+        "cve",
+        "remediation",
+        "summary",
+        "exposure",
+        "detectors",
+        "verification",
+        "severity"
+      ]
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/0xDossier/status/2116299447483162723",
+      "kind": "social",
+      "seen": "2026-11-03"
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-03",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-03",
+      "change": "Initial record drafted for independent review."
+    }
+  ]
+}

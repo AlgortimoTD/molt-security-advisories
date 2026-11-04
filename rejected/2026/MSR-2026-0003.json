@@ -1,0 +1,49 @@
+{
+  "schema": "msr/1",
+  "id": "MSR-2026-0003",
+  "claim": "Zod 4.6.7 never shipped following the repository compromise.",
+  "verdict": "false",
+  "explanation": "The project has an official 4.6.7 release published on October 12. Its 4.6.6 release notes also distinguish the repository incident from npm distribution: the six malicious commits were reverted and were never published to npm. This does not establish anything about a 4.6.8 release, nor does it make repository compromise equivalent to a malicious 4.6.6 npm artifact.",
+  "published": "2026-11-03",
+  "updated": "2026-11-03",
+  "discovery": [
+    {
+      "url": "https://x.com/Joshua_WD/status/2109596999548829890",
+      "kind": "social",
+      "seen": "2026-11-03"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/colinhacks/zod/releases/tag/v4.6.7",
+      "publisher": "Zod",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "explanation"
+      ]
+    },
+    {
+      "url": "https://github.com/colinhacks/zod/releases/tag/v4.6.6",
+      "publisher": "Zod",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "explanation"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-03",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-03",
+      "change": "Initial record drafted for independent review."
+    }
+  ]
+}

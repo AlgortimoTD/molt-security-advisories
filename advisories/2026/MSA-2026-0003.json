@@ -1,0 +1,136 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0003",
+  "title": "Elo through 1.0.0 permits code injection through source strings and programmatic ASTs",
+  "summary": "Elo has three independent injection flaws: JavaScript constructor access can execute host code, Ruby interpolation can execute commands, and unchecked AST fields can inject generated JavaScript, Ruby, Python or SQL.",
+  "status": "published",
+  "published": "2026-11-03",
+  "updated": "2026-11-03",
+  "severity": {
+    "level": "critical",
+    "urgency": "24h",
+    "rationale": "Attacker-supplied Elo source can execute code through documented CLI and library paths. CI and agent pipelines that evaluate untrusted expressions expose the host runtime."
+  },
+  "affected": [
+    {
+      "product": "@enspirit/elo",
+      "ecosystem": "npm",
+      "fixed": "1.0.1",
+      "note": "All three advisories list versions through 1.0.0."
+    }
+  ],
+  "exposure": "Requires processing attacker-controlled Elo source or programmatic ASTs. Ruby injection requires executing the Ruby output; AST injection requires attacker-influenced node fields.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "npm",
+        "name": "@enspirit/elo",
+        "ranges": [
+          {
+            "fixed": "1.0.1"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Remediate the affected component",
+      "details": "Upgrade to 1.0.1 before evaluating untrusted Elo input.",
+      "risk": "Low. Test dependent workflows after updating."
+    }
+  ],
+  "verification": [
+    "Confirm the installed version or revision and exercise the affected workflow with trusted inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-x9rp-7wh3-2rj5",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "affected",
+        "cve",
+        "vendor_severity",
+        "remediation",
+        "summary",
+        "exposure",
+        "detectors",
+        "verification",
+        "severity"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-7w38-ggh5-v542",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "affected",
+        "cve",
+        "vendor_severity",
+        "remediation",
+        "summary",
+        "exposure",
+        "detectors",
+        "verification",
+        "severity"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-33r5-xmm8-v6x5",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "affected",
+        "cve",
+        "vendor_severity",
+        "remediation",
+        "summary",
+        "exposure",
+        "detectors",
+        "verification",
+        "severity"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-03",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-03",
+      "change": "Initial record drafted for independent review."
+    }
+  ],
+  "cve": [
+    "CVE-2026-44265",
+    "CVE-2026-44266",
+    "CVE-2026-44267"
+  ],
+  "ghsa": [
+    "GHSA-x9rp-7wh3-2rj5",
+    "GHSA-7w38-ggh5-v542",
+    "GHSA-33r5-xmm8-v6x5"
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub Reviewed Advisory Database",
+      "value": "7.4 High",
+      "applies_to": "CVE-2026-44265"
+    },
+    {
+      "source": "GitHub Reviewed Advisory Database",
+      "value": "9.8 Critical",
+      "applies_to": "CVE-2026-44266 and CVE-2026-44267"
+    }
+  ]
+}
