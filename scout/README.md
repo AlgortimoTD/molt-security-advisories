@@ -79,8 +79,9 @@ publishing operation is part of the offline tests.
     Authentication failures, merge blocks, author isolation, lease or process cleanup
     failures and persistent X sign-out need a person and notify a blocker at once. Any
     other failure (a source outage, a model or review error) notifies a blocker only on
-    the second consecutive failed run, tracked in `run-health.json`; a completed run
-    resets the count.
+    the second consecutive failed run and on every failed run after it, under one
+    stable key, tracked in `run-health.json`; a completed run resets the count, dry runs
+    never touch it, and a count that cannot be written notifies at once.
     Quiet days send no notice. Every notice uses `agent-approval notify` and a stable
     `molt-security-scout:<id>` key; delivery failure fails the run without cursor ack.
 11. Remove the exact temporary worktree, acknowledge the cursor atomically, and write

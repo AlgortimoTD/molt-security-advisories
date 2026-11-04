@@ -381,7 +381,7 @@ test('a transient failure notifies only when it repeats, and a completed run res
   const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), 'scout-health-')); t.after(() => fs.rmSync(stateDir, { recursive: true, force: true }));
   assert.deepEqual(recordRunHealth(stateDir, 'reviewer'), { consecutiveFailures: 1, notify: false });
   assert.deepEqual(recordRunHealth(stateDir, 'collect'), { consecutiveFailures: 2, notify: true });
-  assert.deepEqual(recordRunHealth(stateDir, 'author'), { consecutiveFailures: 3, notify: false });
+  assert.deepEqual(recordRunHealth(stateDir, 'author'), { consecutiveFailures: 3, notify: true });
   assert.deepEqual(recordRunHealth(stateDir, null), { consecutiveFailures: 0, notify: false });
   assert.deepEqual(recordRunHealth(stateDir, 'github-auth'), { consecutiveFailures: 1, notify: true });
 });
@@ -390,6 +390,11 @@ test('a first model failure is recorded without a blocker notice', async t => {
   assert.equal(h.outcome.exitCode, 1);
   assert.equal(h.calls.some(([file]) => file === 'agent-approval'), false);
   assert.equal(JSON.parse(fs.readFileSync(path.join(h.config.stateDir, 'run-health.json'), 'utf8')).consecutiveFailures, 1);
+});
+test('a dry-run failure leaves the production failure count untouched', async t => {
+  const h = await harness(t, { dryRun: true, modelFailure: true });
+  assert.equal(h.outcome.exitCode, 1);
+  assert.equal(fs.existsSync(path.join(h.config.stateDir, 'run-health.json')), false);
 });
 
 test('new versus updated classification is verified against git rather than the author claim', async t => {
