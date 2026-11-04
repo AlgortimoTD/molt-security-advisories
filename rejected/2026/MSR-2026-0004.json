@@ -1,0 +1,59 @@
+{
+  "schema": "msr/1",
+  "id": "MSR-2026-0004",
+  "claim": "Cursor and Windsurf currently expose developers to 94 known Chromium vulnerabilities, supported by the reported crash and Cursor response that the issue was out of scope.",
+  "verdict": "unverifiable",
+  "explanation": "The current-count claim remains unverified. Cursor's security page says it assesses upstream security patches by risk and impact and releases immediately where warranted. Neither that page nor the inspected current changelog establishes a shipped Electron or Chromium version or a count of 94 applicable vulnerabilities. The matching forum post is a historical lead dated October 22, 2025, not tier 1 evidence under this feed's policy. These sources do not establish current Windsurf builds either. A current vendor version mapping and applicable vulnerability records are needed to evaluate exposure; this rejection does not assert that either product is free of vulnerabilities.",
+  "published": "2026-11-04",
+  "updated": "2026-11-04",
+  "discovery": [
+    {
+      "url": "https://x.com/Trilvu/status/2117658143110930811",
+      "kind": "social",
+      "seen": "2026-11-04"
+    },
+    {
+      "url": "https://forum.cursor.com/t/fix-your-know-94-vulnerabilities-you-selfish-devs/138479/2",
+      "kind": "forum",
+      "seen": "2026-11-04",
+      "note": "Historical community forum post dated October 22, 2025; treated only as a lead."
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://cursor.com/security",
+      "publisher": "Cursor",
+      "tier": 1,
+      "retrieved": "2026-11-04",
+      "supports": [
+        "explanation"
+      ]
+    },
+    {
+      "url": "https://cursor.com/changelog",
+      "publisher": "Cursor",
+      "tier": 1,
+      "retrieved": "2026-11-04",
+      "supports": [
+        "explanation"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-04",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-04",
+      "change": "Recorded that the current-count claim is not substantiated by the matching historical vendor statement."
+    },
+    {
+      "date": "2026-11-04",
+      "change": "Corrected the forum post's unsupported tier 1 classification and security-team attribution. Moved it to discovery and grounded the narrower unverifiable explanation in Cursor's current security page and changelog."
+    }
+  ]
+}
