@@ -26,6 +26,10 @@ vendors or the original reporter.
 
 **Tier 3, leads.** These only start an investigation and are recorded under `discovery`: posts on X
 or other social networks, news articles, blogs, forums, newsletters and messages people forward.
+Curated briefing feeds, such as Cloudflare Radar's Zero Wire, are leads too: take versions, fixes
+and severity from the vendor records a briefing links. Only the publisher's own network
+observations in a briefing (for example traffic matching its firewall rules) count as tier 2
+research, and they never establish that exploitation happened somewhere in particular.
 
 ## Rules
 
