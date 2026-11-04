@@ -1,0 +1,91 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0024",
+  "title": "LiteLLM 1.107.0 distribution artifacts contained credential-stealing malware",
+  "summary": "LiteLLM confirms malicious PyPI wheels and container artifacts for 1.107.0. The malware steals credentials and loads remote code-execution tools; the official GitHub source tag did not contain the malicious files.",
+  "status": "published",
+  "published": "2026-11-04",
+  "updated": "2026-11-04",
+  "severity": {
+    "level": "high",
+    "urgency": "72h",
+    "rationale": "A widely used agent dependency was distributed with credential-stealing code. Merely starting Python in the affected environment can rerun it, so package replacement alone is insufficient."
+  },
+  "affected": [
+    {
+      "product": "litellm",
+      "ecosystem": "PyPI",
+      "note": "Exactly 1.107.0: all seven wheels. Container variants and affected image tags are listed in the vendor incident report; this is an artifact compromise, not an affected-version interval."
+    }
+  ],
+  "exposure": "Exposure depends on installing the malicious PyPI wheels or running affected images. Private enterprise registry releases were not impacted.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check installation history for litellm 1.107.0 and compare container digests with the vendor incident report. Do not start Python or pip in a suspected environment."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Remediate the affected component",
+      "details": "Avoid starting Python or pip before containment. Follow the vendor cleanup guidance, stop the detached loader, rebuild affected environments with a verified clean release, and rotate reachable credentials from a trusted environment. The incident report recommends pinning 1.106.2.",
+      "risk": "High. Rebuilding environments and rotating credentials can interrupt services."
+    }
+  ],
+  "verification": [
+    "Verify malicious startup files and loader persistence are removed, the replacement artifacts are trusted, and credential rotation is complete."
+  ],
+  "sources": [
+    {
+      "url": "https://docs.litellm.ai/blog/security-incident-oct-21-2026",
+      "publisher": "LiteLLM",
+      "tier": 1,
+      "retrieved": "2026-11-04",
+      "supports": [
+        "affected",
+        "remediation",
+        "summary",
+        "exposure",
+        "detectors",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://docs.litellm.ai/blog/security-incident-oct-21-2026-attack-chain",
+      "publisher": "LiteLLM",
+      "tier": 1,
+      "retrieved": "2026-11-04",
+      "supports": [
+        "summary"
+      ]
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/therealdanvega/status/2113340953045942396",
+      "kind": "social",
+      "seen": "2026-11-04"
+    },
+    {
+      "url": "https://x.com/DimitriosMitsos/status/2113389079874171216",
+      "kind": "social",
+      "seen": "2026-11-04"
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-04",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-04",
+      "change": "Initial record drafted for independent review."
+    }
+  ]
+}

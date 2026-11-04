@@ -2,7 +2,7 @@
   "schema": "msa-feed/1",
   "publisher": "MOLT Security Advisories",
   "homepage": "https://github.com/AlgortimoTD/molt-security-advisories",
-  "updated": "2026-11-03",
+  "updated": "2026-11-04",
   "advisories": [
     {
       "schema": "msa/1",
@@ -683,11 +683,11 @@
       "summary": "Malformed Brotli input can overrun an internal decoder buffer through node:zlib, causing crashes, memory disclosure or remote code execution.",
       "status": "published",
       "published": "2026-11-03",
-      "updated": "2026-11-03",
+      "updated": "2026-11-04",
       "severity": {
-        "level": "high",
-        "urgency": "72h",
-        "rationale": "The attacker must supply Brotli data that the application decompresses. Handling remote compressed content is a common runtime exposure for developer services and agents."
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "Handling attacker-controlled Brotli content is a common developer and agent runtime exposure and can permit code execution. CISA lists this component flaw as exploited, raising the previous high rating one level; this does not establish exploitation of every Node.js deployment."
       },
       "affected": [
         {
@@ -746,7 +746,7 @@
           "url": "https://nodejs.org/en/blog/vulnerability/october-2026-security-releases",
           "publisher": "Node.js Project",
           "tier": 1,
-          "retrieved": "2026-11-03",
+          "retrieved": "2026-11-04",
           "supports": [
             "affected",
             "cve",
@@ -763,7 +763,7 @@
           "url": "https://nodejs.org/en/blog/release/v22.23.4/",
           "publisher": "Node.js Project",
           "tier": 1,
-          "retrieved": "2026-11-03",
+          "retrieved": "2026-11-04",
           "supports": [
             "affected",
             "remediation"
@@ -773,7 +773,7 @@
           "url": "https://nodejs.org/en/blog/release/v24.22.1/",
           "publisher": "Node.js Project",
           "tier": 1,
-          "retrieved": "2026-11-03",
+          "retrieved": "2026-11-04",
           "supports": [
             "affected",
             "remediation"
@@ -783,17 +783,27 @@
           "url": "https://nodejs.org/en/blog/release/v26.12.1/",
           "publisher": "Node.js Project",
           "tier": 1,
-          "retrieved": "2026-11-03",
+          "retrieved": "2026-11-04",
           "supports": [
             "affected",
             "remediation"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json",
+          "publisher": "CISA",
+          "tier": 1,
+          "retrieved": "2026-11-04",
+          "supports": [
+            "exploitation",
+            "severity"
           ]
         }
       ],
       "review": {
         "author_model": "gpt-6.1-sol",
         "reviewer_model": "claude-opus-5-5",
-        "reviewed": "2026-11-03",
+        "reviewed": "2026-11-04",
         "verdict": "approve",
         "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
       },
@@ -805,6 +815,10 @@
         {
           "date": "2026-11-03",
           "change": "Expanded affected ranges and detector coverage to include end-of-life lines, following the Node.js security notice, and added migration guidance."
+        },
+        {
+          "date": "2026-11-04",
+          "change": "Added CISA KEV evidence for the bundled Brotli flaw and raised urgency from high/72h to critical/24h without asserting Node.js-specific exploitation."
         }
       ],
       "cve": [
@@ -821,8 +835,18 @@
           "url": "https://x.com/jjjContinue/status/2113200128534417901",
           "kind": "social",
           "seen": "2026-11-03"
+        },
+        {
+          "url": "https://x.com/heygalatea/status/2116897906410078472",
+          "kind": "social",
+          "seen": "2026-11-04"
         }
-      ]
+      ],
+      "exploitation": {
+        "status": "exploited-in-the-wild",
+        "kev": true,
+        "note": "CISA KEV lists CVE-2026-111497 in Google Brotli, added October 27, 2026. This is component-level exploitation evidence, not a claim of confirmed attacks on Node.js specifically."
+      }
     },
     {
       "schema": "msa/1",
@@ -2184,6 +2208,789 @@
           "value": "10.0 Critical"
         }
       ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0022",
+      "title": "Docker Sandboxes workspace symlinks can redirect host-side file copies",
+      "summary": "A malicious sandbox can replace a shared-workspace symlink so a later user-initiated sbx cp reads or writes host files outside that workspace with the invoking user's permissions.",
+      "status": "published",
+      "published": "2026-11-04",
+      "updated": "2026-11-04",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "A copy operation must encounter a workspace controlled by untrusted sandbox code. Crossing this boundary can expose host credentials or overwrite files, making the ordinary agent file-transfer workflow a high-priority exposure."
+      },
+      "affected": [
+        {
+          "product": "Docker Sandboxes",
+          "introduced": "0.28.0",
+          "fixed": "0.51.0"
+        }
+      ],
+      "exposure": "Requires untrusted sandbox code controlling a workspace symlink and a subsequent host-side copy through that workspace.",
+      "detectors": [
+        {
+          "type": "executable-version",
+          "params": {
+            "executable": "sbx",
+            "ranges": [
+              {
+                "introduced": "0.28.0",
+                "fixed": "0.51.0"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Upgrade to 0.51.0 or later. Until then, use a host-only path for copies instead of a host-side source or destination inside a workspace writable by untrusted sandbox code.",
+          "risk": "Medium. Version 0.51.0 changes built-in agent kits and credential settings; review the release notes before updating."
+        }
+      ],
+      "verification": [
+        "Confirm sbx reports 0.51.0 or later and validate trusted copy workflows."
+      ],
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/103xxx/CVE-2026-103916.json",
+          "publisher": "Docker CNA via CVE Program",
+          "tier": 1,
+          "retrieved": "2026-11-04",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        },
+        {
+          "url": "https://docs.docker.com/ai/sandboxes/release-notes/",
+          "publisher": "Docker",
+          "tier": 1,
+          "retrieved": "2026-11-04",
+          "supports": [
+            "remediation",
+            "affected",
+            "verification"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/VorobeoffAI/status/2117876359213293617",
+          "kind": "social",
+          "seen": "2026-11-04"
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-04",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-04",
+          "change": "Initial record drafted for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-103916"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Docker CNA",
+          "value": "8.4 High",
+          "vector": "CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0024",
+      "title": "LiteLLM 1.107.0 distribution artifacts contained credential-stealing malware",
+      "summary": "LiteLLM confirms malicious PyPI wheels and container artifacts for 1.107.0. The malware steals credentials and loads remote code-execution tools; the official GitHub source tag did not contain the malicious files.",
+      "status": "published",
+      "published": "2026-11-04",
+      "updated": "2026-11-04",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "A widely used agent dependency was distributed with credential-stealing code. Merely starting Python in the affected environment can rerun it, so package replacement alone is insufficient."
+      },
+      "affected": [
+        {
+          "product": "litellm",
+          "ecosystem": "PyPI",
+          "note": "Exactly 1.107.0: all seven wheels. Container variants and affected image tags are listed in the vendor incident report; this is an artifact compromise, not an affected-version interval."
+        }
+      ],
+      "exposure": "Exposure depends on installing the malicious PyPI wheels or running affected images. Private enterprise registry releases were not impacted.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check installation history for litellm 1.107.0 and compare container digests with the vendor incident report. Do not start Python or pip in a suspected environment."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Avoid starting Python or pip before containment. Follow the vendor cleanup guidance, stop the detached loader, rebuild affected environments with a verified clean release, and rotate reachable credentials from a trusted environment. The incident report recommends pinning 1.106.2.",
+          "risk": "High. Rebuilding environments and rotating credentials can interrupt services."
+        }
+      ],
+      "verification": [
+        "Verify malicious startup files and loader persistence are removed, the replacement artifacts are trusted, and credential rotation is complete."
+      ],
+      "sources": [
+        {
+          "url": "https://docs.litellm.ai/blog/security-incident-oct-21-2026",
+          "publisher": "LiteLLM",
+          "tier": 1,
+          "retrieved": "2026-11-04",
+          "supports": [
+            "affected",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://docs.litellm.ai/blog/security-incident-oct-21-2026-attack-chain",
+          "publisher": "LiteLLM",
+          "tier": 1,
+          "retrieved": "2026-11-04",
+          "supports": [
+            "summary"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/therealdanvega/status/2113340953045942396",
+          "kind": "social",
+          "seen": "2026-11-04"
+        },
+        {
+          "url": "https://x.com/DimitriosMitsos/status/2113389079874171216",
+          "kind": "social",
+          "seen": "2026-11-04"
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-04",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-04",
+          "change": "Initial record drafted for independent review."
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0025",
+      "title": "Malicious Claude Code extension builds in Cursor attempted persistent SSH backdoors",
+      "summary": "Cursor confirms modified Anthropic.claude-code builds 2.1.312 and 2.1.313 for macOS and Windows in its marketplace. They collected host details and attempted persistent SSH access; these builds were not developed by Anthropic.",
+      "status": "published",
+      "published": "2026-11-04",
+      "updated": "2026-11-04",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Malicious extension artifacts crossed a trusted distribution channel and installed persistence. Backdoor access usually failed without elevated editor privileges, but removal and credential assessment remain necessary."
+      },
+      "affected": [
+        {
+          "product": "Anthropic.claude-code artifacts from Cursor VS Code Extension Marketplace",
+          "note": "Modified macOS and Windows builds 2.1.312 and 2.1.313 distributed on October 29, 2026. Version numbers alone do not distinguish these artifacts from official builds."
+        }
+      ],
+      "exposure": "Limited to the identified Cursor marketplace artifacts. Cursor reports no evidence that official distributions or other extension versions were affected.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Compare extension installation history and VSIX hashes with the Cursor notice; inspect its SSH and persistence indicators. An absent SSH key alone does not prove no payload executed."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Remove the malicious extension and its standalone persistence, unauthorized SSH key and tunnel processes. Isolate systems with execution evidence, assess rebuilding, and rotate accessible credentials and sessions from a trusted system.",
+          "risk": "High. Isolation, persistence removal and credential rotation can interrupt workflows."
+        }
+      ],
+      "verification": [
+        "Verify extension and persistence removal using the vendor indicators and review telemetry for payload execution."
+      ],
+      "sources": [
+        {
+          "url": "https://cursor.com/blog/claude-code-extension-security-notice",
+          "publisher": "Cursor",
+          "tier": 1,
+          "retrieved": "2026-11-04",
+          "supports": [
+            "affected",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/cloudsa/status/2117640585029017645",
+          "kind": "social",
+          "seen": "2026-11-04"
+        },
+        {
+          "url": "https://x.com/AgentBleed/status/2117662172402639058",
+          "kind": "social",
+          "seen": "2026-11-04"
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-04",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-04",
+          "change": "Initial record drafted for independent review."
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0026",
+      "title": "GitLab regular expression integer overflow permits unauthenticated code execution",
+      "summary": "GitLab reports a regular expression compiler integer overflow that can, under certain conditions, let an unauthenticated attacker execute arbitrary server code. Custom installations must also patch their separate Ruby runtime.",
+      "status": "published",
+      "published": "2026-11-04",
+      "updated": "2026-11-04",
+      "severity": {
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "The vendor vector requires neither authentication nor user interaction and permits server code execution. Developer and CI infrastructure exposed to crafted regular expressions needs an urgent update."
+      },
+      "affected": [
+        {
+          "product": "GitLab CE/EE",
+          "introduced": "7.0",
+          "fixed": "18.11.13"
+        },
+        {
+          "product": "GitLab CE/EE",
+          "introduced": "19.0",
+          "fixed": "19.0.10"
+        },
+        {
+          "product": "GitLab CE/EE",
+          "introduced": "19.1",
+          "fixed": "19.1.9"
+        },
+        {
+          "product": "GitLab CE/EE",
+          "introduced": "19.2",
+          "fixed": "19.2.9"
+        },
+        {
+          "product": "GitLab CE/EE",
+          "introduced": "19.3",
+          "fixed": "19.3.6"
+        },
+        {
+          "product": "GitLab CE/EE",
+          "introduced": "19.4",
+          "fixed": "19.4.3"
+        },
+        {
+          "product": "GitLab CE/EE",
+          "introduced": "19.5",
+          "fixed": "19.5.1"
+        }
+      ],
+      "exposure": "Self-managed installations are exposed. GitLab-hosted services are patched. Updating custom installations without their separate Ruby runtime is insufficient.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Compare the GitLab branch with 18.11.13, 19.0.10, 19.1.9, 19.2.9, 19.3.6, 19.4.3 or 19.5.1. Inspect separately supplied Ruby versions too."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Apply the branch-specific GitLab fix through its supported upgrade path. Custom Ruby installations also require Ruby 3.3.13, 3.4.12 or 4.0.9 or later on the corresponding branch.",
+          "risk": "Medium. Backups and upgrade planning are required; this patch includes database migrations and can cause downtime."
+        }
+      ],
+      "verification": [
+        "Confirm the GitLab branch is patched and any separate Ruby runtime meets its fixed floor."
+      ],
+      "sources": [
+        {
+          "url": "https://docs.gitlab.com/releases/patches/patch-release-gitlab-19-5-1-released/",
+          "publisher": "GitLab",
+          "tier": 1,
+          "retrieved": "2026-11-04",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/DimitriosMitsos/status/2113389079874171216",
+          "kind": "social",
+          "seen": "2026-11-04"
+        },
+        {
+          "url": "https://x.com/Skysht3Life/status/2117861713412595825",
+          "kind": "social",
+          "seen": "2026-11-04"
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-04",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-04",
+          "change": "Initial record drafted for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-110264"
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitLab",
+          "value": "10.0 Critical",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H"
+        }
+      ],
+      "related": [
+        "MSA-2026-0021"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0027",
+      "title": "PHP request memory corruption flaws permit unauthenticated remote code execution",
+      "summary": "PHP reports two request-handling memory corruption flaws allowing unauthenticated remote code execution. The highest documented risk is mod_php, where a request can trigger exploitation before application code runs.",
+      "status": "published",
+      "published": "2026-11-04",
+      "updated": "2026-11-04",
+      "severity": {
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "Unauthenticated requests reach memory corruption and code execution in web-serving PHP. Both vulnerabilities are in CISA KEV, requiring a 24-hour response under the feed rubric."
+      },
+      "vendor_severity": [
+        {
+          "source": "PHP Project",
+          "value": "Critical"
+        }
+      ],
+      "affected": [
+        {
+          "product": "PHP 8.2 branch",
+          "fixed": "8.2.35"
+        },
+        {
+          "product": "PHP 8.3 branch",
+          "fixed": "8.3.36"
+        },
+        {
+          "product": "PHP 8.4 branch",
+          "fixed": "8.4.27"
+        },
+        {
+          "product": "PHP 8.5 branch",
+          "fixed": "8.5.12"
+        },
+        {
+          "product": "PHP unsupported branches",
+          "note": "PHP 8.1 and older require a vendor backport or migration to a supported fixed branch."
+        }
+      ],
+      "exposure": "Relevant to PHP serving web requests, including FPM, mod_php, CGI, FrankenPHP and LiteSpeed. Do not assume application authentication protects request initialization.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check the web-serving PHP runtime against 8.2.35, 8.3.36, 8.4.27 or 8.5.12 for its branch; confirm vendor backports separately. CLI version alone may differ from workers."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Update to the patched release for the PHP branch or obtain a vendor-confirmed backport, then restart workers. Partial configuration mitigations are not complete fixes.",
+          "risk": "Medium. Worker restarts interrupt requests; branch migrations require application compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm running web workers use a fixed package after restart."
+      ],
+      "sources": [
+        {
+          "url": "https://www.php.net/archive/2026.php#2026-10-21-5",
+          "publisher": "PHP Project",
+          "tier": 1,
+          "retrieved": "2026-11-04",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json",
+          "publisher": "CISA",
+          "tier": 1,
+          "retrieved": "2026-11-04",
+          "supports": [
+            "exploitation",
+            "severity"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/heygalatea/status/2116897906410078472",
+          "kind": "social",
+          "seen": "2026-11-04"
+        },
+        {
+          "url": "https://x.com/DimitriosMitsos/status/2113389079874171216",
+          "kind": "social",
+          "seen": "2026-11-04"
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-04",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-04",
+          "change": "Initial record drafted for independent review."
+        },
+        {
+          "date": "2026-11-04",
+          "change": "Added the PHP Project's published Critical rating for both vulnerabilities after independent review identified the omission."
+        }
+      ],
+      "cve": [
+        "CVE-2026-109618",
+        "CVE-2026-109619"
+      ],
+      "exploitation": {
+        "status": "exploited-in-the-wild",
+        "kev": true,
+        "note": "Both CVEs were added to CISA KEV on October 26, 2026."
+      }
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0028",
+      "title": "Jupyter MCP management routes allow backend hijacking and a later Host-header bypass",
+      "summary": "Datalayer documents missing authentication and browser-origin checks on standalone HTTP management routes. Attackers can replace the active notebook backend or stop it. A later Host-header check can also be bypassed in insecure no-auth mode.",
+      "status": "published",
+      "published": "2026-11-04",
+      "updated": "2026-11-04",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "A malicious page or network caller can redirect the assistant to attacker-controlled infrastructure. The documented impact is notebook-session integrity and data exposure, rather than unconditional host code execution."
+      },
+      "vendor_severity": [
+        {
+          "source": "Datalayer",
+          "value": "High (7.3)",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:L/VI:H/VA:L/SC:H/SI:H/SA:L",
+          "applies_to": "GHSA-24pw-rf5p-mgp7"
+        },
+        {
+          "source": "Datalayer",
+          "value": "Critical (9.3)",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:H/VA:H/SC:H/SI:H/SA:H",
+          "applies_to": "GHSA-9x8x-crjq-g64h"
+        },
+        {
+          "source": "Datalayer",
+          "value": "Critical",
+          "applies_to": "GHSA-f8rf-rcrx-h6r9"
+        }
+      ],
+      "affected": [
+        {
+          "product": "jupyter-mcp-server",
+          "ecosystem": "PyPI",
+          "note": "The original authentication and DNS-rebinding advisories list versions through 1.0.2 and no patched version."
+        },
+        {
+          "product": "jupyter-mcp-server Host-header bypass",
+          "ecosystem": "PyPI",
+          "fixed": "2.1.3",
+          "note": "The later bypass advisory lists versions below 2.1.3."
+        }
+      ],
+      "exposure": "Original flaws affect standalone streamable-http management routes even with MCP_TOKEN set. The later full backend-hijack bypass requires insecure no-auth mode; token mode still protects state-changing routes.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check jupyter-mcp-server version, standalone HTTP transport and authentication mode. Review the three vendor advisories; a token on /mcp alone does not establish management-route protection."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Require bearer authentication on management routes and enforce browser-origin checks. Upgrade past the later bypass to 2.1.3 or later and verify these controls before exposure. The original advisories do not identify a patched release.",
+          "risk": "Medium. Authentication and listener changes can interrupt clients."
+        }
+      ],
+      "verification": [
+        "Verify unauthenticated management requests and untrusted browser origins are rejected without changing the active backend."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/datalayer/jupyter-mcp-server/security/advisories/GHSA-24pw-rf5p-mgp7",
+          "publisher": "Datalayer",
+          "tier": 1,
+          "retrieved": "2026-11-04",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        },
+        {
+          "url": "https://github.com/datalayer/jupyter-mcp-server/security/advisories/GHSA-9x8x-crjq-g64h",
+          "publisher": "Datalayer",
+          "tier": 1,
+          "retrieved": "2026-11-04",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        },
+        {
+          "url": "https://github.com/datalayer/jupyter-mcp-server/security/advisories/GHSA-f8rf-rcrx-h6r9",
+          "publisher": "Datalayer",
+          "tier": 1,
+          "retrieved": "2026-11-04",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/botnewsnetwork/status/2116343864768541149",
+          "kind": "social",
+          "seen": "2026-11-04"
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-04",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-04",
+          "change": "Initial record drafted for independent review."
+        },
+        {
+          "date": "2026-11-04",
+          "change": "Added the vendor severity for each advisory, including the two published CVSS scores and vectors, after independent review identified the omissions."
+        }
+      ],
+      "ghsa": [
+        "GHSA-24pw-rf5p-mgp7",
+        "GHSA-9x8x-crjq-g64h",
+        "GHSA-f8rf-rcrx-h6r9"
+      ],
+      "cve": [
+        "CVE-2026-77318",
+        "CVE-2026-77359"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0029",
+      "title": "Visual Studio code injection permits network-triggered code execution",
+      "summary": "Microsoft describes code injection in Visual Studio Tools for Applications and SQL Server Management Studio allowing an unauthorized attacker to execute code over a network. The CVE lists affected Visual Studio 17.14 and 18.10 branches.",
+      "status": "published",
+      "published": "2026-11-04",
+      "updated": "2026-11-04",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "The vendor vector requires user interaction but no attacker privileges. Developer workflows consuming untrusted content can meet this precondition; the primary record does not substantiate the lead's specific filename mechanism."
+      },
+      "affected": [
+        {
+          "product": "Microsoft Visual Studio 2022 version 17.14",
+          "introduced": "17.14.0",
+          "fixed": "17.14.42"
+        },
+        {
+          "product": "Microsoft Visual Studio 2026 version 18.10",
+          "introduced": "18.10.0",
+          "fixed": "18.10.4"
+        }
+      ],
+      "exposure": "Requires the interaction described by the vendor vector. The cited CVE names SQL Server Management Studio but supplies no separate SSMS version range.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Read the installed Visual Studio branch and version. Check 17.14 against 17.14.42 and 18.10 against 18.10.4; obtain separate SSMS guidance from Microsoft."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Remediate the affected component",
+          "details": "Update affected Visual Studio branches to 17.14.42 or 18.10.4 or a later patched release on the same branch. Consult Microsoft for SSMS-specific updates.",
+          "risk": "Low. Verify dependent workflows after updating."
+        }
+      ],
+      "verification": [
+        "Confirm the installed Visual Studio branch reports its patched release."
+      ],
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/103xxx/CVE-2026-103572.json",
+          "publisher": "Microsoft CNA via CVE Program",
+          "tier": 1,
+          "retrieved": "2026-11-04",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "remediation",
+            "summary",
+            "exposure",
+            "detectors",
+            "verification",
+            "severity"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/chenYijl/status/2117592608029503911",
+          "kind": "social",
+          "seen": "2026-11-04"
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-04",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-04",
+          "change": "Initial record drafted for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-103572"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Microsoft CNA",
+          "value": "8.8 High",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H/E:U/RL:O/RC:C"
+        }
+      ]
     }
   ],
   "rejected": [
@@ -2217,6 +3024,15 @@
       "updated": "2026-11-03",
       "related": [],
       "url": "https://github.com/AlgortimoTD/molt-security-advisories/blob/main/rejected/2026/MSR-2026-0003.json"
+    },
+    {
+      "id": "MSR-2026-0004",
+      "claim": "Cursor and Windsurf currently expose developers to 94 known Chromium vulnerabilities, supported by the reported crash and Cursor response that the issue was out of scope.",
+      "verdict": "unverifiable",
+      "published": "2026-11-04",
+      "updated": "2026-11-04",
+      "related": [],
+      "url": "https://github.com/AlgortimoTD/molt-security-advisories/blob/main/rejected/2026/MSR-2026-0004.json"
     }
   ]
 }

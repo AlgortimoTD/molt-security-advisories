@@ -1,0 +1,129 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0027",
+  "title": "PHP request memory corruption flaws permit unauthenticated remote code execution",
+  "summary": "PHP reports two request-handling memory corruption flaws allowing unauthenticated remote code execution. The highest documented risk is mod_php, where a request can trigger exploitation before application code runs.",
+  "status": "published",
+  "published": "2026-11-04",
+  "updated": "2026-11-04",
+  "severity": {
+    "level": "critical",
+    "urgency": "24h",
+    "rationale": "Unauthenticated requests reach memory corruption and code execution in web-serving PHP. Both vulnerabilities are in CISA KEV, requiring a 24-hour response under the feed rubric."
+  },
+  "vendor_severity": [
+    {
+      "source": "PHP Project",
+      "value": "Critical"
+    }
+  ],
+  "affected": [
+    {
+      "product": "PHP 8.2 branch",
+      "fixed": "8.2.35"
+    },
+    {
+      "product": "PHP 8.3 branch",
+      "fixed": "8.3.36"
+    },
+    {
+      "product": "PHP 8.4 branch",
+      "fixed": "8.4.27"
+    },
+    {
+      "product": "PHP 8.5 branch",
+      "fixed": "8.5.12"
+    },
+    {
+      "product": "PHP unsupported branches",
+      "note": "PHP 8.1 and older require a vendor backport or migration to a supported fixed branch."
+    }
+  ],
+  "exposure": "Relevant to PHP serving web requests, including FPM, mod_php, CGI, FrankenPHP and LiteSpeed. Do not assume application authentication protects request initialization.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check the web-serving PHP runtime against 8.2.35, 8.3.36, 8.4.27 or 8.5.12 for its branch; confirm vendor backports separately. CLI version alone may differ from workers."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Remediate the affected component",
+      "details": "Update to the patched release for the PHP branch or obtain a vendor-confirmed backport, then restart workers. Partial configuration mitigations are not complete fixes.",
+      "risk": "Medium. Worker restarts interrupt requests; branch migrations require application compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm running web workers use a fixed package after restart."
+  ],
+  "sources": [
+    {
+      "url": "https://www.php.net/archive/2026.php#2026-10-21-5",
+      "publisher": "PHP Project",
+      "tier": 1,
+      "retrieved": "2026-11-04",
+      "supports": [
+        "affected",
+        "cve",
+        "vendor_severity",
+        "remediation",
+        "summary",
+        "exposure",
+        "detectors",
+        "verification",
+        "severity"
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json",
+      "publisher": "CISA",
+      "tier": 1,
+      "retrieved": "2026-11-04",
+      "supports": [
+        "exploitation",
+        "severity"
+      ]
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/heygalatea/status/2116897906410078472",
+      "kind": "social",
+      "seen": "2026-11-04"
+    },
+    {
+      "url": "https://x.com/DimitriosMitsos/status/2113389079874171216",
+      "kind": "social",
+      "seen": "2026-11-04"
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-04",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-04",
+      "change": "Initial record drafted for independent review."
+    },
+    {
+      "date": "2026-11-04",
+      "change": "Added the PHP Project's published Critical rating for both vulnerabilities after independent review identified the omission."
+    }
+  ],
+  "cve": [
+    "CVE-2026-109618",
+    "CVE-2026-109619"
+  ],
+  "exploitation": {
+    "status": "exploited-in-the-wild",
+    "kev": true,
+    "note": "Both CVEs were added to CISA KEV on October 26, 2026."
+  }
+}
