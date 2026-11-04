@@ -301,11 +301,15 @@ export async function runScout(config, dependencies = {}) {
         const head = (await git(['rev-parse', 'HEAD'])).stdout.trim();
         phase = 'merge'; log('merge: poll checks and mergeability, at most 15 minutes');
         await waitForChecks({ exec, wait, now, repository, prUrl, head });
-        // gh deletes the local branch too; detach our worktree so git can remove it.
+        // Detach our worktree so the daily branch is no longer checked out anywhere.
         await git(['switch', '--detach', head]);
         await exec('gh', ['pr', 'merge', prUrl, '--repo', repository, '--squash', '--delete-branch', '--match-head-commit', head], { cwd: config.repo, timeoutMs: 120_000 });
         const merged = JSON.parse((await exec('gh', ['pr', 'view', prUrl, '--repo', repository, '--json', 'state'], { timeoutMs: 30_000 })).stdout);
         if (merged.state !== 'MERGED') throw Error('PR merge was not confirmed');
+        // With --repo, gh deletes only the remote branch. The squash merge is confirmed for this
+        // exact head, so the local branch holds nothing unpublished: remove it so none accumulate.
+        const removed = await git(['branch', '-D', branch], { allowFailure: true, timeoutMs: 30_000 });
+        if (removed.code !== 0) log(`merge: local branch ${branch} could not be deleted; remove it after checking it is merged`);
       }
     }
     phase = 'notify'; log('notify: publication risks and non-quiet daily summary');

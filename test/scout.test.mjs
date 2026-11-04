@@ -365,6 +365,8 @@ test('simulated publication uses a checked PR, exact-head squash and summary aft
   const merge = h.calls.findIndex(([file, args]) => file === 'gh' && args[1] === 'merge');
   const notice = h.calls.findIndex(([file]) => file === 'agent-approval');
   assert.ok(push >= 0 && create > push && merge > create && notice > merge);
+  const removeBranch = h.calls.findIndex(([file, args]) => file === 'git' && args[0] === 'branch' && args[1] === '-D' && /^scout\/\d{4}-\d{2}-\d{2}/.test(args[2]));
+  assert.ok(removeBranch > merge && removeBranch < notice);
   assert.equal(h.calls.some(([file, args]) => file === 'git' && args[0] === 'push' && args.includes('main')), false);
   assert.ok(h.calls.filter(([file, args]) => file === 'gh' || (file === 'git' && args[0] === 'push')).every(([, args]) => !args.includes('--admin') && !args.includes('--force')));
 });
