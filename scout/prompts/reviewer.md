@@ -26,6 +26,8 @@ open findings. When you cannot read a source or verify a claim, request changes.
 approve on the strength of a test or the author's summary. English, no em-dashes.
 
 Return exactly one result per changed record, with no duplicates or omitted records.
+Each verdict is exactly "approve" (no findings) or "changes" (at least one finding); no
+other value is accepted, so write "changes" whenever you request changes or reject.
 For compatibility with the host runner, emit the same compact JSON on both final lines:
 REVIEW_RESULT={"status":"completed","model":"EXACT_MODEL","records":[{"id":"MSA-YYYY-NNNN","verdict":"approve","findings":[]}]}
 REVIEW_RESULT {"status":"completed","model":"EXACT_MODEL","records":[{"id":"MSA-YYYY-NNNN","verdict":"approve","findings":[]}]}

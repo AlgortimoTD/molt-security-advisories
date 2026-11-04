@@ -159,6 +159,13 @@ test('missing records, self-review, alias mismatch and open findings fail closed
   assert.throws(() => validateReviewResult(result, files, 'claude-exact'));
   assert.throws(() => validateReviewResult(result, files, 'codex-exact', 'other-exact'));
   assert.throws(() => validateReviewResult({ ...result, records: [{ ...result.records[0], findings: [{ severity: 'minor', field: 'title', issue: 'unclear', fix: 'clarify' }] }] }, files, 'codex-exact'));
+  const finding = { severity: 'major', field: 'cve', issue: 'missing CVE', fix: 'add it' };
+  for (const verdict of ['changes', 'request_changes', 'request-changes', 'changes_requested', 'reject']) {
+    const review = validateReviewResult({ ...result, records: [{ ...result.records[0], verdict, findings: [finding] }] }, files, 'codex-exact');
+    assert.equal(review.records[0].verdict, 'changes');
+  }
+  assert.throws(() => validateReviewResult({ ...result, records: [{ ...result.records[0], verdict: 'changes', findings: [] }] }, files, 'codex-exact'), /needs at least one finding/);
+  assert.throws(() => validateReviewResult({ ...result, records: [{ ...result.records[0], verdict: 'maybe', findings: [finding] }] }, files, 'codex-exact'), /Invalid review verdict/);
   assert.equal(validateAuthorResult({ model: 'codex-exact', created: ['MSA-2026-0001'], updated: [], skipped: [] }, files), 'codex-exact');
   assert.throws(() => validateAuthorResult({ model: 'codex-exact', created: [], updated: [], skipped: [] }, files));
 });
