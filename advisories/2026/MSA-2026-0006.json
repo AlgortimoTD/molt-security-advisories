@@ -1,0 +1,116 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0006",
+  "title": "Langflow OSS through 1.12.8 has authentication bypass and unauthenticated code execution",
+  "summary": "IBM reports authentication bypass and unauthenticated code execution, including an MCP tool-enumeration path. The same upgrade also addresses authenticated agentic command execution and credential disclosure. All four Langflow flaws are addressed by Langflow OSS 1.13.0.",
+  "status": "published",
+  "published": "2026-11-03",
+  "updated": "2026-11-03",
+  "severity": {
+    "level": "critical",
+    "urgency": "24h",
+    "rationale": "Unauthenticated remote code execution reaches the agent workflow server. No account or further user interaction is required in the published CVSS vector."
+  },
+  "affected": [
+    {
+      "product": "Langflow OSS",
+      "ecosystem": "PyPI",
+      "introduced": "1.0.0",
+      "fixed": "1.13.0",
+      "note": "IBM lists affected versions 1.0.0 through 1.12.8."
+    }
+  ],
+  "exposure": "Exposed deployments allow attacker access to Langflow, including its MCP surface. Do not assume the authentication control prevents access.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "PyPI",
+        "name": "langflow",
+        "ranges": [
+          {
+            "fixed": "1.13.0",
+            "introduced": "1.0.0"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Remediate the affected component",
+      "details": "Back up the database, secret key and uploaded files. Prepare automatic-login accounts for password sign-in, then upgrade the package or Docker deployment to 1.13.0.",
+      "risk": "Medium. Authentication changes and persistent deployment data require upgrade preparation."
+    }
+  ],
+  "verification": [
+    "Confirm the installed version or revision and exercise the affected workflow with trusted inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://www.ibm.com/support/pages/node/7294467",
+      "publisher": "IBM",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "affected",
+        "cve",
+        "vendor_severity",
+        "remediation",
+        "summary",
+        "exposure",
+        "detectors",
+        "verification",
+        "severity"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-03",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-03",
+      "change": "Initial record drafted for independent review."
+    },
+    {
+      "date": "2026-11-03",
+      "change": "Added the two other Langflow CVEs covered by the IBM upgrade, their individual scores and their authentication conditions."
+    }
+  ],
+  "cve": [
+    "CVE-2026-93680",
+    "CVE-2026-110186",
+    "CVE-2026-110193",
+    "CVE-2026-110192"
+  ],
+  "vendor_severity": [
+    {
+      "source": "IBM",
+      "value": "9.8 Critical",
+      "applies_to": "CVE-2026-93680, CVE-2026-110186"
+    },
+    {
+      "source": "IBM",
+      "value": "8.8 High",
+      "applies_to": "CVE-2026-110193"
+    },
+    {
+      "source": "IBM",
+      "value": "6.5 Medium",
+      "applies_to": "CVE-2026-110192"
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/theomlondhe/status/2117496855416160673",
+      "kind": "social",
+      "seen": "2026-11-03"
+    }
+  ]
+}

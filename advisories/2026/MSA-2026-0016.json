@@ -1,0 +1,103 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0016",
+  "title": "Chrome Dawn buffer overflow can execute code outside the sandbox",
+  "summary": "The Chrome CVE record describes a Dawn buffer overflow allowing a crafted HTML page to execute arbitrary code outside the sandbox. Google ships fixes in Stable and Extended Stable channels.",
+  "status": "published",
+  "published": "2026-11-03",
+  "updated": "2026-11-03",
+  "severity": {
+    "level": "critical",
+    "urgency": "24h",
+    "rationale": "A crafted web page can reach code execution outside the browser sandbox. Agents browsing untrusted pages meet the interaction requirement without human oversight."
+  },
+  "affected": [
+    {
+      "product": "Google Chrome Stable desktop",
+      "fixed": "157.0.8103.38"
+    },
+    {
+      "product": "Google Chrome Extended Stable desktop",
+      "fixed": "156.0.8078.88",
+      "note": "Windows and macOS. Use channel-specific checks; do not flag this backport solely for being below 157."
+    }
+  ],
+  "exposure": "Browsers visiting untrusted HTML are exposed before their channel-specific fix. No exploitation status is asserted.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Read the browser executable version and channel. Stable requires 157.0.8103.38 or later; Extended Stable on Windows/macOS requires 156.0.8078.88 or later."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Remediate the affected component",
+      "details": "Update Chrome to the patched release for its channel and restart all browser processes.",
+      "risk": "Low. Test dependent workflows after updating."
+    }
+  ],
+  "verification": [
+    "Confirm the running executable version and channel after restart, including automation-launched browser instances."
+  ],
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/121xxx/CVE-2026-121156.json",
+      "publisher": "CVE Program official record repository",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "affected",
+        "cve",
+        "vendor_severity",
+        "remediation",
+        "summary",
+        "exposure",
+        "detectors",
+        "verification",
+        "severity"
+      ]
+    },
+    {
+      "url": "https://chromereleases.googleblog.com/2026/11/extended-stable-update-for-desktop.html",
+      "publisher": "Google Chrome Releases",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "affected",
+        "cve",
+        "vendor_severity",
+        "remediation"
+      ],
+      "quote": "[567735302] Critical CVE-2026-121156"
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-03",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-03",
+      "change": "Initial record drafted for independent review."
+    },
+    {
+      "date": "2026-11-03",
+      "change": "Replaced the archive citation with the readable Extended Stable post, which explicitly lists the Dawn CVE and backport; limited Stable version detail to the CVE record."
+    }
+  ],
+  "cve": [
+    "CVE-2026-121156"
+  ],
+  "vendor_severity": [
+    {
+      "source": "Google Chrome Releases",
+      "value": "Critical"
+    }
+  ]
+}

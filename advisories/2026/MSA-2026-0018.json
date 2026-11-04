@@ -1,0 +1,81 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0018",
+  "title": "Kali-GPT MCP tool parameters permit shell command injection",
+  "summary": "Unsanitized scanner parameters reach shell=True in the MCP server. An MCP client or prompt-injected agent can execute commands as the server user.",
+  "status": "published",
+  "published": "2026-11-03",
+  "updated": "2026-11-03",
+  "cve": [
+    "CVE-2026-117569"
+  ],
+  "severity": {
+    "level": "high",
+    "urgency": "72h",
+    "rationale": "An attacker must control tool arguments or influence agent calls. This common agent boundary can expose the MCP server process to arbitrary command execution."
+  },
+  "affected": [
+    {
+      "product": "Kali-GPT",
+      "note": "The CVE record identifies affected code through commit a608c74 and specifies no fixed release."
+    }
+  ],
+  "exposure": "Exposed deployments accept untrusted tool parameters, directly or through prompt-injected agent calls.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Identify the Kali-GPT checkout revision and check for the command-injection behavior described by CVE-2026-117569; version numbers alone are insufficient."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Contain exposure and apply a verified fix",
+      "details": "As a containment recommendation, disconnect the vulnerable server from untrusted workflows until a vendor-verified patch is deployed. The cited record provides no fixed release.",
+      "risk": "Medium. Disabling the affected capability interrupts dependent workflows."
+    }
+  ],
+  "verification": [
+    "Confirm the version or revision and review the affected configuration before restoring untrusted input."
+  ],
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/117xxx/CVE-2026-117569.json",
+      "publisher": "CVE Program official record repository",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "affected",
+        "cve",
+        "remediation",
+        "summary",
+        "exposure",
+        "detectors",
+        "verification",
+        "severity"
+      ]
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/disismohi/status/2115864663787495759",
+      "kind": "social",
+      "seen": "2026-11-03"
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-03",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-03",
+      "change": "Initial record drafted for independent review."
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0021",
+  "title": "GitLab CI regular expression compilation permits unauthenticated server code execution",
+  "summary": "An integer overflow in the CI/CD regular expression compiler can, under certain conditions, allow an unauthenticated attacker to execute arbitrary code on an affected GitLab CE or EE server through a crafted regular expression.",
+  "status": "published",
+  "published": "2026-11-03",
+  "updated": "2026-11-03",
+  "cve": [
+    "CVE-2026-97229"
+  ],
+  "severity": {
+    "level": "critical",
+    "urgency": "24h",
+    "rationale": "An unauthenticated remote attacker can execute code in CI infrastructure. The published vector requires neither privileges nor user interaction."
+  },
+  "affected": [
+    {
+      "product": "GitLab CE/EE",
+      "introduced": "19.2",
+      "fixed": "19.2.8"
+    },
+    {
+      "product": "GitLab CE/EE",
+      "introduced": "19.3",
+      "fixed": "19.3.5"
+    },
+    {
+      "product": "GitLab CE/EE",
+      "introduced": "19.4",
+      "fixed": "19.4.2"
+    }
+  ],
+  "exposure": "Relevant to affected self-managed installations. GitLab states its hosted and Dedicated environments were patched before the release notice.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Read the GitLab server version and compare its branch against the fixed floors 19.2.8, 19.3.5 and 19.4.2."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Contain exposure and apply a verified fix",
+      "details": "Upgrade using the supported GitLab upgrade path to the latest patched release on a supported branch. The listed versions are minimum fixes for this CVE, not a complete current security baseline.",
+      "risk": "Medium. Server upgrades require backups, supported upgrade steps and service validation."
+    }
+  ],
+  "verification": [
+    "Confirm the GitLab server reports 19.2.8, 19.3.5, 19.4.2 or a later patched release on its branch."
+  ],
+  "sources": [
+    {
+      "url": "https://docs.gitlab.com/releases/patches/patch-release-gitlab-19-4-2-released/",
+      "publisher": "GitLab",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "affected",
+        "cve",
+        "vendor_severity",
+        "remediation",
+        "summary",
+        "exposure",
+        "detectors",
+        "verification",
+        "severity"
+      ]
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/MachinaRecord/status/2117137544404251036",
+      "kind": "social",
+      "seen": "2026-11-03"
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-03",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-03",
+      "change": "Initial record drafted for independent review."
+    },
+    {
+      "date": "2026-11-03",
+      "change": "Named the integer overflow in the CI/CD regular expression compiler, qualified the triggering conditions and made verification specific to the patched server version."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitLab",
+      "value": "10.0 Critical"
+    }
+  ]
+}

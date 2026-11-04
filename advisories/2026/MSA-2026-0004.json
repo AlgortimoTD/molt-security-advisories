@@ -1,0 +1,87 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0004",
+  "title": "Stanza 1.14.0 can execute code while loading an untrusted lemmatizer checkpoint",
+  "summary": "The lemmatizer decompresses and unpickles an inner checkpoint field without restrictions. PyTorch weights_only=True does not protect that inner stream.",
+  "status": "published",
+  "published": "2026-11-03",
+  "updated": "2026-11-03",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "Code execution requires an attacker-controlled custom lemma checkpoint. This is a narrower model-loading configuration, rather than ordinary text inference."
+  },
+  "affected": [
+    {
+      "product": "stanza",
+      "ecosystem": "PyPI",
+      "introduced": "1.14.0",
+      "fixed": "1.15.0",
+      "note": "The advisory lists exactly 1.14.0 as affected."
+    }
+  ],
+  "exposure": "Pipelines loading caller-supplied or shared untrusted lemma checkpoints are exposed. Ordinary inference text alone is not this attack surface.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check whether stanza is exactly 1.14.0 and whether custom or shared lemma checkpoints can be untrusted."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Remediate the affected component",
+      "details": "Upgrade to 1.15.0, which fixes the unrestricted inner deserialization.",
+      "risk": "Low. Test dependent workflows after updating."
+    }
+  ],
+  "verification": [
+    "Confirm the installed version or revision and exercise the affected workflow with trusted inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-gh9r-c94j-cmp5",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-03",
+      "supports": [
+        "affected",
+        "cve",
+        "vendor_severity",
+        "remediation",
+        "summary",
+        "exposure",
+        "detectors",
+        "verification",
+        "severity"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-03",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-03",
+      "change": "Initial record drafted for independent review."
+    }
+  ],
+  "cve": [
+    "CVE-2026-115878"
+  ],
+  "ghsa": [
+    "GHSA-gh9r-c94j-cmp5"
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub Reviewed Advisory Database",
+      "value": "7.8 High"
+    }
+  ]
+}
