@@ -96,11 +96,27 @@ async function snapshot(root, exec) {
   }
   return JSON.stringify(result);
 }
+// Phases that always need a person (credentials, isolation, leases, an open PR) notify at once.
+// Any other failure is often transient (network, a source outage), so it notifies only when
+// it repeats on consecutive runs, and keeps notifying under one stable key while it lasts,
+// so a lost delivery is retried on the next failed run. A completed run resets the count.
+// Dry runs never touch the count: they must not reset or consume a production failure.
+export const IMMEDIATE_BLOCKER_PHASES = ['github-auth', 'merge', 'browser-cleanup', 'process-cleanup', 'author-isolation'];
+export const REPEATED_FAILURE_THRESHOLD = 2;
+export function recordRunHealth(stateDir, phase) {
+  const file = path.join(stateDir, 'run-health.json');
+  const consecutiveFailures = phase === null ? 0 : (readJson(file, { consecutiveFailures: 0 }).consecutiveFailures || 0) + 1;
+  writeJson(file, { consecutiveFailures, ...(phase === null ? {} : { lastFailedPhase: phase }) });
+  const notify = phase !== null && (IMMEDIATE_BLOCKER_PHASES.includes(phase) || consecutiveFailures >= REPEATED_FAILURE_THRESHOLD);
+  return { consecutiveFailures, notify };
+}
+
 export async function noLeads({ config, cursor, run, cleanup, log = () => {} }) {
   log('no-leads: model-free completion');
   // Keep acknowledgement after cleanup: a failed cleanup must not consume leads.
   await cleanup();
   commitCursor(config.stateDir, cursor);
+  if (!config.dryRun) recordRunHealth(config.stateDir, null);
   ledgerEnd(config.ledgerPath, run, { outcome: 'no-leads', modelInvoked: false });
   return { outcome: 'no-leads', modelInvoked: false };
 }
@@ -302,6 +318,7 @@ export async function runScout(config, dependencies = {}) {
     phase = 'cleanup'; log('cleanup: acknowledge cursor and remove worktree');
     await cleanup();
     commitCursor(config.stateDir, collected.nextCursor);
+    if (!config.dryRun) recordRunHealth(config.stateDir, null);
     const outcome = config.dryRun && files.length ? 'dry-run-committed' : files.length ? 'published' : dropped.length ? 'withheld' : 'no-records';
     ledgerEnd(config.ledgerPath, run, { outcome, modelInvoked, now: now() }); finished = true;
     return { exitCode: 0, outcome, branch, records: files.map(recordId), dropped: dropped.map(r => r.id), prUrl };
@@ -309,9 +326,14 @@ export async function runScout(config, dependencies = {}) {
     if (error instanceof ProcessTreeSurvived) { survived = true; phase = 'process-cleanup'; }
     writeJson(path.join(runDir, 'failure.json'), { phase, reason: error.message });
     log(`failed: ${phase}; cursor not acknowledged`);
-    if (['github-auth', 'merge', 'browser-cleanup', 'process-cleanup', 'author-isolation'].includes(phase)) {
-      try { await notify('blocker', `${date}-${phase}`, 'Security scout needs attention', `Run failed during ${phase}. Review the private run evidence and host ledger. The cursor was not acknowledged.`); } catch { log('notify: failed to deliver blocker'); }
-    }
+    // Without a trustworthy count, notify rather than risk staying silent.
+    let health = { consecutiveFailures: 0, notify: true, untracked: true };
+    if (config.dryRun) health = { consecutiveFailures: 0, notify: IMMEDIATE_BLOCKER_PHASES.includes(phase) };
+    else try { health = recordRunHealth(config.stateDir, phase); } catch { log('health: could not record the failure count'); }
+    if (health.notify) {
+      const repeated = !IMMEDIATE_BLOCKER_PHASES.includes(phase);
+      try { await notify('blocker', repeated ? 'repeated-failure' : `${date}-${phase}`, 'Security scout needs attention', `${repeated ? health.untracked ? `Run failed during ${phase} and the failure count could not be recorded.` : `${health.consecutiveFailures} consecutive runs failed; the latest failed during ${phase}.` : `Run failed during ${phase}.`} Review the private run evidence and host ledger. The cursor was not acknowledged, so no lead is lost.`); } catch { log('notify: failed to deliver blocker'); }
+    } else log(`notify: failure ${health.consecutiveFailures} of ${REPEATED_FAILURE_THRESHOLD} before a blocker notice`);
     return { exitCode: 1, outcome: 'failed', phase };
   } finally {
     if (!finished) {

@@ -376,6 +376,27 @@ test('simulated GitHub authentication failure notifies a blocker and never ackno
   assert.equal(h.calls.some(([file, args]) => file === 'git' && args[0] === 'push'), false);
 });
 
+test('a transient failure notifies only when it repeats, and a completed run resets the count', async t => {
+  const { recordRunHealth } = await import('../scout/run.mjs');
+  const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), 'scout-health-')); t.after(() => fs.rmSync(stateDir, { recursive: true, force: true }));
+  assert.deepEqual(recordRunHealth(stateDir, 'reviewer'), { consecutiveFailures: 1, notify: false });
+  assert.deepEqual(recordRunHealth(stateDir, 'collect'), { consecutiveFailures: 2, notify: true });
+  assert.deepEqual(recordRunHealth(stateDir, 'author'), { consecutiveFailures: 3, notify: true });
+  assert.deepEqual(recordRunHealth(stateDir, null), { consecutiveFailures: 0, notify: false });
+  assert.deepEqual(recordRunHealth(stateDir, 'github-auth'), { consecutiveFailures: 1, notify: true });
+});
+test('a first model failure is recorded without a blocker notice', async t => {
+  const h = await harness(t, { dryRun: false, modelFailure: true });
+  assert.equal(h.outcome.exitCode, 1);
+  assert.equal(h.calls.some(([file]) => file === 'agent-approval'), false);
+  assert.equal(JSON.parse(fs.readFileSync(path.join(h.config.stateDir, 'run-health.json'), 'utf8')).consecutiveFailures, 1);
+});
+test('a dry-run failure leaves the production failure count untouched', async t => {
+  const h = await harness(t, { dryRun: true, modelFailure: true });
+  assert.equal(h.outcome.exitCode, 1);
+  assert.equal(fs.existsSync(path.join(h.config.stateDir, 'run-health.json')), false);
+});
+
 test('new versus updated classification is verified against git rather than the author claim', async t => {
   const root = await gitFixture(t), files = ['advisories/2026/MSA-2026-0001.json'];
   await validateAuthorPaths(root, { created: [], updated: ['MSA-2026-0001'] }, files, command);
