@@ -2,7 +2,7 @@
   "schema": "msa-feed/1",
   "publisher": "MOLT Security Advisories",
   "homepage": "https://github.com/AlgortimoTD/molt-security-advisories",
-  "updated": "2026-11-04",
+  "updated": "2026-11-05",
   "advisories": [
     {
       "schema": "msa/1",
@@ -2989,6 +2989,220 @@
           "source": "Microsoft CNA",
           "value": "8.8 High",
           "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H/E:U/RL:O/RC:C"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0030",
+      "title": "Exploited WebKit pointer-authentication bypass affects Safari and multiple Apple operating systems",
+      "summary": "Apple fixed CVE-2024-27834 in Safari 17.5, macOS Sonoma 14.5, iOS and iPadOS 16.7.8 and 17.5, tvOS 17.5, and watchOS 10.5. An attacker who already has arbitrary read and write capability may bypass Pointer Authentication. CISA added the vulnerability to its Known Exploited Vulnerabilities catalog on November 4, 2026.",
+      "status": "published",
+      "published": "2026-11-05",
+      "updated": "2026-11-05",
+      "cve": [
+        "CVE-2024-27834"
+      ],
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "The arbitrary-read/write precondition makes this a medium baseline under the rubric, rather than a standalone remote-code-execution flaw. Confirmed exploitation raises the level to high. Agent browsing on affected WebKit installations warrants prompt patching."
+      },
+      "vendor_severity": [
+        {
+          "source": "CISA ADP in the CVE record, not an Apple severity rating",
+          "value": "5.5 Medium",
+          "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:N"
+        }
+      ],
+      "exploitation": {
+        "status": "exploited-in-the-wild",
+        "kev": true,
+        "note": "CISA KEV lists CVE-2024-27834 with a date added of November 4, 2026."
+      },
+      "affected": [
+        {
+          "product": "Apple Safari on macOS Monterey and macOS Ventura",
+          "fixed": "17.5",
+          "note": "Apple's Safari 17.5 security bulletin lists the WebKit fix for these operating systems."
+        },
+        {
+          "product": "Apple macOS Sonoma WebKit",
+          "fixed": "14.5",
+          "note": "The fix is included in macOS Sonoma 14.5; assess this branch separately from Safari updates for Monterey and Ventura."
+        },
+        {
+          "product": "Apple iOS and iPadOS 16 branch WebKit",
+          "fixed": "16.7.8",
+          "note": "Apple CNA identifies iOS 16.7.8 and iPadOS 16.7.8 as fixed releases in the CVE record."
+        },
+        {
+          "product": "Apple iOS and iPadOS 17 branch WebKit",
+          "fixed": "17.5",
+          "note": "Apple lists the WebKit fix in the iOS 17.5 and iPadOS 17.5 security bulletin."
+        },
+        {
+          "product": "Apple tvOS WebKit",
+          "fixed": "17.5",
+          "note": "Apple lists the WebKit fix in the tvOS 17.5 security bulletin."
+        },
+        {
+          "product": "Apple watchOS WebKit",
+          "fixed": "10.5",
+          "note": "Apple lists the WebKit fix in the watchOS 10.5 security bulletin."
+        }
+      ],
+      "exposure": "Relevant to agent browsers and developer workflows using affected Apple-shipped Safari or WebKit built into Apple operating systems, including iOS and iPadOS. Exploitation requires an attacker to already have arbitrary read and write capability. The cited primary sources do not establish standalone code execution or sandbox escape from this flaw alone. These sources assess Apple-shipped WebKit only; separate builds such as Playwright WebKit and WebKitGTK are not assessed by them.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check the applicable Apple software version against the listed fix: Safari 17.5 on Monterey or Ventura; macOS Sonoma 14.5; iOS or iPadOS 16.7.8 on the 16 branch or 17.5 on the 17 branch; tvOS 17.5; watchOS 10.5. Versions below the applicable fix need the vendor update. These criteria cover Apple-shipped WebKit only."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Install the applicable Apple security update",
+          "details": "Install the applicable fix or a later patched release: Safari 17.5 on Monterey or Ventura, macOS Sonoma 14.5, iOS or iPadOS 16.7.8 on the 16 branch or 17.5 on the 17 branch, tvOS 17.5, or watchOS 10.5.",
+          "risk": "Low to medium. Browser or operating-system updates can interrupt active automation; verify workflows after updating."
+        }
+      ],
+      "verification": [
+        "Confirm Safari reports at least 17.5 on Monterey or Ventura, or macOS Sonoma reports at least 14.5.",
+        "Confirm iOS or iPadOS reports at least 16.7.8 on the 16 branch or 17.5 on the 17 branch; confirm tvOS reports at least 17.5 and watchOS at least 10.5, as applicable.",
+        "Restart affected browsing and automation sessions after updating and verify dependent workflows."
+      ],
+      "sources": [
+        {
+          "url": "https://support.apple.com/en-us/120896",
+          "publisher": "Apple",
+          "tier": 1,
+          "retrieved": "2026-11-05",
+          "supports": [
+            "affected",
+            "cve",
+            "summary",
+            "exposure",
+            "severity",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://support.apple.com/en-us/120903",
+          "publisher": "Apple",
+          "tier": 1,
+          "retrieved": "2026-11-05",
+          "supports": [
+            "affected",
+            "cve",
+            "summary",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/27xxx/CVE-2024-27834.json",
+          "publisher": "Apple CNA and CISA ADP via the CVE Program",
+          "tier": 1,
+          "retrieved": "2026-11-05",
+          "supports": [
+            "affected",
+            "cve",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "remediation",
+            "summary",
+            "detectors",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json",
+          "publisher": "CISA",
+          "tier": 1,
+          "retrieved": "2026-11-05",
+          "supports": [
+            "cve",
+            "exploitation",
+            "summary",
+            "severity"
+          ]
+        },
+        {
+          "url": "https://support.apple.com/en-us/120905",
+          "publisher": "Apple",
+          "tier": 1,
+          "retrieved": "2026-11-05",
+          "supports": [
+            "affected",
+            "cve",
+            "summary",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://support.apple.com/en-us/120901",
+          "publisher": "Apple",
+          "tier": 1,
+          "retrieved": "2026-11-05",
+          "supports": [
+            "affected",
+            "cve",
+            "summary",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://support.apple.com/en-us/120902",
+          "publisher": "Apple",
+          "tier": 1,
+          "retrieved": "2026-11-05",
+          "supports": [
+            "affected",
+            "cve",
+            "summary",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=CVE-2024-27834",
+          "kind": "feed",
+          "seen": "2026-11-05"
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-05",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-05",
+          "change": "Initial record drafted for independent review."
+        },
+        {
+          "date": "2026-11-05",
+          "change": "Corrected platform coverage after independent review: added iOS, iPadOS, tvOS and watchOS fixes, expanded version checks and remediation, and clarified that the sources assess Apple-shipped WebKit only."
         }
       ]
     }
