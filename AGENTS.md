@@ -20,8 +20,10 @@ this file only adds how agents work here.
 
 ## Gate
 
-- `npm run check` runs the tests, validates every record and checks that `feed.json` is current.
-  Run `npm run feed` after changing records and commit `feed.json` with them.
+- `npm run check` runs the tests, validates every record and checks that `feed.json` and the
+  README's "Latest advisories" section are current. Run `npm run feed` after changing records and
+  commit `feed.json` and `README.md` with them. Never edit that README section by hand: it is
+  generated from the records (the three most recent publication days).
 - A record is complete only with a `review` block from a reviewer model different from the
   author model, which re-read the tier 1 sources and approved the current text. The validator
   refuses placeholders, self review and a review older than the last update.

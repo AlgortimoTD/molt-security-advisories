@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { ROOT } from '../scripts/lib.mjs';
 import { validateAll } from '../scripts/validate.mjs';
-import { buildFeed, serialize } from '../scripts/build-feed.mjs';
+import { buildFeed, serialize, renderLatest, updateReadme, README_START, README_END } from '../scripts/build-feed.mjs';
 
 const advisory = () => ({
   schema: 'msa/1', id: 'MSA-2026-0001', title: 'Example product before 2.0.1 runs code from a crafted file',
@@ -109,4 +109,42 @@ test('the feed is deterministic and lists rejected claims by summary', () => {
   assert.equal(feed.advisories[0].id, 'MSA-2026-0001');
   assert.equal(feed.rejected[0].verdict, 'false');
   assert.equal(feed.rejected[0].explanation, undefined);
+});
+test('the README latest section lists the most recent publication days, newest and most severe first', () => {
+  const entry = (id, published, level, extra = {}) => ({ id, published, updated: published, title: `Title ${id}`, status: 'published', severity: { level, urgency: '72h' }, ...extra });
+  const feed = { advisories: [
+    entry('MSA-2026-0001', '2026-11-01', 'high'),
+    entry('MSA-2026-0006', '2026-10-30', 'medium', { updated: '2026-11-03' }),
+    entry('MSA-2026-0002', '2026-11-02', 'medium'),
+    entry('MSA-2026-0003', '2026-11-02', 'critical', { title: 'Pipe | and\nnewline', exploitation: { status: 'exploited-in-the-wild' } }),
+    entry('MSA-2026-0004', '2026-11-03', 'high', { status: 'withdrawn' }),
+    entry('MSA-2026-0005', '2026-11-04', 'low'),
+  ], rejected: [{ id: 'MSR-2026-0001', published: '2026-11-04', verdict: 'false', claim: 'A false claim' }] };
+  const out = renderLatest(feed);
+  assert.equal(out, renderLatest(feed));
+  assert.deepEqual(out.match(/^### .+$/gm), ['### 2026-11-04', '### 2026-11-03', '### 2026-11-02']);
+  assert.equal(out.includes('MSA-2026-0001'), false);
+  assert.ok(out.indexOf('MSA-2026-0003') < out.indexOf('MSA-2026-0002'));
+  assert.ok(out.indexOf('MSA-2026-0005') < out.indexOf('MSR-2026-0001'));
+  assert.ok(out.includes('| [MSA-2026-0003](advisories/2026/MSA-2026-0003.json) | Critical, exploited in the wild | 72 hours | Pipe \\| and newline |'));
+  assert.match(out, /\| \[MSA-2026-0004\]\([^)]+\) \| Withdrawn \|  \|/);
+  // A later correction shows on its update day only when that day is in the window.
+  assert.match(out, /### 2026-11-03\n[^#]*\| \[MSA-2026-0006\]\([^)]+\) \(updated\) \| Medium \|/);
+  assert.equal(out.match(/MSA-2026-0006\]/g).length, 1);
+  assert.match(out, /\| \[MSR-2026-0001\]\(rejected\/2026\/MSR-2026-0001\.json\) \| Rejected claim: false \|/);
+  const readme = `# Title\n\n${README_START}\nstale\n${README_END}\n\nRest\n`;
+  const next = updateReadme(readme, feed);
+  assert.ok(next.startsWith('# Title\n\n') && next.endsWith('\n\nRest\n') && !next.includes('stale'));
+  assert.equal(updateReadme(next, feed), next);
+  assert.throws(() => updateReadme('# No markers\n', feed), /markers/);
+  assert.throws(() => updateReadme(`${readme}${README_START}\n`, feed), /exactly one/);
+  assert.throws(() => updateReadme(`${next}${README_END}\n`, feed), /exactly one/);
+  assert.throws(() => updateReadme(`${README_END}\n${README_START}\n`, feed), /exactly one/);
+  assert.match(renderLatest({ advisories: [], rejected: [] }), /No records published yet/);
+  // Record text cannot inject HTML or a copy of the end marker into the generated section.
+  const hostile = { advisories: [entry('MSA-2026-0009', '2026-11-05', 'high', { title: `x ${README_END} <img src=y> & [a](https://e.example) ![i](https://e.example/i.png) *b*` })], rejected: [] };
+  const hostileReadme = updateReadme(readme, hostile);
+  assert.equal(hostileReadme.split(README_END).length, 2);
+  assert.ok(hostileReadme.includes('x &lt;\\!\\-\\- latest\\-advisories:end \\-\\-&gt; &lt;img src=y&gt; &amp; \\[a\\]\\(https://e.example\\) \\!\\[i\\]\\(https://e.example/i.png\\) \\*b\\* |'));
+  assert.equal(updateReadme(hostileReadme, hostile), hostileReadme);
 });
