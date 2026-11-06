@@ -37,8 +37,10 @@ export const README_END = '<!-- latest-advisories:end -->';
 const LEVELS = ['critical', 'high', 'medium', 'low', 'informational'];
 const URGENCY = { '24h': '24 hours', '72h': '72 hours', '30d': '30 days', 'next-update': 'Next update' };
 const capital = text => text.charAt(0).toUpperCase() + text.slice(1);
-// Table cells come from record text: keep each on one line and keep pipes from splitting columns.
-const cell = text => String(text).replace(/\s+/g, ' ').trim().replace(/\\/g, '\\\\').replace(/\|/g, '\\|');
+// Table cells come from record text: keep each on one line, keep pipes from splitting columns and
+// keep HTML (including a copy of the section markers) from rendering or breaking the section.
+const cell = text => String(text).replace(/\s+/g, ' ').trim().replace(/\\/g, '\\\\').replace(/\|/g, '\\|')
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const recordPath = (dir, id) => `${dir}/${id.slice(4, 8)}/${id}.json`;
 
 export function renderLatest(feed, days = LATEST_DAYS) {

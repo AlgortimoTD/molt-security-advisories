@@ -139,4 +139,10 @@ test('the README latest section lists the most recent publication days, newest a
   assert.throws(() => updateReadme('# No markers\n', feed), /markers/);
   assert.throws(() => updateReadme(`${readme}${README_START}\n`, feed), /exactly one/);
   assert.match(renderLatest({ advisories: [], rejected: [] }), /No records published yet/);
+  // Record text cannot inject HTML or a copy of the end marker into the generated section.
+  const hostile = { advisories: [entry('MSA-2026-0009', '2026-11-05', 'high', { title: `x ${README_END} <img src=y> & z` })], rejected: [] };
+  const hostileReadme = updateReadme(readme, hostile);
+  assert.equal(hostileReadme.split(README_END).length, 2);
+  assert.match(hostileReadme, /x &lt;!-- latest-advisories:end --&gt; &lt;img src=y&gt; &amp; z/);
+  assert.equal(updateReadme(hostileReadme, hostile), hostileReadme);
 });
