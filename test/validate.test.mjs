@@ -126,7 +126,7 @@ test('the README latest section lists the most recent publication days, newest a
   assert.equal(out.includes('MSA-2026-0001'), false);
   assert.ok(out.indexOf('MSA-2026-0003') < out.indexOf('MSA-2026-0002'));
   assert.ok(out.indexOf('MSA-2026-0005') < out.indexOf('MSR-2026-0001'));
-  assert.match(out, /\| \[MSA-2026-0003\]\(advisories\/2026\/MSA-2026-0003\.json\) \| Critical, exploited in the wild \| 72 hours \| Pipe \\\| and newline \|/);
+  assert.ok(out.includes('| [MSA-2026-0003](advisories/2026/MSA-2026-0003.json) | Critical, exploited in the wild | 72 hours | Pipe \\| and newline |'));
   assert.match(out, /\| \[MSA-2026-0004\]\([^)]+\) \| Withdrawn \|  \|/);
   // A later correction shows on its update day only when that day is in the window.
   assert.match(out, /### 2026-11-03\n[^#]*\| \[MSA-2026-0006\]\([^)]+\) \(updated\) \| Medium \|/);
@@ -138,11 +138,13 @@ test('the README latest section lists the most recent publication days, newest a
   assert.equal(updateReadme(next, feed), next);
   assert.throws(() => updateReadme('# No markers\n', feed), /markers/);
   assert.throws(() => updateReadme(`${readme}${README_START}\n`, feed), /exactly one/);
+  assert.throws(() => updateReadme(`${next}${README_END}\n`, feed), /exactly one/);
+  assert.throws(() => updateReadme(`${README_END}\n${README_START}\n`, feed), /exactly one/);
   assert.match(renderLatest({ advisories: [], rejected: [] }), /No records published yet/);
   // Record text cannot inject HTML or a copy of the end marker into the generated section.
-  const hostile = { advisories: [entry('MSA-2026-0009', '2026-11-05', 'high', { title: `x ${README_END} <img src=y> & z` })], rejected: [] };
+  const hostile = { advisories: [entry('MSA-2026-0009', '2026-11-05', 'high', { title: `x ${README_END} <img src=y> & [a](https://e.example) ![i](https://e.example/i.png) *b*` })], rejected: [] };
   const hostileReadme = updateReadme(readme, hostile);
   assert.equal(hostileReadme.split(README_END).length, 2);
-  assert.match(hostileReadme, /x &lt;!-- latest-advisories:end --&gt; &lt;img src=y&gt; &amp; z/);
+  assert.ok(hostileReadme.includes('x &lt;\\!\\-\\- latest\\-advisories:end \\-\\-&gt; &lt;img src=y&gt; &amp; \\[a\\]\\(https://e.example\\) \\!\\[i\\]\\(https://e.example/i.png\\) \\*b\\* |'));
   assert.equal(updateReadme(hostileReadme, hostile), hostileReadme);
 });
