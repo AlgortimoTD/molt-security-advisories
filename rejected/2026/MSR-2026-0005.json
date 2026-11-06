@@ -1,0 +1,59 @@
+{
+  "schema": "msr/1",
+  "id": "MSR-2026-0005",
+  "claim": "A browser extension with access to claude.ai can bypass Claude Dispatch approvals and execute code on another computer on the same account, and the same unpatched flaw affects Cowork and Claude Code Remote Control.",
+  "verdict": "unverifiable",
+  "explanation": "The cross-product exploit and unpatched-status claims are not established by the inspected tier 1 sources. Anthropic describes Dispatch as an opted-in way to assign tasks to a running desktop and documents limited availability. Its computer-use announcement describes permission safeguards and acknowledges evolving threats. These documents do not establish the reported extension approval bypass, its affected versions or its current remediation status. This verdict records the primary-evidence gap under this feed's policy; it does not establish that the reported attack is false or that these products are safe from malicious extensions.",
+  "published": "2026-11-06",
+  "updated": "2026-11-06",
+  "discovery": [
+    {
+      "url": "https://x.com/ABCDMMviha/status/2118555603970994671",
+      "kind": "social",
+      "seen": "2026-11-06"
+    },
+    {
+      "url": "https://x.com/ManavMishr89235/status/2118511209960075403",
+      "kind": "social",
+      "seen": "2026-11-06"
+    },
+    {
+      "url": "https://x.com/TrojanTx0/status/2118482959636303961",
+      "kind": "social",
+      "seen": "2026-11-06"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://claude.com/blog/dispatch-and-computer-use",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "retrieved": "2026-11-06",
+      "supports": [
+        "explanation"
+      ]
+    },
+    {
+      "url": "https://support.claude.com/en/articles/13947068-assign-tasks-from-anywhere-in-claude-cowork",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "retrieved": "2026-11-06",
+      "supports": [
+        "explanation"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-06",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-06",
+      "change": "Recorded the limits of primary-source verification; independent review pending."
+    }
+  ]
+}

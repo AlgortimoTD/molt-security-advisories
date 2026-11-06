@@ -2,7 +2,7 @@
   "schema": "msa-feed/1",
   "publisher": "MOLT Security Advisories",
   "homepage": "https://github.com/AlgortimoTD/molt-security-advisories",
-  "updated": "2026-11-05",
+  "updated": "2026-11-06",
   "advisories": [
     {
       "schema": "msa/1",
@@ -3205,6 +3205,575 @@
           "change": "Corrected platform coverage after independent review: added iOS, iPadOS, tvOS and watchOS fixes, expanded version checks and remediation, and clarified that the sources assess Apple-shipped WebKit only."
         }
       ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0032",
+      "title": "Kaniko ACR helper can leak Azure access tokens to lookalike registry hosts",
+      "summary": "Kaniko before 1.25.20 can disclose an Azure Resource Manager access token to an attacker-controlled registry. An untrusted Dockerfile image reference is sufficient; no build command or image push is required.",
+      "status": "published",
+      "published": "2026-11-06",
+      "updated": "2026-11-06",
+      "cve": [
+        "CVE-2026-105769"
+      ],
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Untrusted build inputs can expose a live cloud token when the build can obtain an Azure identity. Credential exposure warrants a 72-hour response; this is not unconditional code execution."
+      },
+      "affected": [
+        {
+          "product": "Chainguard Kaniko",
+          "ecosystem": "Go",
+          "fixed": "1.25.20",
+          "note": "Module github.com/chainguard-dev/kaniko. The upstream ACR helper has no fixed release."
+        }
+      ],
+      "exposure": "Requires attacker-influenced Dockerfiles or build arguments and an accessible Azure service principal, federated identity or managed identity. Using ACR is not required. The executor, the warmer and the standalone docker-credential-acr-env helper are affected.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "Go",
+            "name": "github.com/chainguard-dev/kaniko",
+            "ranges": [
+              {
+                "fixed": "1.25.20"
+              }
+            ]
+          },
+          "context": "any"
+        },
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check deployed executor, warmer and docker-credential-acr-env build provenance against Kaniko 1.25.20. A source dependency update alone does not replace deployed artifacts."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Apply the verified fix",
+          "details": "Rebuild the executor, warmer and standalone helper from 1.25.20 or later, or update the Go module. The repository publishes no images or binaries. Until then, prevent untrusted builds from accessing Azure identities, including metadata services. If untrusted builds had identity access, treat issued tokens as compromised and review identity activity. Rotating credentials does not revoke existing tokens.",
+          "risk": "Medium. Rebuilds interrupt CI; removing identity access can break authenticated pulls."
+        }
+      ],
+      "verification": [
+        "Confirm deployed artifacts derive from patched source and validate trusted builds."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-5q7h-w9jf-cx97",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-06",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "vendor_severity",
+            "exposure",
+            "severity",
+            "detectors",
+            "remediation",
+            "verification",
+            "ghsa"
+          ]
+        },
+        {
+          "url": "https://github.com/chainguard-forks/kaniko/security/advisories/GHSA-5q7h-w9jf-cx97",
+          "publisher": "Chainguard Kaniko",
+          "tier": 1,
+          "retrieved": "2026-11-06",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "vendor_severity",
+            "exposure",
+            "severity",
+            "detectors",
+            "remediation",
+            "verification",
+            "ghsa"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-06",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-06",
+          "change": "Initial record drafted for independent review."
+        },
+        {
+          "date": "2026-11-06",
+          "change": "Clarified that all three helper consumers are affected and recorded the published CVSS score and vector after re-reading both primary advisories."
+        }
+      ],
+      "ghsa": [
+        "GHSA-5q7h-w9jf-cx97"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Chainguard Kaniko",
+          "value": "9.3 Critical",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:N"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://github.com/advisories/GHSA-5q7h-w9jf-cx97",
+          "kind": "feed",
+          "seen": "2026-11-06"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0033",
+      "title": "Banks completion tools resolve untrusted import paths into executable callables",
+      "summary": "Banks through 2.4.2 parses tool definitions from completion bodies and resolves their import_path without an allowlist. A matching model tool call can invoke an attacker-selected Python callable with attacker-controlled arguments.",
+      "status": "published",
+      "published": "2026-11-06",
+      "updated": "2026-11-06",
+      "cve": [
+        "CVE-2026-61536"
+      ],
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Code execution requires attacker influence over a completion body and a matching tool call. These conditions can arise in agents using shared or network-supplied prompts, so the tool boundary warrants prompt patching."
+      },
+      "affected": [
+        {
+          "product": "banks",
+          "ecosystem": "PyPI",
+          "fixed": "2.4.3",
+          "note": "Affected through 2.4.2. The separate Jinja sandbox fix in 2.4.2 does not fix this issue."
+        }
+      ],
+      "exposure": "Requires attacker-influenced completion content and an LLM that emits tool calls. Execution inherits the Banks process privileges.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "PyPI",
+            "name": "banks",
+            "ranges": [
+              {
+                "fixed": "2.4.3"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Apply the verified fix",
+          "details": "Upgrade to 2.4.3 or later. The fix resolves callables from an explicit tool registry instead of arbitrary imports.",
+          "risk": "Medium. Applications may need to adapt tool registration; validate trusted completion flows."
+        }
+      ],
+      "verification": [
+        "Confirm the resolved Banks package is patched and completion tools use explicit registration."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-64vx-6h2c-rjh7",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-06",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "vendor_severity",
+            "exposure",
+            "severity",
+            "detectors",
+            "remediation",
+            "verification",
+            "ghsa"
+          ]
+        },
+        {
+          "url": "https://github.com/masci/banks/releases/tag/v2.4.3",
+          "publisher": "Banks",
+          "tier": 1,
+          "retrieved": "2026-11-06",
+          "supports": [
+            "affected",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-06",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-06",
+          "change": "Initial record drafted for independent review."
+        }
+      ],
+      "ghsa": [
+        "GHSA-64vx-6h2c-rjh7"
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Reviewed Advisory Database",
+          "value": "7.5 High"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://github.com/advisories/GHSA-64vx-6h2c-rjh7",
+          "kind": "feed",
+          "seen": "2026-11-06"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0034",
+      "title": "OpenSSH on musl without PAM can accept passwords for accounts without password hashes",
+      "summary": "OpenSSH before 10.6p2 on Linux with musl and PAM disabled can permit password authentication without knowing a password under specific account configurations. Alpine publishes backported package fixes and requires restarting sshd after updating.",
+      "status": "published",
+      "published": "2026-11-06",
+      "updated": "2026-11-06",
+      "cve": [
+        "CVE-2026-123158"
+      ],
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "A network caller can gain an account's privileges without its password when the documented configuration conditions hold. The resulting access can reach developer credentials, but the musl, PAM and account prerequisites prevent a universal critical rating."
+      },
+      "affected": [
+        {
+          "product": "Portable OpenSSH on Linux with musl and PAM disabled",
+          "fixed": "10.6p2",
+          "note": "Distribution backports must be checked separately."
+        },
+        {
+          "product": "Alpine Linux openssh",
+          "note": "Fixed packages: edge 10.6_p2-r0; 3.24 10.3_p1-r2; 3.23 10.2_p1-r1; 3.22 10.0_p1-r11; 3.21 9.9_p2-r1; 3.20 9.7_p1-r6; 3.19 9.6_p1-r3; 3.18 9.3_p2-r4; 3.17 9.1_p1-r7; 3.16 9.0_p1-r6."
+        }
+      ],
+      "exposure": "Alpine documents password authentication enabled, an account with a * password field and another account with a $5$ or $6$ hash. The ordinary openssh-server package lacks PAM; openssh-server-pam with UsePAM no is affected, while UsePAM yes is unaffected. Root is reachable when PermitRootLogin allows passwords or when an exposed account can escalate, for example through doas. Official Alpine tiny-cloud images 3.18.11 through 3.24.3 ship an alpine user with a * password and passwordless doas; they become exploitable when any $6$ hash exists. Containers without sshd are not exposed through this path.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Identify the running SSH server's package, libc, PAM and password-authentication settings. Compare upstream against 10.6p2 or the exact Alpine branch package floor in this advisory; do not flag vendor backports solely by upstream version."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Apply the verified fix",
+          "details": "Install OpenSSH 10.6p2 or the vendor backport and restart sshd. If updating is delayed, disable password authentication and restart sshd after validating configuration. Verify key login first and retain an existing session while testing a fresh login.",
+          "risk": "Medium. Restarting or changing authentication can interrupt automation or lock out administrators."
+        }
+      ],
+      "verification": [
+        "Confirm the running daemon uses the fixed package after restart.",
+        "If using containment, verify effective PasswordAuthentication is no, including applicable Match conditions, and test a new key login."
+      ],
+      "sources": [
+        {
+          "url": "https://www.openssh.org/txt/release-10.6p2",
+          "publisher": "OpenSSH",
+          "tier": 1,
+          "retrieved": "2026-11-06",
+          "supports": [
+            "summary",
+            "affected",
+            "remediation",
+            "severity"
+          ]
+        },
+        {
+          "url": "https://alpinelinux.org/posts/2026-11-05-openssh-password-authentication-bypass/",
+          "publisher": "Alpine Linux",
+          "tier": 1,
+          "retrieved": "2026-11-06",
+          "supports": [
+            "summary",
+            "affected",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification",
+            "severity"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/123xxx/CVE-2026-123158.json",
+          "publisher": "MITRE CNA via CVE Program",
+          "tier": 1,
+          "retrieved": "2026-11-06",
+          "supports": [
+            "cve",
+            "affected",
+            "vendor_severity",
+            "summary",
+            "exploitation"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-06",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-06",
+          "change": "Initial record drafted for independent review."
+        },
+        {
+          "date": "2026-11-06",
+          "change": "Expanded root exposure to include privilege escalation and tiny-cloud defaults, made the UsePAM no condition explicit, and recorded proof-of-concept status from the CVE record."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "MITRE CNA",
+          "value": "8.1 High",
+          "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/DarkWebInformer/status/2118412864767557672",
+          "kind": "social",
+          "seen": "2026-11-06"
+        }
+      ],
+      "exploitation": {
+        "status": "public-exploit",
+        "note": "CISA ADP SSVC in the CVE record marks exploitation as proof of concept; public reproductions are referenced."
+      }
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0035",
+      "title": "Claude plugin installation can resolve a pinned SHA to an attacker-controlled branch",
+      "summary": "Claude Code's plugin installer could select a branch named like the pinned commit instead of the reviewed commit. The advisory also names Claude Desktop's installation flow, but gives no separate Desktop fixed version.",
+      "status": "published",
+      "published": "2026-11-06",
+      "updated": "2026-11-06",
+      "cve": [
+        "CVE-2026-86063"
+      ],
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Installing a malicious plugin from a Git host that permits SHA-shaped branch names can bypass the integrity pin. This supply chain precondition limits reach while exposing coding-agent execution."
+      },
+      "affected": [
+        {
+          "product": "@anthropic-ai/claude-code",
+          "ecosystem": "npm",
+          "fixed": "2.1.179"
+        },
+        {
+          "product": "Claude Desktop plugin installation flow",
+          "note": "Named in the advisory; no separate fixed version specified."
+        }
+      ],
+      "exposure": "Requires an attacker-controlled plugin repository, installation pinned to a safe hash and a host allowing 40-character SHA-shaped branches.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "npm",
+            "name": "@anthropic-ai/claude-code",
+            "ranges": [
+              {
+                "fixed": "2.1.179"
+              }
+            ]
+          },
+          "context": "any"
+        },
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check Claude Desktop updates separately; this advisory does not map the plugin fix to a Desktop version."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Apply the verified fix",
+          "details": "Update Claude Code to 2.1.179 or later. Use vendor updates for Desktop.",
+          "risk": "Low. Validate plugin installation after updating."
+        }
+      ],
+      "verification": [
+        "Confirm the installed Claude Code version meets the fixed floor."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/anthropics/claude-code/security/advisories/GHSA-pq7j-f95f-qfcv",
+          "publisher": "Anthropic",
+          "tier": 1,
+          "retrieved": "2026-11-06",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "vendor_severity",
+            "exposure",
+            "severity",
+            "detectors",
+            "remediation",
+            "verification",
+            "ghsa"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-06",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-06",
+          "change": "Initial record drafted for independent review."
+        }
+      ],
+      "ghsa": [
+        "GHSA-pq7j-f95f-qfcv"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Anthropic",
+          "value": "7.7 High"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/GoToTokyoUniv0/status/2118640463255367890",
+          "kind": "social",
+          "seen": "2026-11-06"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0036",
+      "title": "Claude Desktop on Windows can execute a project-local git.exe",
+      "summary": "Claude Desktop on Windows searched the current directory when launching git.exe. A malicious executable in a project could run when that project was opened.",
+      "status": "published",
+      "published": "2026-11-06",
+      "updated": "2026-11-06",
+      "cve": [
+        "CVE-2026-88066"
+      ],
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Opening an attacker-controlled project can execute code with the application's privileges. This common developer interaction makes the flaw high priority, with a project-opening prerequisite."
+      },
+      "affected": [
+        {
+          "product": "Claude Desktop on Windows",
+          "fixed": "1.8089.0"
+        }
+      ],
+      "exposure": "Requires a malicious git.exe in a project directory opened in an affected Windows installation.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check Claude Desktop on Windows against version 1.8089.0. This is a Desktop issue, not a Claude Code CLI version check."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Apply the verified fix",
+          "details": "Update Claude Desktop to 1.8089.0 or later. Anthropic says standard auto-updates already delivered the fix.",
+          "risk": "Low. Restart and validate project workflows after updating."
+        }
+      ],
+      "verification": [
+        "Confirm Claude Desktop reports the fixed version or a later patched release."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/anthropics/claude-code/security/advisories/GHSA-4p2j-qj3c-6x84",
+          "publisher": "Anthropic",
+          "tier": 1,
+          "retrieved": "2026-11-06",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "vendor_severity",
+            "exposure",
+            "severity",
+            "detectors",
+            "remediation",
+            "verification",
+            "ghsa"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-06",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-06",
+          "change": "Initial record drafted for independent review."
+        }
+      ],
+      "ghsa": [
+        "GHSA-4p2j-qj3c-6x84"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Anthropic",
+          "value": "7.5 High"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/GoToTokyoUniv0/status/2118640463255367890",
+          "kind": "social",
+          "seen": "2026-11-06"
+        }
+      ]
     }
   ],
   "rejected": [
@@ -3247,6 +3816,15 @@
       "updated": "2026-11-04",
       "related": [],
       "url": "https://github.com/AlgortimoTD/molt-security-advisories/blob/main/rejected/2026/MSR-2026-0004.json"
+    },
+    {
+      "id": "MSR-2026-0005",
+      "claim": "A browser extension with access to claude.ai can bypass Claude Dispatch approvals and execute code on another computer on the same account, and the same unpatched flaw affects Cowork and Claude Code Remote Control.",
+      "verdict": "unverifiable",
+      "published": "2026-11-06",
+      "updated": "2026-11-06",
+      "related": [],
+      "url": "https://github.com/AlgortimoTD/molt-security-advisories/blob/main/rejected/2026/MSR-2026-0005.json"
     }
   ]
 }

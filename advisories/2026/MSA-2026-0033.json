@@ -1,0 +1,111 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0033",
+  "title": "Banks completion tools resolve untrusted import paths into executable callables",
+  "summary": "Banks through 2.4.2 parses tool definitions from completion bodies and resolves their import_path without an allowlist. A matching model tool call can invoke an attacker-selected Python callable with attacker-controlled arguments.",
+  "status": "published",
+  "published": "2026-11-06",
+  "updated": "2026-11-06",
+  "cve": [
+    "CVE-2026-61536"
+  ],
+  "severity": {
+    "level": "high",
+    "urgency": "72h",
+    "rationale": "Code execution requires attacker influence over a completion body and a matching tool call. These conditions can arise in agents using shared or network-supplied prompts, so the tool boundary warrants prompt patching."
+  },
+  "affected": [
+    {
+      "product": "banks",
+      "ecosystem": "PyPI",
+      "fixed": "2.4.3",
+      "note": "Affected through 2.4.2. The separate Jinja sandbox fix in 2.4.2 does not fix this issue."
+    }
+  ],
+  "exposure": "Requires attacker-influenced completion content and an LLM that emits tool calls. Execution inherits the Banks process privileges.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "PyPI",
+        "name": "banks",
+        "ranges": [
+          {
+            "fixed": "2.4.3"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Apply the verified fix",
+      "details": "Upgrade to 2.4.3 or later. The fix resolves callables from an explicit tool registry instead of arbitrary imports.",
+      "risk": "Medium. Applications may need to adapt tool registration; validate trusted completion flows."
+    }
+  ],
+  "verification": [
+    "Confirm the resolved Banks package is patched and completion tools use explicit registration."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-64vx-6h2c-rjh7",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-06",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "vendor_severity",
+        "exposure",
+        "severity",
+        "detectors",
+        "remediation",
+        "verification",
+        "ghsa"
+      ]
+    },
+    {
+      "url": "https://github.com/masci/banks/releases/tag/v2.4.3",
+      "publisher": "Banks",
+      "tier": 1,
+      "retrieved": "2026-11-06",
+      "supports": [
+        "affected",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-06",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-06",
+      "change": "Initial record drafted for independent review."
+    }
+  ],
+  "ghsa": [
+    "GHSA-64vx-6h2c-rjh7"
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub Reviewed Advisory Database",
+      "value": "7.5 High"
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://github.com/advisories/GHSA-64vx-6h2c-rjh7",
+      "kind": "feed",
+      "seen": "2026-11-06"
+    }
+  ]
+}

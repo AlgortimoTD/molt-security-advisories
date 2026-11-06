@@ -1,0 +1,130 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0032",
+  "title": "Kaniko ACR helper can leak Azure access tokens to lookalike registry hosts",
+  "summary": "Kaniko before 1.25.20 can disclose an Azure Resource Manager access token to an attacker-controlled registry. An untrusted Dockerfile image reference is sufficient; no build command or image push is required.",
+  "status": "published",
+  "published": "2026-11-06",
+  "updated": "2026-11-06",
+  "cve": [
+    "CVE-2026-105769"
+  ],
+  "severity": {
+    "level": "high",
+    "urgency": "72h",
+    "rationale": "Untrusted build inputs can expose a live cloud token when the build can obtain an Azure identity. Credential exposure warrants a 72-hour response; this is not unconditional code execution."
+  },
+  "affected": [
+    {
+      "product": "Chainguard Kaniko",
+      "ecosystem": "Go",
+      "fixed": "1.25.20",
+      "note": "Module github.com/chainguard-dev/kaniko. The upstream ACR helper has no fixed release."
+    }
+  ],
+  "exposure": "Requires attacker-influenced Dockerfiles or build arguments and an accessible Azure service principal, federated identity or managed identity. Using ACR is not required. The executor, the warmer and the standalone docker-credential-acr-env helper are affected.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "Go",
+        "name": "github.com/chainguard-dev/kaniko",
+        "ranges": [
+          {
+            "fixed": "1.25.20"
+          }
+        ]
+      },
+      "context": "any"
+    },
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check deployed executor, warmer and docker-credential-acr-env build provenance against Kaniko 1.25.20. A source dependency update alone does not replace deployed artifacts."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Apply the verified fix",
+      "details": "Rebuild the executor, warmer and standalone helper from 1.25.20 or later, or update the Go module. The repository publishes no images or binaries. Until then, prevent untrusted builds from accessing Azure identities, including metadata services. If untrusted builds had identity access, treat issued tokens as compromised and review identity activity. Rotating credentials does not revoke existing tokens.",
+      "risk": "Medium. Rebuilds interrupt CI; removing identity access can break authenticated pulls."
+    }
+  ],
+  "verification": [
+    "Confirm deployed artifacts derive from patched source and validate trusted builds."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-5q7h-w9jf-cx97",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-06",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "vendor_severity",
+        "exposure",
+        "severity",
+        "detectors",
+        "remediation",
+        "verification",
+        "ghsa"
+      ]
+    },
+    {
+      "url": "https://github.com/chainguard-forks/kaniko/security/advisories/GHSA-5q7h-w9jf-cx97",
+      "publisher": "Chainguard Kaniko",
+      "tier": 1,
+      "retrieved": "2026-11-06",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "vendor_severity",
+        "exposure",
+        "severity",
+        "detectors",
+        "remediation",
+        "verification",
+        "ghsa"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-06",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-06",
+      "change": "Initial record drafted for independent review."
+    },
+    {
+      "date": "2026-11-06",
+      "change": "Clarified that all three helper consumers are affected and recorded the published CVSS score and vector after re-reading both primary advisories."
+    }
+  ],
+  "ghsa": [
+    "GHSA-5q7h-w9jf-cx97"
+  ],
+  "vendor_severity": [
+    {
+      "source": "Chainguard Kaniko",
+      "value": "9.3 Critical",
+      "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:N"
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://github.com/advisories/GHSA-5q7h-w9jf-cx97",
+      "kind": "feed",
+      "seen": "2026-11-06"
+    }
+  ]
+}
