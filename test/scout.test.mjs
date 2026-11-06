@@ -208,7 +208,7 @@ async function harness(t, { dryRun = true, decisions = ['approve'], noItems = fa
   await command('git', ['init', '-b', 'main', '--quiet'], { cwd: repo });
   await command('git', ['config', 'user.email', 'test@example.invalid'], { cwd: repo });
   await command('git', ['config', 'user.name', 'Test'], { cwd: repo });
-  for (const file of ['schema', 'scripts', 'test', 'scout', 'package.json', 'feed.json']) fs.cpSync(path.join(ROOT, file), path.join(repo, file), { recursive: true });
+  for (const file of ['schema', 'scripts', 'test', 'scout', 'package.json', 'feed.json', 'README.md']) fs.cpSync(path.join(ROOT, file), path.join(repo, file), { recursive: true });
   await command('git', ['add', '.'], { cwd: repo }); await command('git', ['commit', '--quiet', '-m', 'fixture'], { cwd: repo });
   const head = (await command('git', ['rev-parse', 'HEAD'], { cwd: repo })).stdout.trim();
   const config = { repo, worktreesDir: path.join(root, 'trees'), stateDir: path.join(root, 'state'), ledgerPath: path.join(root, 'state/runs.jsonl'), llmControlPanelPath: '/example/panel', author: { provider: 'codex', profile: '/example/codex', model: 'codex-exact', timeoutS: 10 }, reviewer: { provider: 'claude', profile: '/example/claude', model: 'claude-exact', timeoutS: 10 }, github: { remote: 'origin', base: 'main' }, notify: { agent: 'test-scout', project: 'example-feed' }, x: { enabled: false, searches: [] }, dryRun };
@@ -289,6 +289,9 @@ test('offline orchestration commits only approved records locally in dry-run and
   assert.equal(h.calls.some(([file, args]) => file === 'gh' || file === 'agent-approval' || (file === 'git' && args[0] === 'push')), false);
   const committed = JSON.parse((await command('git', ['show', `${h.outcome.branch}:rejected/2026/MSR-2026-0001.json`], { cwd: h.repo })).stdout);
   assert.equal(committed.review.reviewer_model, 'claude-exact'); assert.equal(committed.review.notes.includes('PENDING'), false);
+  // The regenerated README section ships in the same commit as the record.
+  const readme = (await command('git', ['show', `${h.outcome.branch}:README.md`], { cwd: h.repo })).stdout;
+  assert.match(readme, /\[MSR-2026-0001\]\(rejected\/2026\/MSR-2026-0001\.json\)/);
   assert.equal(fs.existsSync(path.join(h.config.stateDir, 'cursor.json')), true);
   assert.equal(fs.readdirSync(h.config.worktreesDir).length, 0);
   // Each model run was confined to its own scope, and every scope was killed afterwards.

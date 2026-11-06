@@ -281,10 +281,12 @@ export async function runScout(config, dependencies = {}) {
       phase = 'gate'; log('gate: build feed and run complete repository checks');
       await exec('npm', ['run', 'feed'], { cwd: worktree, timeoutMs: 120_000 });
       await exec('npm', ['run', 'check'], { cwd: worktree, timeoutMs: 300_000 });
-      phase = 'commit'; log('commit: approved records and generated feed');
-      await stageExactly(worktree, [...files, 'feed.json'], exec);
-      // Re-run the path guard on what is about to be committed: nothing outside records and the feed.
-      const outside = (await changedPaths(worktree, exec)).filter(file => file !== 'feed.json' && !files.includes(file));
+      phase = 'commit'; log('commit: approved records, generated feed and README latest section');
+      // npm run feed regenerates both files after the models finished; models never write them.
+      const generated = ['feed.json', 'README.md'];
+      await stageExactly(worktree, [...files, ...generated], exec);
+      // Re-run the path guard on what is about to be committed: nothing outside records and generated files.
+      const outside = (await changedPaths(worktree, exec)).filter(file => !generated.includes(file) && !files.includes(file));
       if (outside.length) throw Error('Unapproved paths changed before commit');
       await git(['commit', '-m', `Scout ${date}: ${files.map(recordId).join(', ')}`], { timeoutMs: 60_000 });
       if (config.dryRun) log(`dry-run: would push ${branch}, open a PR, require green checks, and squash merge`);
