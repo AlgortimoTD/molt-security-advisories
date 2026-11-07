@@ -1,0 +1,118 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0047",
+  "title": "Exploited Chrome V8 type confusion can execute code inside the browser sandbox",
+  "summary": "Google fixed CVE-2026-85046 in its September 3 security update and confirmed an exploit in the wild. A crafted HTML page can execute code inside the sandbox through V8 type confusion. This is a historical flaw identified during the current lead review, not a new November disclosure.",
+  "status": "published",
+  "published": "2026-11-07",
+  "updated": "2026-11-07",
+  "cve": [
+    "CVE-2026-85046"
+  ],
+  "severity": {
+    "level": "critical",
+    "urgency": "24h",
+    "rationale": "Crafted web content reaches code execution, and Google confirms exploitation in the wild. Confirmed exploitation reaching code execution warrants a 24-hour response under this rubric; the CVE establishes execution inside the sandbox, not a standalone sandbox escape."
+  },
+  "vendor_severity": [
+    {
+      "source": "Google Chrome",
+      "value": "High"
+    }
+  ],
+  "exploitation": {
+    "status": "exploited-in-the-wild",
+    "note": "Google confirms an exploit exists in the wild in its September 3, 2026 release notice. The CVE record includes CISA KEV metadata with a date added of 2026-09-04.",
+    "kev": true
+  },
+  "affected": [
+    {
+      "product": "Google Chrome desktop",
+      "fixed": "152.0.7977.82",
+      "note": "Google lists 152.0.7977.82/.83 for Windows and macOS and 152.0.7977.82 for Linux."
+    }
+  ],
+  "exposure": "Affected Chrome instances processing untrusted HTML are exposed, including agent-driven browsing. The primary description limits this flaw alone to execution inside the sandbox.",
+  "detectors": [
+    {
+      "type": "chromium-browser-version",
+      "params": {
+        "product": "chrome",
+        "fixed": "152.0.7977.82"
+      },
+      "context": "browsing"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update Chrome",
+      "details": "Install a current patched Chrome release at or above 152.0.7977.82 and restart browser processes. This historical floor addresses this CVE only.",
+      "risk": "Low. Restarting interrupts active browsing sessions."
+    }
+  ],
+  "verification": [
+    "Confirm the running browser executable reports the patched version after restart."
+  ],
+  "sources": [
+    {
+      "url": "https://chromereleases.googleblog.com/2026/09/stable-channel-update-for-desktop_01882797386.html",
+      "publisher": "Google Chrome Releases",
+      "tier": 1,
+      "retrieved": "2026-11-07",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "vendor_severity",
+        "exploitation",
+        "remediation",
+        "severity",
+        "detectors",
+        "verification",
+        "exposure"
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/85xxx/CVE-2026-85046.json",
+      "publisher": "Chrome CNA via CVE Program",
+      "tier": 1,
+      "retrieved": "2026-11-07",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "exposure",
+        "severity",
+        "detectors",
+        "remediation",
+        "verification",
+        "exploitation"
+      ]
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/TV9Tamil/status/2119029619815047327",
+      "kind": "social",
+      "seen": "2026-11-07",
+      "note": "Generic Chrome 12-fix lead prompted a primary-source check. The verified September advisory is recorded with its historical date; the post does not identify this CVE."
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-07",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-07",
+      "change": "Initial record drafted for independent review from the historical September vendor notice."
+    },
+    {
+      "date": "2026-11-07",
+      "change": "Added the CISA KEV listing and September 4, 2026 inclusion date from CISA enrichment in the CVE record."
+    }
+  ]
+}

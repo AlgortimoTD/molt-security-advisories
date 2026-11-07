@@ -1,0 +1,218 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0039",
+  "title": "Incus and LXD project checks can be bypassed through copying and snapshot restore",
+  "summary": "Missing source authorization permits copying instances or custom volumes from another project and accessing their secrets. Separately, restoring a crafted snapshot bypasses blocked low-level settings and can run host commands as root. The CVEs identify Incus; LXD uses separate GHSAs.",
+  "status": "published",
+  "published": "2026-11-07",
+  "updated": "2026-11-07",
+  "cve": [
+    "CVE-2026-55622",
+    "CVE-2026-55621",
+    "CVE-2026-48751"
+  ],
+  "ghsa": [
+    "GHSA-c9f5-j9c3-mhrg",
+    "GHSA-64f3-v33m-w89f",
+    "GHSA-48q5-w887-33wv",
+    "GHSA-qx75-2p3r-pwm5",
+    "GHSA-7mr3-28h5-m5vx",
+    "GHSA-47w9-6r3f-938g"
+  ],
+  "severity": {
+    "level": "high",
+    "urgency": "72h",
+    "rationale": "Restricted users can expose other projects' secrets or escape project execution restrictions. Existing API privileges and the specific copy or snapshot workflow are required, making this high priority for shared developer container services."
+  },
+  "vendor_severity": [
+    {
+      "source": "Incus",
+      "value": "High",
+      "applies_to": "Instance and custom-volume copy"
+    },
+    {
+      "source": "Incus",
+      "value": "9.9 Critical",
+      "applies_to": "Snapshot restriction bypass"
+    },
+    {
+      "source": "GitHub Reviewed Advisory Database",
+      "value": "High",
+      "applies_to": "LXD instance and custom-volume copy"
+    },
+    {
+      "source": "GitHub Reviewed Advisory Database",
+      "value": "9.9 Critical",
+      "applies_to": "LXD snapshot restriction bypass"
+    }
+  ],
+  "affected": [
+    {
+      "product": "Incus",
+      "fixed": "7.2.0"
+    },
+    {
+      "product": "github.com/canonical/lxd",
+      "ecosystem": "Go",
+      "fixed": "0.0.0-20260630083100-c5184be310b1",
+      "note": "Go module revision, not a numbered LXD daemon release."
+    }
+  ],
+  "exposure": "Copy attacks require destination creation rights and knowledge of the source project and object names on the same server. Snapshot attacks require transferring and restoring an instance snapshot containing blocked low-level settings.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check Incus against 7.2.0 or a vendor backport. For LXD, verify the installed build contains all three project restriction fixes corresponding to Go revision c5184be310b1."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Apply the verified fix",
+      "details": "Update Incus to 7.2.0 or later, or install an LXD vendor build containing all three listed project restriction fixes.",
+      "risk": "Medium. Schedule service restarts and validate dependent workflows."
+    }
+  ],
+  "verification": [
+    "Confirm the running daemon contains the source authorization and snapshot restriction fixes; validate legitimate project workflows."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/lxc/incus/security/advisories/GHSA-c9f5-j9c3-mhrg",
+      "publisher": "lxc/incus",
+      "tier": 1,
+      "retrieved": "2026-11-07",
+      "supports": [
+        "summary",
+        "affected",
+        "exposure",
+        "severity",
+        "detectors",
+        "remediation",
+        "verification",
+        "ghsa",
+        "vendor_severity",
+        "cve"
+      ]
+    },
+    {
+      "url": "https://github.com/lxc/incus/security/advisories/GHSA-64f3-v33m-w89f",
+      "publisher": "lxc/incus",
+      "tier": 1,
+      "retrieved": "2026-11-07",
+      "supports": [
+        "summary",
+        "affected",
+        "exposure",
+        "severity",
+        "detectors",
+        "remediation",
+        "verification",
+        "ghsa",
+        "vendor_severity",
+        "cve"
+      ]
+    },
+    {
+      "url": "https://github.com/lxc/incus/security/advisories/GHSA-48q5-w887-33wv",
+      "publisher": "lxc/incus",
+      "tier": 1,
+      "retrieved": "2026-11-07",
+      "supports": [
+        "summary",
+        "affected",
+        "exposure",
+        "severity",
+        "detectors",
+        "remediation",
+        "verification",
+        "ghsa",
+        "vendor_severity",
+        "cve"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-qx75-2p3r-pwm5",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-07",
+      "supports": [
+        "summary",
+        "affected",
+        "exposure",
+        "severity",
+        "detectors",
+        "remediation",
+        "verification",
+        "ghsa",
+        "vendor_severity"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-7mr3-28h5-m5vx",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-07",
+      "supports": [
+        "summary",
+        "affected",
+        "exposure",
+        "severity",
+        "detectors",
+        "remediation",
+        "verification",
+        "ghsa",
+        "vendor_severity"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-47w9-6r3f-938g",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-07",
+      "supports": [
+        "summary",
+        "affected",
+        "exposure",
+        "severity",
+        "detectors",
+        "remediation",
+        "verification",
+        "ghsa",
+        "vendor_severity"
+      ]
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://github.com/advisories/GHSA-qx75-2p3r-pwm5",
+      "kind": "feed",
+      "seen": "2026-11-07"
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-7mr3-28h5-m5vx",
+      "kind": "feed",
+      "seen": "2026-11-07"
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-47w9-6r3f-938g",
+      "kind": "feed",
+      "seen": "2026-11-07"
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-07",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-07",
+      "change": "Initial record drafted for independent review."
+    }
+  ]
+}

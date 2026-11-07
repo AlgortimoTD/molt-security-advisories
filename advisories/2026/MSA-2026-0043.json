@@ -1,0 +1,162 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0043",
+  "title": "Claude Code UI default authentication can be bypassed for WebSocket shell execution",
+  "summary": "The third-party Claude Code UI combines a default JWT secret, incomplete WebSocket user validation and shell injection into unauthenticated code execution. A separate authenticated Git endpoint injection is fixed in 1.24.0; the WebSocket chain requires 1.25.0.",
+  "status": "published",
+  "published": "2026-11-07",
+  "updated": "2026-11-07",
+  "severity": {
+    "level": "critical",
+    "urgency": "24h",
+    "rationale": "A network-accessible default installation can execute commands without attacker credentials. The exposed process serves a coding assistant and can reach developer code and data, warranting a 24-hour response."
+  },
+  "affected": [
+    {
+      "product": "@siteboon/claude-code-ui",
+      "ecosystem": "npm",
+      "fixed": "1.25.0",
+      "note": "WebSocket flaw affects versions through 1.24.0. The separate Git endpoint flaw affects versions through 1.23.0 and is fixed in 1.24.0."
+    }
+  ],
+  "exposure": "Requires network access to the affected UI. The unauthenticated chain depends on the default JWT secret; the Git endpoint issue separately requires authentication. This is a third-party UI, not the Anthropic CLI.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "npm",
+        "name": "@siteboon/claude-code-ui",
+        "ranges": [
+          {
+            "fixed": "1.25.0"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Apply the verified fix",
+      "details": "Upgrade Claude Code UI to 1.25.0 or later and configure an explicit strong JWT secret. Updating only to 1.24.0 leaves the WebSocket chain affected.",
+      "risk": "Medium. Restart affected sessions and validate dependent workflows."
+    }
+  ],
+  "verification": [
+    "Confirm the running UI is patched, uses an explicit secret and rejects tokens for nonexistent users."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/siteboon/claudecodeui/security/advisories/GHSA-gv8f-wpm2-m5wr",
+      "publisher": "siteboon/claudecodeui",
+      "tier": 1,
+      "retrieved": "2026-11-07",
+      "supports": [
+        "summary",
+        "affected",
+        "exposure",
+        "severity",
+        "detectors",
+        "remediation",
+        "verification",
+        "ghsa",
+        "cve",
+        "vendor_severity"
+      ]
+    },
+    {
+      "url": "https://github.com/siteboon/claudecodeui/security/advisories/GHSA-f2fc-vc88-6w7q",
+      "publisher": "siteboon/claudecodeui",
+      "tier": 1,
+      "retrieved": "2026-11-07",
+      "supports": [
+        "summary",
+        "affected",
+        "exposure",
+        "severity",
+        "detectors",
+        "remediation",
+        "verification",
+        "ghsa",
+        "cve",
+        "vendor_severity"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-gv8f-wpm2-m5wr",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-07",
+      "supports": [
+        "summary",
+        "affected",
+        "exposure",
+        "severity",
+        "detectors",
+        "remediation",
+        "verification",
+        "ghsa",
+        "cve",
+        "vendor_severity"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-f2fc-vc88-6w7q",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-07",
+      "supports": [
+        "summary",
+        "affected",
+        "exposure",
+        "severity",
+        "detectors",
+        "remediation",
+        "verification",
+        "ghsa",
+        "cve",
+        "vendor_severity"
+      ]
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/tsumikasanedev/status/2118944681799389607",
+      "kind": "social",
+      "seen": "2026-11-07"
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-07",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-07",
+      "change": "Initial record drafted for independent review."
+    }
+  ],
+  "cve": [
+    "CVE-2026-31975",
+    "CVE-2026-31862"
+  ],
+  "ghsa": [
+    "GHSA-gv8f-wpm2-m5wr",
+    "GHSA-f2fc-vc88-6w7q"
+  ],
+  "vendor_severity": [
+    {
+      "source": "siteboon/claudecodeui vendor advisory",
+      "value": "9.8 Critical",
+      "applies_to": "WebSocket chain"
+    },
+    {
+      "source": "siteboon/claudecodeui vendor advisory",
+      "value": "9.1 Critical",
+      "applies_to": "Git endpoint injection"
+    }
+  ]
+}

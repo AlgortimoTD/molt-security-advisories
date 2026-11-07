@@ -1,0 +1,120 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0042",
+  "title": "MCP Toolbox older protocol handlers omit per-tool OAuth scope checks",
+  "summary": "A low-privilege authenticated client can invoke higher-privilege tools by selecting an older MCP protocol or omitting the version header. The CVE identifies version 1.3.0; the vendor includes centralized scope validation in release 1.4.0.",
+  "status": "published",
+  "published": "2026-11-07",
+  "updated": "2026-11-07",
+  "severity": {
+    "level": "high",
+    "urgency": "72h",
+    "rationale": "An authenticated client can bypass the intended tool authorization boundary and reach privileged data operations. Possessing a low-privilege token is a meaningful precondition, but scoped agent database access needs prompt correction."
+  },
+  "affected": [
+    {
+      "product": "MCP Toolbox for Databases",
+      "fixed": "1.4.0",
+      "note": "The CVE identifies exactly 1.3.0 as affected; no broader affected range is asserted. Release 1.4.0 includes the scope validation fix."
+    }
+  ],
+  "exposure": "Requires authenticated access and tools restricted by scopesRequired. Vulnerable handlers are 2025-06-18, 2025-03-26 and 2024-11-05; omitting the header selects the latter.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check for MCP Toolbox 1.3.0 and verify the deployed build includes the centralized scope validation shipped in 1.4.0."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Apply the verified fix",
+      "details": "Install MCP Toolbox 1.4.0 or a later release containing the centralized scope validation fix. Do not rely on clients voluntarily selecting the newer protocol.",
+      "risk": "Medium. Restart affected sessions and validate dependent workflows."
+    }
+  ],
+  "verification": [
+    "With a low-scope test token, verify privileged tool calls are denied for every supported protocol and with the version header omitted."
+  ],
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/11xxx/CVE-2026-11719.json",
+      "publisher": "CVE Program, assigning vendor CNA",
+      "tier": 1,
+      "retrieved": "2026-11-07",
+      "supports": [
+        "summary",
+        "affected",
+        "exposure",
+        "severity",
+        "detectors",
+        "remediation",
+        "verification",
+        "cve",
+        "vendor_severity"
+      ]
+    },
+    {
+      "url": "https://github.com/googleapis/mcp-toolbox/pull/3335",
+      "publisher": "Google MCP Toolbox",
+      "tier": 1,
+      "retrieved": "2026-11-07",
+      "supports": [
+        "summary",
+        "affected",
+        "exposure",
+        "severity",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/googleapis/mcp-toolbox/releases/tag/v1.4.0",
+      "publisher": "Google MCP Toolbox",
+      "tier": 1,
+      "retrieved": "2026-11-07",
+      "supports": [
+        "summary",
+        "affected",
+        "exposure",
+        "severity",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/DFIR_Lab/status/2118885888482500767",
+      "kind": "social",
+      "seen": "2026-11-07"
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-07",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-07",
+      "change": "Initial record drafted for independent review."
+    }
+  ],
+  "cve": [
+    "CVE-2026-11719"
+  ],
+  "vendor_severity": [
+    {
+      "source": "Google CNA",
+      "value": "8.6 High",
+      "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N"
+    }
+  ]
+}
