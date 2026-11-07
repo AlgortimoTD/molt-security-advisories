@@ -1,0 +1,97 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0045",
+  "title": "Xen grant copy flaws allow a guest to read and write other domains' memory",
+  "summary": "Xen grant-copy validation flaws allow a malicious guest to read and write arbitrary memory belonging to other domains, including Dom0. Xen 4.6 onward is affected; XSA-523 provides patches and reports no known mitigation.",
+  "status": "published",
+  "published": "2026-11-07",
+  "updated": "2026-11-07",
+  "severity": {
+    "level": "high",
+    "urgency": "72h",
+    "rationale": "The attacker needs control of a guest, but can then cross the virtualization boundary into other guests and Dom0. This is high priority for developer or agent workloads isolated with Xen."
+  },
+  "affected": [
+    {
+      "product": "Xen hypervisor",
+      "introduced": "4.6",
+      "note": "XSA-523 provides branch patches, not a numbered first fixed release."
+    }
+  ],
+  "exposure": "Relevant where Xen hosts untrusted guests, including developer and agent virtual machines.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "For Xen 4.6 or later, verify the vendor build contains both XSA-523 fixes; a version number alone does not establish backport status."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Apply the verified fix",
+      "details": "Apply both XSA-523 patches for the applicable branch or obtain a vendor-patched build. The advisory provides patches for unstable/4.19 and 4.18/4.17 and identifies no known mitigation.",
+      "risk": "Medium. Plan for a host reboot, interrupting all guests remaining on the host, unless the vendor provides an applicable live patch. Validate guests afterwards."
+    }
+  ],
+  "verification": [
+    "Confirm the running hypervisor includes both fixes after the host reboot or application of a vendor-provided live patch; validate guest workloads."
+  ],
+  "sources": [
+    {
+      "url": "https://xenbits.xen.org/xsa/advisory-523.html",
+      "publisher": "Xen Project",
+      "tier": 1,
+      "retrieved": "2026-11-07",
+      "supports": [
+        "summary",
+        "affected",
+        "exposure",
+        "severity",
+        "detectors",
+        "remediation",
+        "verification",
+        "cve"
+      ]
+    },
+    {
+      "url": "https://xenbits.xenproject.org/docs/4.21-testing/features/livepatch.html",
+      "publisher": "Xen Project",
+      "tier": 1,
+      "retrieved": "2026-11-07",
+      "supports": [
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/TheEaglegon/status/2118726059554492763",
+      "kind": "social",
+      "seen": "2026-11-07"
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-07",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-07",
+      "change": "Initial record drafted for independent review."
+    },
+    {
+      "date": "2026-11-07",
+      "change": "Clarified that hypervisor remediation requires planning for a host reboot and guest interruption unless an applicable vendor live patch is available; a session restart is insufficient."
+    }
+  ],
+  "cve": [
+    "CVE-2026-102703",
+    "CVE-2026-102704"
+  ]
+}
