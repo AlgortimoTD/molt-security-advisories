@@ -1,0 +1,136 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0051",
+  "title": "fastapi-code-generator emits executable Python from untrusted OpenAPI fields",
+  "summary": "Unescaped route paths and status-code keys of additional responses execute injected expressions when generated code is imported. An unescaped operation summary executes injected code when the generated handler is called.",
+  "status": "published",
+  "published": "2026-11-10",
+  "updated": "2026-11-10",
+  "severity": {
+    "level": "high",
+    "urgency": "72h",
+    "rationale": "Code execution requires generation from an attacker-influenced specification and execution of the output. These prerequisites occur in developer and CI workflows, warranting 72 hours."
+  },
+  "affected": [
+    {
+      "product": "fastapi-code-generator",
+      "ecosystem": "PyPI",
+      "fixed": "0.8.1"
+    }
+  ],
+  "exposure": "Workflows generating and running FastAPI applications from untrusted OpenAPI specifications are exposed.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "PyPI",
+        "name": "fastapi-code-generator",
+        "ranges": [
+          {
+            "fixed": "0.8.1"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Apply remediation",
+      "details": "Upgrade to 0.8.1 or later. As a remediation recommendation, regenerate affected output from reviewed specifications before importing or serving it.",
+      "risk": "Medium. Updating or containment can interrupt dependent workflows."
+    }
+  ],
+  "verification": [
+    "Confirm the installed and running component meets the documented fix or containment condition."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-h667-4jj2-cgv4",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-10",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-6xmv-cjr5-w3q8",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-10",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-p2mm-64f6-gmpp",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-10",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-10",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-10",
+      "change": "Initial record drafted for independent review."
+    },
+    {
+      "date": "2026-11-10",
+      "change": "Specified that the additional response injection sink is the status-code key, not the content-type key."
+    }
+  ],
+  "cve": [
+    "CVE-2026-63470",
+    "CVE-2026-63469",
+    "CVE-2026-63471"
+  ],
+  "ghsa": [
+    "GHSA-h667-4jj2-cgv4",
+    "GHSA-6xmv-cjr5-w3q8",
+    "GHSA-p2mm-64f6-gmpp"
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub advisory",
+      "value": "Critical"
+    }
+  ]
+}

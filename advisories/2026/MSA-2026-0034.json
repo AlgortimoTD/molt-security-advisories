@@ -5,14 +5,14 @@
   "summary": "OpenSSH before 10.6p2 on Linux with musl and PAM disabled can permit password authentication without knowing a password under specific account configurations. Alpine publishes backported package fixes and requires restarting sshd after updating.",
   "status": "published",
   "published": "2026-11-06",
-  "updated": "2026-11-06",
+  "updated": "2026-11-10",
   "cve": [
     "CVE-2026-123158"
   ],
   "severity": {
-    "level": "high",
-    "urgency": "72h",
-    "rationale": "A network caller can gain an account's privileges without its password when the documented configuration conditions hold. The resulting access can reach developer credentials, but the musl, PAM and account prerequisites prevent a universal critical rating."
+    "level": "critical",
+    "urgency": "24h",
+    "rationale": "CISA now lists this authentication bypass as exploited in the wild. Exploited account access can reach developer credentials and code execution, warranting 24 hours; the musl, PAM and account prerequisites still determine exposure."
   },
   "affected": [
     {
@@ -40,11 +40,17 @@
       "action": "Apply the verified fix",
       "details": "Install OpenSSH 10.6p2 or the vendor backport and restart sshd. If updating is delayed, disable password authentication and restart sshd after validating configuration. Verify key login first and retain an existing session while testing a fresh login.",
       "risk": "Medium. Restarting or changing authentication can interrupt automation or lock out administrators."
+    },
+    {
+      "action": "Investigate possible compromise",
+      "details": "Search authentication logs for Accepted password for entries involving accounts without passwords, including root and key-only users. Review doas activity, newly created users and files, and authorized keys. If an unauthorized login cannot be ruled out, treat the system as compromised.",
+      "risk": "Medium. Investigation and compromise response can interrupt services; installing the fix does not establish that earlier access did not occur."
     }
   ],
   "verification": [
     "Confirm the running daemon uses the fixed package after restart.",
-    "If using containment, verify effective PasswordAuthentication is no, including applicable Match conditions, and test a new key login."
+    "If using containment, verify effective PasswordAuthentication is no, including applicable Match conditions, and test a new key login.",
+    "Complete the Alpine compromise checks for exposed systems; unresolved evidence of a possible login requires treating the system as compromised."
   ],
   "sources": [
     {
@@ -63,7 +69,7 @@
       "url": "https://alpinelinux.org/posts/2026-11-05-openssh-password-authentication-bypass/",
       "publisher": "Alpine Linux",
       "tier": 1,
-      "retrieved": "2026-11-06",
+      "retrieved": "2026-11-10",
       "supports": [
         "summary",
         "affected",
@@ -78,7 +84,7 @@
       "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/123xxx/CVE-2026-123158.json",
       "publisher": "MITRE CNA via CVE Program",
       "tier": 1,
-      "retrieved": "2026-11-06",
+      "retrieved": "2026-11-10",
       "supports": [
         "cve",
         "affected",
@@ -86,12 +92,22 @@
         "summary",
         "exploitation"
       ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json",
+      "publisher": "CISA",
+      "tier": 1,
+      "retrieved": "2026-11-10",
+      "supports": [
+        "exploitation",
+        "severity"
+      ]
     }
   ],
   "review": {
     "author_model": "gpt-6.1-sol",
     "reviewer_model": "claude-opus-5-5",
-    "reviewed": "2026-11-06",
+    "reviewed": "2026-11-10",
     "verdict": "approve",
     "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
   },
@@ -103,6 +119,14 @@
     {
       "date": "2026-11-06",
       "change": "Expanded root exposure to include privilege escalation and tiny-cloud defaults, made the UsePAM no condition explicit, and recorded proof-of-concept status from the CVE record."
+    },
+    {
+      "date": "2026-11-10",
+      "change": "Replaced proof-of-concept status with confirmed exploitation after CISA KEV inclusion on November 9; raised severity to critical and urgency to 24 hours. Existing exposure conditions and fixes are unchanged."
+    },
+    {
+      "date": "2026-11-10",
+      "change": "Added Alpine compromise investigation guidance following confirmed exploitation and refreshed the Alpine and CVE source retrieval dates after re-reading them."
     }
   ],
   "vendor_severity": [
@@ -120,7 +144,8 @@
     }
   ],
   "exploitation": {
-    "status": "public-exploit",
-    "note": "CISA ADP SSVC in the CVE record marks exploitation as proof of concept; public reproductions are referenced."
+    "status": "exploited-in-the-wild",
+    "kev": true,
+    "note": "CISA added this vulnerability to KEV on November 9, 2026."
   }
 }

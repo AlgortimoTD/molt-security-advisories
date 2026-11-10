@@ -1,0 +1,40 @@
+{
+  "schema": "msr/1",
+  "id": "MSR-2026-0006",
+  "claim": "Unpatched Grok Bot sandbox flaws let a prompt-injected command obtain root, read every account file and maintain persistent access.",
+  "verdict": "unverifiable",
+  "explanation": "The inspected vendor security documentation describes hosted computers, network controls and action approvals, but does not establish the reported root escalation, persistence mechanism, affected deployments or current patch status. This record marks the tier 1 evidence gap, not a finding that the reported attack is false or that the platform is safe. A vendor advisory, vendor fix record or qualifying vulnerability record is needed to substantiate those claims under this feed policy.",
+  "published": "2026-11-10",
+  "updated": "2026-11-10",
+  "discovery": [
+    {
+      "url": "https://x.com/infrastack_ai/status/2119924547579519119",
+      "kind": "social",
+      "seen": "2026-11-10"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://docs.x.ai/grok-bot/security",
+      "publisher": "xAI",
+      "tier": 1,
+      "retrieved": "2026-11-10",
+      "supports": [
+        "explanation"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-10",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-10",
+      "change": "Recorded the limits of tier 1 verification; independent review pending."
+    }
+  ]
+}
