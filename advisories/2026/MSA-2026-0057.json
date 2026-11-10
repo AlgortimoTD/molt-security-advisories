@@ -1,0 +1,107 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0057",
+  "title": "Exploited GPUStack authentication bypass grants remote administrator access",
+  "summary": "GPUStack trusts loopback request sources by default. A same-host proxy or forged real-IP header can grant unauthenticated administrator access, secret disclosure and worker code execution.",
+  "status": "published",
+  "published": "2026-11-10",
+  "updated": "2026-11-10",
+  "severity": {
+    "level": "critical",
+    "urgency": "24h",
+    "rationale": "CISA lists this flaw as exploited, and administrator access reaches secrets and code execution. Confirmed exploitation warrants action within 24 hours."
+  },
+  "affected": [
+    {
+      "product": "gpustack",
+      "ecosystem": "PyPI",
+      "fixed": "2.2.0"
+    }
+  ],
+  "exposure": "Exposed APIs with force_auth_localhost disabled can trust proxy peers or a forged X-GPUStack-Real-IP header as loopback.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "PyPI",
+        "name": "gpustack",
+        "ranges": [
+          {
+            "fixed": "2.2.0"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Apply remediation",
+      "details": "Upgrade to 2.2.0 or later. Until then, require force_auth_localhost=true, strip client-supplied real-IP headers and restrict API access as the advisory recommends.",
+      "risk": "Medium. Updating or containment can interrupt dependent workflows."
+    }
+  ],
+  "verification": [
+    "Confirm the installed and running component meets the documented fix or containment condition."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-gj9m-f8ph-pmhr",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-10",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json",
+      "publisher": "CISA",
+      "tier": 1,
+      "retrieved": "2026-11-10",
+      "supports": [
+        "exploitation",
+        "severity"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-10",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-10",
+      "change": "Initial record drafted for independent review."
+    }
+  ],
+  "cve": [
+    "CVE-2026-102895"
+  ],
+  "ghsa": [
+    "GHSA-gj9m-f8ph-pmhr"
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub advisory",
+      "value": "Critical"
+    }
+  ],
+  "exploitation": {
+    "status": "exploited-in-the-wild",
+    "kev": true,
+    "note": "CISA added the flaw on November 9, 2026."
+  }
+}
