@@ -2,7 +2,7 @@
   "schema": "msa-feed/1",
   "publisher": "MOLT Security Advisories",
   "homepage": "https://github.com/AlgortimoTD/molt-security-advisories",
-  "updated": "2026-11-10",
+  "updated": "2026-11-12",
   "advisories": [
     {
       "schema": "msa/1",
@@ -6512,6 +6512,2508 @@
           "change": "Made the title and summary singular to match the sole malicious release listed by GitHub."
         }
       ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0065",
+      "title": "Exploited Chrome XML use-after-free permits code execution inside the sandbox",
+      "summary": "A crafted HTML page can exploit an XML use-after-free to execute code inside the browser sandbox. CISA added the vulnerability to its exploited-vulnerability catalog on November 10.",
+      "status": "published",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "severity": {
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "Confirmed exploitation reaches browser code execution through untrusted pages. Agent browsing makes that content routinely reachable, warranting action within 24 hours."
+      },
+      "affected": [
+        {
+          "product": "Google Chrome Stable",
+          "fixed": "157.0.8103.50",
+          "note": "The vendor CVE description identifies Stable versions before this build. Other channels and Chromium-derived products require their own vendor fix mapping."
+        }
+      ],
+      "exposure": "Browsers rendering untrusted HTML are exposed. This CVE establishes execution inside the sandbox, not a sandbox escape. Test browsers confined to trusted content have less exposure.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "For Google Chrome Stable, read the executable version and update versions below 157.0.8103.50. For other channels or derived browsers, verify the vendor has incorporated the CVE-2026-125350 fix."
+          },
+          "context": "browsing"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Install the current patched vendor browser and restart it. Chrome Stable builds from 157.0.8103.50 address this CVE; verify other channels against their vendor notices.",
+          "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version and the component used by running processes meet the documented fix or containment condition."
+      ],
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/125xxx/CVE-2026-125350.json",
+          "publisher": "CVE Program, vendor CNA",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json",
+          "publisher": "CISA",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "exploitation",
+            "summary",
+            "severity",
+            "remediation"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-12",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-12",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-125350"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Google CNA",
+          "value": "High"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/1_Z0DIAC_1/status/2120778925232054352",
+          "kind": "social",
+          "seen": "2026-11-12"
+        }
+      ],
+      "exploitation": {
+        "status": "exploited-in-the-wild",
+        "kev": true,
+        "note": "Listed in CISA KEV on November 10, 2026."
+      }
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0066",
+      "title": "Chrome ServiceWorker use-after-free can execute code outside the sandbox",
+      "summary": "The ServiceWorker flaw permits code execution outside the sandbox through crafted HTML. Separate CSS, Layout and Accessibility use-after-free flaws permit execution inside the sandbox.",
+      "status": "published",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "severity": {
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "A crafted page can execute code outside the sandbox without an additional configuration prerequisite in the vendor record. Unattended agent browsers need the fix within 24 hours."
+      },
+      "affected": [
+        {
+          "product": "Google Chrome Stable",
+          "fixed": "157.0.8103.78",
+          "note": "Stable: 157.0.8103.78/.79 on Windows and macOS; 157.0.8103.78 on Linux."
+        },
+        {
+          "product": "Google Chrome Extended Stable",
+          "fixed": "156.0.8078.100",
+          "note": "Windows and macOS. The release lists all four CVEs."
+        }
+      ],
+      "exposure": "Browsers processing attacker-controlled HTML are exposed, including sandboxed agent browsers. Test-only browsers restricted to trusted application content have lower exposure.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Read the browser executable version and its release channel. Stable needs 157.0.8103.78 or later; Windows/macOS Extended Stable needs 156.0.8078.100 or later. Do not compare Extended Stable against the Stable threshold."
+          },
+          "context": "browsing"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Update to the patched build for the installed release channel and restart browser processes.",
+          "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version and the component used by running processes meet the documented fix or containment condition."
+      ],
+      "sources": [
+        {
+          "url": "https://chromereleases.googleblog.com/2026/11/stable-channel-update-for-desktop_01744469280.html",
+          "publisher": "Google Chrome Releases",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://chromereleases.googleblog.com/2026/11/extended-stable-update-for-desktop_01570615041.html",
+          "publisher": "Google Chrome Releases",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/126xxx/CVE-2026-126885.json",
+          "publisher": "CVE Program, vendor CNA",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/126xxx/CVE-2026-126895.json",
+          "publisher": "CVE Program, vendor CNA",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/126xxx/CVE-2026-126879.json",
+          "publisher": "CVE Program, vendor CNA",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/126xxx/CVE-2026-126911.json",
+          "publisher": "CVE Program, vendor CNA",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-12",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-12",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-126885",
+        "CVE-2026-126895",
+        "CVE-2026-126879",
+        "CVE-2026-126911"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Google Chrome Releases",
+          "value": "Critical",
+          "applies_to": "All four CVEs"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0067",
+      "title": "Node.js HTTPS and HTTP/2 flaws disclose memory, bypass TLS policies and corrupt server memory",
+      "summary": "HTTPS request-parser re-entrancy can expose TLS private keys and other requests. HTTP/2 teardown can disclose response memory or corrupt freed stream objects. Other fixes address TLS authorization, certificate-policy reuse, proxy-secret logging and denial of service. This record covers the High and Medium issues in the November security release.",
+      "status": "published",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Remote callers can reach cross-connection secrets and server memory corruption under documented application conditions. Credential exposure warrants a 72-hour response; availability-only paths have lower impact."
+      },
+      "affected": [
+        {
+          "product": "Node.js",
+          "fixed": "22.23.5",
+          "note": "Includes end-of-life lines. Issue coverage varies by API and release line; the Node.js bulletin states end-of-life versions are affected when a security release occurs."
+        },
+        {
+          "product": "Node.js",
+          "introduced": "23.0.0",
+          "fixed": "24.22.3",
+          "note": "Includes end-of-life lines. Issue coverage varies by API and release line; the Node.js bulletin states end-of-life versions are affected when a security release occurs."
+        },
+        {
+          "product": "Node.js",
+          "introduced": "25.0.0",
+          "fixed": "26.13.1",
+          "note": "Includes end-of-life lines. Issue coverage varies by API and release line; the Node.js bulletin states end-of-life versions are affected when a security release occurs."
+        }
+      ],
+      "exposure": "HTTPS disclosure requires flushHeaders before body completion, a later non-empty end, and a route echoing or storing bodies. HTTP/2 disclosure needs teardown during backpressure; freed-stream corruption involves respondWithFile or respondWithFD. TLS bypasses concern per-host client-certificate policies or reuse of an Agent across different CA policies. Exposure depends on enabled APIs.",
+      "detectors": [
+        {
+          "type": "executable-version",
+          "params": {
+            "executable": "node",
+            "ranges": [
+              {
+                "fixed": "22.23.5"
+              },
+              {
+                "introduced": "23.0.0",
+                "fixed": "24.22.3"
+              },
+              {
+                "introduced": "25.0.0",
+                "fixed": "26.13.1"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Update supported lines to 22.23.5, 24.22.3 or 26.13.1, respectively, or a later patched release on that line. Move end-of-life installations to a supported patched line. Replace embedded runtimes and restart services.",
+          "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version and the component used by running processes meet the documented fix or containment condition."
+      ],
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/nodejs/nodejs.org/main/apps/site/pages/en/blog/vulnerability/november-2026-security-releases.md",
+          "publisher": "Node.js Project",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/nodejs/node/releases/tag/v22.23.5",
+          "publisher": "Node.js Project",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "affected",
+            "remediation",
+            "vendor_severity",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/nodejs/node/releases/tag/v24.22.3",
+          "publisher": "Node.js Project",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "affected",
+            "remediation",
+            "vendor_severity",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/nodejs/node/releases/tag/v26.13.1",
+          "publisher": "Node.js Project",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "affected",
+            "remediation",
+            "vendor_severity",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/123xxx/CVE-2026-123864.json",
+          "publisher": "CVE Program, vendor CNA",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/123xxx/CVE-2026-123866.json",
+          "publisher": "CVE Program, vendor CNA",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/123xxx/CVE-2026-123872.json",
+          "publisher": "CVE Program, vendor CNA",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-12",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-12",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        },
+        {
+          "date": "2026-11-12",
+          "change": "Expanded affected ranges and detector coverage to include end-of-life lines, added supported-line migration guidance, and clarified that this record covers the High and Medium issues after re-reading the Node.js bulletin and CVE affected ranges."
+        }
+      ],
+      "cve": [
+        "CVE-2026-123863",
+        "CVE-2026-123864",
+        "CVE-2026-123865",
+        "CVE-2026-123866",
+        "CVE-2026-126051",
+        "CVE-2026-123872",
+        "CVE-2026-123874",
+        "CVE-2026-123828",
+        "CVE-2026-123867",
+        "CVE-2026-123868",
+        "CVE-2026-123871",
+        "CVE-2026-123877",
+        "CVE-2026-123875"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Node.js Project",
+          "value": "High",
+          "applies_to": "123863, 123864, 123865, 123866, 123872, 123874 and 126051 CVEs"
+        },
+        {
+          "source": "Node.js Project",
+          "value": "Medium",
+          "applies_to": "123828, 123867, 123868, 123871, 123875 and 123877 CVEs"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/bebuu_ai/status/2120781872183869631",
+          "kind": "social",
+          "seen": "2026-11-12"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0068",
+      "title": "AG2 SandboxShellTool newline injection bypasses command allowlists",
+      "summary": "Embedded newlines bypass allowed-command and readonly filters while the raw argument is executed through a shell. With LocalEnvironment, commands run as host subprocesses without container isolation.",
+      "status": "published",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Prompt-influenced shell arguments can bypass restrictions in a commonly used agent tool configuration. Host command execution warrants a 72-hour response."
+      },
+      "affected": [
+        {
+          "product": "ag2",
+          "ecosystem": "PyPI",
+          "introduced": "0.13.2",
+          "fixed": "1.1.1"
+        },
+        {
+          "product": "autogen",
+          "ecosystem": "PyPI",
+          "introduced": "0.13.2",
+          "note": "Affected through 0.14.1 inclusive. No patched autogen version is listed."
+        }
+      ],
+      "exposure": "Agents using SandboxShellTool with allowed or readonly modes can execute attacker-directed commands when untrusted content influences tool arguments. The execution environment determines the resulting privileges.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "PyPI",
+            "name": "ag2",
+            "ranges": [
+              {
+                "fixed": "1.1.1",
+                "introduced": "0.13.2"
+              }
+            ]
+          },
+          "context": "any"
+        },
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check for autogen 0.13.2 through 0.14.1 inclusive and restricted SandboxShellTool use. The advisory lists no fixed autogen release."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade ag2 to 1.1.1 or later. For affected autogen installations, stop exposing the restricted shell tool to untrusted input until a patched distribution or equivalent verified fix is available.",
+          "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version and the component used by running processes meet the documented fix or containment condition."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-2h4w-29cv-2cmv",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/ag2ai/ag2/security/advisories/GHSA-2h4w-29cv-2cmv",
+          "publisher": "AG2 maintainers",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-12",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-12",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-113663"
+      ],
+      "ghsa": [
+        "GHSA-2h4w-29cv-2cmv"
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub advisory",
+          "value": "High, CVSS 3.1 8.8"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/Khaled865412521/status/2120430289247723728",
+          "kind": "social",
+          "seen": "2026-11-12"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0069",
+      "title": "node-forge accepts forged RSA signatures with public exponent e=3 and can exhaust ASN.1 parser resources",
+      "summary": "Non-canonical DigestInfo encodings permit signature forgery for RSA keys with public exponent e=3. Separate nested BIT STRING decoding flaws bypass depth limits and consume excessive CPU or memory.",
+      "status": "published",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "Practical signature forgery requires an unusual RSA verification key with public exponent e=3. The parser issue causes denial of service, placing these conditions in the rubric's 30-day category."
+      },
+      "affected": [
+        {
+          "product": "node-forge",
+          "ecosystem": "npm",
+          "fixed": "1.4.1",
+          "note": "Both advisories list versions through 1.4.0 inclusive."
+        }
+      ],
+      "exposure": "Exposed when verifying attacker-provided signatures with RSA keys with public exponent e=3 or parsing untrusted DER/PEM. Higher-level certificate, PKCS and TLS APIs can reach the affected parser.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "npm",
+            "name": "node-forge",
+            "ranges": [
+              {
+                "fixed": "1.4.1"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade node-forge to 1.4.1 or later. Avoid RSA verification keys with public exponent e=3. Disabling BIT STRING decoding is only a limited direct-parser workaround and changes parsed structures.",
+          "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version and the component used by running processes meet the documented fix or containment condition."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-6qrw-m8cv-hcxf",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-rhr8-3pm8-cq29",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-12",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-12",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        },
+        {
+          "date": "2026-11-12",
+          "change": "Narrowed the RSA signature-forgery condition to public exponent e=3 throughout the record after re-reading the reviewed GitHub advisory."
+        }
+      ],
+      "cve": [
+        "CVE-2026-119192",
+        "CVE-2026-119191"
+      ],
+      "ghsa": [
+        "GHSA-6qrw-m8cv-hcxf",
+        "GHSA-rhr8-3pm8-cq29"
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub advisories",
+          "value": "High, CVSS 3.1 7.5",
+          "applies_to": "Both CVEs"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0070",
+      "title": "Aspire CLI temporary files expose configuration and permit local build code execution",
+      "summary": "Insecure temporary-directory handling lets a local attacker influence generated MSBuild builds. The deprecated MCP scanner can also disclose sensitive configuration through temporary diagnostic files.",
+      "status": "published",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "Both paths require local access on non-Windows systems. Shared temporary directories and CLI operations are prerequisites, warranting action within 30 days under the local-access rubric."
+      },
+      "affected": [
+        {
+          "product": "@microsoft/aspire-cli",
+          "ecosystem": "npm",
+          "introduced": "13.4.2",
+          "fixed": "13.6.5"
+        },
+        {
+          "product": "@microsoft/aspire-cli-linux-x64",
+          "ecosystem": "npm",
+          "introduced": "13.4.2",
+          "fixed": "13.6.5"
+        },
+        {
+          "product": "@microsoft/aspire-cli-linux-arm64",
+          "ecosystem": "npm",
+          "introduced": "13.4.2",
+          "fixed": "13.6.5"
+        },
+        {
+          "product": "@microsoft/aspire-cli-linux-musl-x64",
+          "ecosystem": "npm",
+          "introduced": "13.4.2",
+          "fixed": "13.6.5"
+        },
+        {
+          "product": "@microsoft/aspire-cli-osx-x64",
+          "ecosystem": "npm",
+          "introduced": "13.4.2",
+          "fixed": "13.6.5"
+        },
+        {
+          "product": "@microsoft/aspire-cli-osx-arm64",
+          "ecosystem": "npm",
+          "introduced": "13.4.2",
+          "fixed": "13.6.5"
+        },
+        {
+          "product": "Aspire.Cli",
+          "ecosystem": "NuGet",
+          "introduced": "13.2.0",
+          "fixed": "13.6.5"
+        },
+        {
+          "product": "Aspire.Cli.linux-x64",
+          "ecosystem": "NuGet",
+          "introduced": "13.3.0",
+          "fixed": "13.6.5"
+        },
+        {
+          "product": "Aspire.Cli.linux-arm64",
+          "ecosystem": "NuGet",
+          "introduced": "13.3.0",
+          "fixed": "13.6.5"
+        },
+        {
+          "product": "Aspire.Cli.linux-musl-x64",
+          "ecosystem": "NuGet",
+          "introduced": "13.3.0",
+          "fixed": "13.6.5"
+        },
+        {
+          "product": "Aspire.Cli.osx-x64",
+          "ecosystem": "NuGet",
+          "introduced": "13.3.0",
+          "fixed": "13.6.5"
+        },
+        {
+          "product": "Aspire.Cli.osx-arm64",
+          "ecosystem": "NuGet",
+          "introduced": "13.3.0",
+          "fixed": "13.6.5"
+        }
+      ],
+      "exposure": "Linux and macOS x64/Arm64 CLI installations are affected. Generated server/integration builds can encounter attacker-writable response-file ancestors. Agent or MCP initialization can expose scanner diagnostics through shared temporary files.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "npm",
+            "name": "@microsoft/aspire-cli",
+            "ranges": [
+              {
+                "fixed": "13.6.5",
+                "introduced": "13.4.2"
+              }
+            ]
+          },
+          "context": "any"
+        },
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "npm",
+            "name": "@microsoft/aspire-cli-linux-x64",
+            "ranges": [
+              {
+                "fixed": "13.6.5",
+                "introduced": "13.4.2"
+              }
+            ]
+          },
+          "context": "any"
+        },
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "npm",
+            "name": "@microsoft/aspire-cli-linux-arm64",
+            "ranges": [
+              {
+                "fixed": "13.6.5",
+                "introduced": "13.4.2"
+              }
+            ]
+          },
+          "context": "any"
+        },
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "npm",
+            "name": "@microsoft/aspire-cli-linux-musl-x64",
+            "ranges": [
+              {
+                "fixed": "13.6.5",
+                "introduced": "13.4.2"
+              }
+            ]
+          },
+          "context": "any"
+        },
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "npm",
+            "name": "@microsoft/aspire-cli-osx-x64",
+            "ranges": [
+              {
+                "fixed": "13.6.5",
+                "introduced": "13.4.2"
+              }
+            ]
+          },
+          "context": "any"
+        },
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "npm",
+            "name": "@microsoft/aspire-cli-osx-arm64",
+            "ranges": [
+              {
+                "fixed": "13.6.5",
+                "introduced": "13.4.2"
+              }
+            ]
+          },
+          "context": "any"
+        },
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check standalone and .NET-tool Aspire CLI packages: Aspire.Cli 13.2.0 to below 13.6.5, and listed platform packages 13.3.0 to below 13.6.5. Verify Linux/macOS package and running CLI versions."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Update Aspire CLI to 13.6.5 or later through its installation method. Update npm platform dependencies as well. Updating the .NET runtime or SDK alone does not update Aspire.",
+          "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version and the component used by running processes meet the documented fix or containment condition."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-m63f-xhvm-6mv5",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-q6jf-24jf-m3cg",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-12",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-12",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-120778",
+        "CVE-2026-120792"
+      ],
+      "ghsa": [
+        "GHSA-m63f-xhvm-6mv5",
+        "GHSA-q6jf-24jf-m3cg"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Microsoft advisories",
+          "value": "High, CVSS 3.1 7.3; MSRC Important",
+          "applies_to": "Both CVEs"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0071",
+      "title": "GPUStack SAML callback accepts forged identities even when SAML is not configured",
+      "summary": "The callback issues sessions without validating SAML assertions. A network caller can impersonate an existing administrator or create a non-admin account; captured signed assertions can also be replayed.",
+      "status": "published",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Unauthenticated network callers can take over administrator accounts and gain control of managed infrastructure. Account and sensitive-data exposure warrant action within 72 hours; no exploitation status is inferred."
+      },
+      "affected": [
+        {
+          "product": "gpustack",
+          "ecosystem": "PyPI",
+          "introduced": "0.7.1",
+          "fixed": "2.2.2"
+        }
+      ],
+      "exposure": "Network access to /auth/saml/callback is sufficient. Disabling or leaving SAML unconfigured does not prevent the vulnerable callback from issuing sessions.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "PyPI",
+            "name": "gpustack",
+            "ranges": [
+              {
+                "fixed": "2.2.2",
+                "introduced": "0.7.1"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade gpustack to 2.2.2 or later. Until then, block network access to /auth/saml/callback; disabling SAML configuration alone is ineffective.",
+          "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version and the component used by running processes meet the documented fix or containment condition."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-62m9-f875-rqw6",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-12",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-12",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-102894"
+      ],
+      "ghsa": [
+        "GHSA-62m9-f875-rqw6"
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub advisory",
+          "value": "Critical, CVSS 3.1 9.1"
+        }
+      ],
+      "related": [
+        "MSA-2026-0057"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0072",
+      "title": "GPUStack Kubernetes proxy omits cluster authorization checks",
+      "summary": "A non-admin user can access an unauthorized Kubernetes cluster through GPUStack's API proxy. Requests use a worker ServiceAccount and can expose resources or create workloads within its permissions.",
+      "status": "published",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Authenticated users can cross cluster authorization boundaries and potentially execute code by creating workloads. The common cluster-use prerequisite and credential exposure warrant 72 hours."
+      },
+      "affected": [
+        {
+          "product": "gpustack",
+          "ecosystem": "PyPI",
+          "introduced": "2.2.0",
+          "fixed": "2.2.2"
+        }
+      ],
+      "exposure": "Requires a Kubernetes-provider cluster and a reachable worker. The worker ServiceAccount permissions bound what the caller can read, change or delete.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "PyPI",
+            "name": "gpustack",
+            "ranges": [
+              {
+                "fixed": "2.2.2",
+                "introduced": "2.2.0"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade gpustack to 2.2.2 or later. Until then, restrict the instance to trusted administrator accounts.",
+          "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version and the component used by running processes meet the documented fix or containment condition."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-3hch-x692-6qj3",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-12",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-12",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-103002"
+      ],
+      "ghsa": [
+        "GHSA-3hch-x692-6qj3"
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub advisory",
+          "value": "High"
+        }
+      ],
+      "related": [
+        "MSA-2026-0071"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0073",
+      "title": "React Server Components typed-array responses can permit unauthenticated code execution",
+      "summary": "Crafted payloads can cause remote code execution in server-component frameworks in rare cases where responses carry multiple typed arrays and an attacker-controlled value.",
+      "status": "published",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "The vendor restricts this flaw to extremely rare response conditions, an uncommon application configuration under this rubric. Affected applications still need the documented upgrade; the vendor rates it Critical."
+      },
+      "affected": [
+        {
+          "product": "react-server-dom-webpack",
+          "ecosystem": "npm",
+          "introduced": "19.0.0",
+          "fixed": "19.0.9"
+        },
+        {
+          "product": "react-server-dom-webpack",
+          "ecosystem": "npm",
+          "introduced": "19.1.0",
+          "fixed": "19.1.10"
+        },
+        {
+          "product": "react-server-dom-webpack",
+          "ecosystem": "npm",
+          "introduced": "19.2.0",
+          "fixed": "19.2.9"
+        },
+        {
+          "product": "react-server-dom-webpack",
+          "ecosystem": "npm",
+          "introduced": "19.3.0",
+          "fixed": "19.3.1"
+        },
+        {
+          "product": "react-server-dom-parcel",
+          "ecosystem": "npm",
+          "introduced": "19.0.0",
+          "fixed": "19.0.9"
+        },
+        {
+          "product": "react-server-dom-parcel",
+          "ecosystem": "npm",
+          "introduced": "19.1.0",
+          "fixed": "19.1.10"
+        },
+        {
+          "product": "react-server-dom-parcel",
+          "ecosystem": "npm",
+          "introduced": "19.2.0",
+          "fixed": "19.2.9"
+        },
+        {
+          "product": "react-server-dom-parcel",
+          "ecosystem": "npm",
+          "introduced": "19.3.0",
+          "fixed": "19.3.1"
+        },
+        {
+          "product": "react-server-dom-turbopack",
+          "ecosystem": "npm",
+          "introduced": "19.0.0",
+          "fixed": "19.0.9"
+        },
+        {
+          "product": "react-server-dom-turbopack",
+          "ecosystem": "npm",
+          "introduced": "19.1.0",
+          "fixed": "19.1.10"
+        },
+        {
+          "product": "react-server-dom-turbopack",
+          "ecosystem": "npm",
+          "introduced": "19.2.0",
+          "fixed": "19.2.9"
+        },
+        {
+          "product": "react-server-dom-turbopack",
+          "ecosystem": "npm",
+          "introduced": "19.3.0",
+          "fixed": "19.3.1"
+        }
+      ],
+      "exposure": "Requires a server and a framework, bundler or plugin supporting React Server Components plus the typed-array response condition. Client-only React applications are unaffected.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "npm",
+            "name": "react-server-dom-webpack",
+            "ranges": [
+              {
+                "introduced": "19.0.0",
+                "fixed": "19.0.9"
+              },
+              {
+                "introduced": "19.1.0",
+                "fixed": "19.1.10"
+              },
+              {
+                "introduced": "19.2.0",
+                "fixed": "19.2.9"
+              },
+              {
+                "introduced": "19.3.0",
+                "fixed": "19.3.1"
+              }
+            ]
+          },
+          "context": "any"
+        },
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "npm",
+            "name": "react-server-dom-parcel",
+            "ranges": [
+              {
+                "introduced": "19.0.0",
+                "fixed": "19.0.9"
+              },
+              {
+                "introduced": "19.1.0",
+                "fixed": "19.1.10"
+              },
+              {
+                "introduced": "19.2.0",
+                "fixed": "19.2.9"
+              },
+              {
+                "introduced": "19.3.0",
+                "fixed": "19.3.1"
+              }
+            ]
+          },
+          "context": "any"
+        },
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "npm",
+            "name": "react-server-dom-turbopack",
+            "ranges": [
+              {
+                "introduced": "19.0.0",
+                "fixed": "19.0.9"
+              },
+              {
+                "introduced": "19.1.0",
+                "fixed": "19.1.10"
+              },
+              {
+                "introduced": "19.2.0",
+                "fixed": "19.2.9"
+              },
+              {
+                "introduced": "19.3.0",
+                "fixed": "19.3.1"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade the affected react-server-dom packages to patched releases for their branch: 19.0.9, 19.1.10, 19.2.9 or 19.3.1. Check framework-managed dependencies and follow that framework's upgrade instructions.",
+          "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version and the component used by running processes meet the documented fix or containment condition."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-xqc2-xf4c-x3h3",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/react/react/security/advisories/GHSA-xqc2-xf4c-x3h3",
+          "publisher": "React maintainers",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-12",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-12",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-126187"
+      ],
+      "ghsa": [
+        "GHSA-xqc2-xf4c-x3h3"
+      ],
+      "vendor_severity": [
+        {
+          "source": "React advisory",
+          "value": "Critical, CVSS 4.0 9.5"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://radar.cloudflare.com/security/zero-wire/rsc-typed-array-rce",
+          "kind": "feed",
+          "seen": "2026-11-12"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0075",
+      "title": "AWS API MCP Server operation normalization bypasses custom deny and consent rules",
+      "summary": "Operation names containing consecutive capital letters fail to match correctly written denyList or elicitList entries, allowing operations the operator intended to block or gate.",
+      "status": "published",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "An assistant can perform cloud actions beyond the configured custom policy, including sensitive identity or destructive operations. User interaction and a custom policy are prerequisites; the impact warrants 72 hours."
+      },
+      "affected": [
+        {
+          "product": "awslabs.aws-api-mcp-server",
+          "ecosystem": "PyPI",
+          "introduced": "0.2.13",
+          "fixed": "1.5.1"
+        }
+      ],
+      "exposure": "Requires a locally run server with a custom policy covering affected operation names and user interaction with the assistant. The remote offering and READ_OPERATIONS_ONLY and REQUIRE_MUTATION_CONSENT settings are unaffected.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "PyPI",
+            "name": "awslabs.aws-api-mcp-server",
+            "ranges": [
+              {
+                "fixed": "1.5.1",
+                "introduced": "0.2.13"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade awslabs.aws-api-mcp-server to 1.5.1 or later and patch derivative code. AWS lists no workaround other than upgrading.",
+          "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version and the component used by running processes meet the documented fix or containment condition."
+      ],
+      "sources": [
+        {
+          "url": "https://aws.amazon.com/security/security-bulletins/2026-176-aws/",
+          "publisher": "AWS",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/awslabs/mcp/security/advisories/GHSA-4wq9-grf3-qg2p",
+          "publisher": "AWS",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-12",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-12",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-125271"
+      ],
+      "ghsa": [
+        "GHSA-4wq9-grf3-qg2p"
+      ],
+      "vendor_severity": [
+        {
+          "source": "AWS project advisory",
+          "value": "High, CVSS 4.0 8.5"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/undercode_news/status/2120423746230214678",
+          "kind": "social",
+          "seen": "2026-11-12"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0076",
+      "title": "MCP Gateway Registry server addresses permit requests into internal networks",
+      "summary": "Authenticated users allowed to register or edit servers can choose upstream addresses that make the gateway request internal services and sometimes return responses, potentially exposing metadata credentials.",
+      "status": "published",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Server-registration privileges can cross a network boundary and disclose cloud credentials. This limited privilege prerequisite with sensitive-data exposure warrants action within 72 hours."
+      },
+      "affected": [
+        {
+          "product": "mcp-gateway-registry",
+          "introduced": "1.0.3",
+          "fixed": "1.35.0",
+          "note": "Affected through 1.34.0 inclusive. The unrelated 1.25.0 management-API fix does not address this SSRF."
+        }
+      ],
+      "exposure": "Requires authenticated registration or modification permission. The registry network and attached role determine reachable services and secrets.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check the deployed mcp-gateway-registry version: 1.0.3 through 1.34.0 require updating to at least 1.35.0. Inspect stored upstream addresses as well as the running version."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 1.35.0 or later. Review and correct stored server addresses, which are not rewritten by the upgrade. Review registration logs; if unexpected activity cannot be ruled out, review attached-role activity and rotate its credentials. Limit registration permissions and outbound access.",
+          "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed version is at least 1.35.0 and stored upstream addresses have been reviewed and corrected.",
+        "Confirm the registration-log and attached-role reviews and any indicated credential replacement are complete."
+      ],
+      "sources": [
+        {
+          "url": "https://aws.amazon.com/security/security-bulletins/2026-180-aws/",
+          "publisher": "AWS",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/agentic-community/mcp-gateway-registry/security/advisories/GHSA-fc39-fwh3-wv5r",
+          "publisher": "MCP Gateway Registry maintainers",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-12",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-12",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-125926"
+      ],
+      "ghsa": [
+        "GHSA-fc39-fwh3-wv5r"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Project advisory",
+          "value": "High, CVSS 3.1 8.5"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/xcademialtd/status/2120830907909320864",
+          "kind": "social",
+          "seen": "2026-11-12"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0077",
+      "title": "VS Code MCP inputs and agent-originated commands can execute unexpected local commands",
+      "summary": "MCP notification links and install-link variables can execute commands. Unvalidated legacy SSE endpoints can redirect requests and expose credentials. Agent-originated local-command syntax can also bypass expected terminal approval.",
+      "status": "published",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "A malicious MCP server or prompt content can reach local commands and credentials under common integration prerequisites. Connection, click or tool-approval requirements limit reach; act within 72 hours."
+      },
+      "affected": [
+        {
+          "product": "Visual Studio Code",
+          "fixed": "1.145.3",
+          "note": "All four advisories list versions before 1.145.3."
+        }
+      ],
+      "exposure": "Elicitation needs a connected hostile server and a notification-link click. Install links need installation approval. SSE needs connection to a hostile server. The Agent Host path needs attacker-influenced child prompts and a granted related session tool operation.",
+      "detectors": [
+        {
+          "type": "executable-version",
+          "params": {
+            "executable": "code",
+            "ranges": [
+              {
+                "fixed": "1.145.3"
+              }
+            ]
+          },
+          "context": "any"
+        },
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check the actual VS Code installation version, including installations whose code command is absent from PATH. This record does not establish applicability to forks."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade VS Code to 1.145.3 or later. Connect only to trusted MCP servers and avoid untrusted install links and notification links. Until patched, remove affected SSE servers; prefer the Copilot harness to the Local harness and avoid session-wide tool grants for untrusted instructions.",
+          "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version and the component used by running processes meet the documented fix or containment condition."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/microsoft/vscode/security/advisories/GHSA-66hq-jw93-462h",
+          "publisher": "Microsoft VS Code",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/microsoft/vscode/security/advisories/GHSA-4x35-6qr8-ww48",
+          "publisher": "Microsoft VS Code",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/microsoft/vscode/security/advisories/GHSA-crhv-2887-p3xr",
+          "publisher": "Microsoft VS Code",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/microsoft/vscode/security/advisories/GHSA-w9fm-7vcm-cvq4",
+          "publisher": "Microsoft VS Code",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-12",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-12",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-120779",
+        "CVE-2026-119983",
+        "CVE-2026-114171",
+        "CVE-2026-120782"
+      ],
+      "ghsa": [
+        "GHSA-66hq-jw93-462h",
+        "GHSA-4x35-6qr8-ww48",
+        "GHSA-crhv-2887-p3xr",
+        "GHSA-w9fm-7vcm-cvq4"
+      ],
+      "vendor_severity": [
+        {
+          "source": "VS Code repository advisory",
+          "value": "High, CVSS 3.1 8.3",
+          "applies_to": "CVE-2026-120779"
+        },
+        {
+          "source": "VS Code repository advisories",
+          "value": "High, CVSS 3.1 7.7",
+          "applies_to": "CVE-2026-119983 and CVE-2026-114171"
+        },
+        {
+          "source": "VS Code repository advisory",
+          "value": "Moderate, CVSS 3.1 6.8",
+          "applies_to": "CVE-2026-120782"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/botnewsnetwork/status/2120585686160130544",
+          "kind": "social",
+          "seen": "2026-11-12"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0078",
+      "title": "LMCache multiprocess transport deserializes unauthenticated messages into code execution",
+      "summary": "An unauthenticated message to the multiprocess ZeroMQ transport can execute code through pickle deserialization of device descriptors. The process account determines privileges.",
+      "status": "published",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Remote code execution requires multiprocess mode bound to a reachable address, a documented multi-node configuration. That common prerequisite warrants 72 hours; default loopback-only and in-process configurations reduce network reach."
+      },
+      "affected": [
+        {
+          "product": "lmcache multiprocess transport",
+          "ecosystem": "PyPI",
+          "introduced": "0.3.9",
+          "fixed": "0.5.6",
+          "note": "Also affects 0.5.6rc1 through rc3. Final 0.5.6 replaces device IPC descriptor pickle serialization."
+        }
+      ],
+      "exposure": "Requires access to the MP transport, which defaults to loopback but can be bound to a routable address. In-process vLLM use does not open this port. The device-descriptor fix does not remove every other pickle path or add RPC authentication.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "PyPI",
+            "name": "lmcache",
+            "ranges": [
+              {
+                "fixed": "0.5.6",
+                "introduced": "0.3.9"
+              }
+            ]
+          },
+          "context": "any"
+        },
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check LMCache 0.5.6 release candidates through rc3 and pre-fix development builds, and whether the MP transport is reachable by untrusted peers."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade MP servers and workers together to final 0.5.6 or later; the descriptor wire format is incompatible with older peers. Restrict MP traffic to trusted peers. Treat formerly untrusted-network-reachable vulnerable deployments as potentially compromised and redeploy clean images.",
+          "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the installed version and the component used by running processes meet the documented fix or containment condition."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/LMCache/LMCache/security/advisories/GHSA-w5f2-9q9c-ff4h",
+          "publisher": "LMCache maintainers",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://blog.lmcache.ai/en/2026/10/20/lmcache-v0-5-6-release/",
+          "publisher": "LMCache Project",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-12",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-12",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-105192"
+      ],
+      "ghsa": [
+        "GHSA-w5f2-9q9c-ff4h"
+      ],
+      "vendor_severity": [
+        {
+          "source": "LMCache advisory",
+          "value": "Critical, CVSS 9.8",
+          "applies_to": "Routable multiprocess configuration"
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/AgentFieldKit/status/2120631738007261509",
+          "kind": "social",
+          "seen": "2026-11-12"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0079",
+      "title": "LMCache run_script admin endpoint executes caller-supplied Python without authentication",
+      "summary": "Before 0.5.6, the admin /run_script endpoint was enabled on all interfaces without authentication. Final 0.5.6 disables it by default, but explicitly enabling it still exposes unauthenticated Python execution.",
+      "status": "published",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "severity": {
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "An enabled, reachable admin endpoint executes arbitrary Python without authentication. The earlier default made this reachable without a special opt-in, warranting action within 24 hours."
+      },
+      "affected": [
+        {
+          "product": "LMCache admin run_script API",
+          "ecosystem": "PyPI",
+          "note": "Before 0.5.6, the endpoint was served by default. In 0.5.6 it is disabled by default and admin HTTP binds to loopback; explicit re-enablement still provides unauthenticated execution. No complete affected introduction range is established here."
+        }
+      ],
+      "exposure": "Any untrusted caller reaching an enabled /run_script endpoint can run Python in the LMCache process. Package version alone cannot prove safety when explicit settings override the hardened defaults.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check LMCache admin API reachability and run_script_api_enabled or --run-script-api-enabled. Upgrade releases before 0.5.6 and verify the endpoint stays disabled; a version check alone is insufficient."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 0.5.6 or later for hardened defaults and keep /run_script disabled. Verify the admin bind and network controls. Do not expose an explicitly enabled endpoint to untrusted callers.",
+          "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm /run_script returns 404 with the feature disabled and untrusted networks cannot reach the admin service.",
+        "Check explicit configuration overrides after upgrade."
+      ],
+      "sources": [
+        {
+          "url": "https://blog.lmcache.ai/en/2026/10/20/lmcache-v0-5-6-release/",
+          "publisher": "LMCache Project",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-12",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-12",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/AgentFieldKit/status/2120631738007261509",
+          "kind": "social",
+          "seen": "2026-11-12"
+        }
+      ],
+      "related": [
+        "MSA-2026-0078"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0080",
+      "title": "The @ethersphere/bee-js 13.3.0 npm package contains malware",
+      "summary": "GitHub identifies exactly @ethersphere/bee-js 13.3.0 as malicious and advises treating installations as fully compromised. No patched version is listed.",
+      "status": "published",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "A malicious installed dependency exposes developer and CI environments and their secrets. Supply chain compromise and credential exposure warrant containment within 72 hours."
+      },
+      "affected": [
+        {
+          "product": "@ethersphere/bee-js",
+          "ecosystem": "npm",
+          "note": "Exactly 13.3.0. No patched version is listed in the inspected advisory."
+        }
+      ],
+      "exposure": "Relevant to environments that installed or ran the named release, including transitive installation. This record does not establish affected Swarm Desktop builds.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Inspect lockfiles, caches and installation history for @ethersphere/bee-js exactly 13.3.0 without executing the package."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Remove the package and replace exposed secrets and keys from a separate trusted system. Removal alone may leave other malicious software behind.",
+          "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the malicious package is absent and exposed secrets were replaced; package removal alone does not establish recovery."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-hh7j-5m3j-23pf",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-12",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-12",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "ghsa": [
+        "GHSA-hh7j-5m3j-23pf"
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/SlowMist_Team/status/2119998212497125582",
+          "kind": "social",
+          "seen": "2026-11-12"
+        }
+      ]
+    },
+    {
+      "id": "MSA-2026-0082",
+      "title": "Microsoft Agent Framework .NET workflows and MCP integrations can disclose protected state and credentials",
+      "summary": "Declarative workflows can disclose protected configuration through control flow, errors, variable case mismatches and MCP inputs. Reused workflow executors can disclose cross-session state. Pending MCP approvals can execute with changed headers, and Foundry toolbox clients can send Azure bearer tokens to unintended origins.",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Less-trusted workflow definitions and MCP integrations can expose application secrets, tokens or other sessions' data. These integration prerequisites limit reach; credential exposure warrants action within 72 hours."
+      },
+      "affected": [
+        {
+          "product": "Microsoft.Agents.AI.Workflows.Declarative",
+          "ecosystem": "NuGet",
+          "fixed": "1.26.0",
+          "note": "Four protected-configuration issues affect versions below 1.26.0. The separate MCP input and approval-header issues affect versions below 1.24.0 and are fixed in 1.24.0."
+        },
+        {
+          "product": "Microsoft.Agents.AI.Workflows",
+          "ecosystem": "NuGet",
+          "fixed": "1.26.0",
+          "note": "Cross-session disclosure in affected reused instance-bound application-defined executors; versions below 1.26.0."
+        },
+        {
+          "product": "Microsoft.Agents.AI.Foundry.Hosting",
+          "ecosystem": "NuGet",
+          "fixed": "1.23.0-preview.260928.1",
+          "note": "Foundry toolbox token disclosure affects versions below this release."
+        }
+      ],
+      "exposure": "Configuration-disclosure paths require less-trusted workflows, host-exposed protected values and an observable error, output or enabled outbound action. Cross-session leakage requires reused instance-bound StatefulExecutor or ChatProtocolExecutor subclasses; failed/cancelled turns add a chat-message path. Header substitution requires mutable state selecting headers during a separate operator's pending approval. Foundry exposure requires the built-in toolbox integration.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check resolved NuGet versions: Workflows.Declarative and Workflows must be at least 1.26.0; Foundry.Hosting must be at least 1.23.0-preview.260928.1. Inspect workflow trust, Env allowlists, executor reuse, approval-header state and built-in Foundry toolbox usage to assess exposure."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Upgrade the affected .NET packages",
+          "details": "Upgrade Workflows.Declarative and Workflows to 1.26.0 or later and Foundry.Hosting to 1.23.0-preview.260928.1 or later. If Foundry cannot be updated, stop using the built-in toolbox integration and use a StreamableHttp MCP client attaching credentials only to the toolbox endpoint.",
+          "risk": "Medium. Package updates can change workflow behavior. Replacing the toolbox integration requires integration validation."
+        }
+      ],
+      "verification": [
+        "Confirm resolved and deployed NuGet versions meet each package's fix threshold.",
+        "Validate session isolation and protected-value rejection using synthetic configuration and local/mock handlers."
+      ],
+      "ghsa": [
+        "GHSA-4532-fhjf-wq2q",
+        "GHSA-f92h-h85c-p8w6",
+        "GHSA-68cw-g4g7-7h9f",
+        "GHSA-r8fg-8q6m-6c5m",
+        "GHSA-8j78-92fm-c727",
+        "GHSA-q7g7-7c7x-frcq",
+        "GHSA-9f26-7mqc-9vc4",
+        "GHSA-r2mq-wgc9-vgh3"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Microsoft Agent Framework repository advisories",
+          "value": "Moderate",
+          "applies_to": "Seven advisories, including the Foundry token and approval-header issues"
+        },
+        {
+          "source": "Microsoft Agent Framework repository advisory",
+          "value": "High, CVSS 3.1 7.5",
+          "applies_to": "GHSA-9f26-7mqc-9vc4 protected MCP inputs"
+        }
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/microsoft/agent-framework/security/advisories/GHSA-4532-fhjf-wq2q",
+          "publisher": "Microsoft Agent Framework",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/microsoft/agent-framework/security/advisories/GHSA-f92h-h85c-p8w6",
+          "publisher": "Microsoft Agent Framework",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/microsoft/agent-framework/security/advisories/GHSA-68cw-g4g7-7h9f",
+          "publisher": "Microsoft Agent Framework",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/microsoft/agent-framework/security/advisories/GHSA-r8fg-8q6m-6c5m",
+          "publisher": "Microsoft Agent Framework",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/microsoft/agent-framework/security/advisories/GHSA-8j78-92fm-c727",
+          "publisher": "Microsoft Agent Framework",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/microsoft/agent-framework/security/advisories/GHSA-q7g7-7c7x-frcq",
+          "publisher": "Microsoft Agent Framework",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/microsoft/agent-framework/security/advisories/GHSA-9f26-7mqc-9vc4",
+          "publisher": "Microsoft Agent Framework",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/microsoft/agent-framework/security/advisories/GHSA-r2mq-wgc9-vgh3",
+          "publisher": "Microsoft Agent Framework",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/agentbuildershq/status/2120796139846844757",
+          "kind": "social",
+          "seen": "2026-11-12"
+        }
+      ],
+      "schema": "msa/1",
+      "status": "published",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-12",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-12",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0083",
+      "title": "Cocos AI attested TLS can retain trust after workload state changes",
+      "summary": "A peer continues to trust a long-lived TLS connection after an attacker changes the attested workload code, memory-backed state or configuration. Attestation at connection establishment does not establish freshness for the connection lifetime.",
+      "status": "published",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "cve": [
+        "CVE-2026-119345"
+      ],
+      "ghsa": [
+        "GHSA-ghwv-vrp2-2975"
+      ],
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "An attacker must already be able to modify attested workload state after the connection is established. This local-access prerequisite and specialized attestation configuration warrant a 30-day response."
+      },
+      "vendor_severity": [
+        {
+          "source": "GitHub Reviewed Advisory Database",
+          "value": "High, CVSS 4.0 7.2"
+        }
+      ],
+      "affected": [
+        {
+          "product": "github.com/ultravioletrs/cocos",
+          "ecosystem": "Go",
+          "fixed": "0.9.0",
+          "note": "The advisory lists versions through 0.8.2 inclusive."
+        }
+      ],
+      "exposure": "Applications relying on Cocos AI intra-handshake attested TLS for ongoing workload trust are exposed when an attacker can modify the attester state without closing the connection. Long-lived connections increase the stale-evidence window.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check the resolved github.com/ultravioletrs/cocos module and attested TLS usage. The advisory lists versions through 0.8.2 as affected and 0.9.0 as patched; verify any intervening version with the vendor."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update Cocos and maintain evidence freshness",
+          "details": "Upgrade to 0.9.0 or later, the listed patched version. The advisory proposes periodic or operator-defined post-handshake re-attestation as a workaround.",
+          "risk": "Medium. Upgrading and introducing re-attestation can change connection behavior and require integration validation."
+        }
+      ],
+      "verification": [
+        "Confirm the resolved Cocos module is at least 0.9.0 and the attestation configuration meets the application's evidence-freshness requirements."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-ghwv-vrp2-2975",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-12",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-12",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-12",
+          "change": "Initial record drafted from the directly inspected reviewed advisory for independent review."
+        }
+      ]
     }
   ],
   "rejected": [
@@ -6572,6 +9074,24 @@
       "updated": "2026-11-10",
       "related": [],
       "url": "https://github.com/AlgortimoTD/molt-security-advisories/blob/main/rejected/2026/MSR-2026-0006.json"
+    },
+    {
+      "id": "MSR-2026-0007",
+      "claim": "Prompt injection in the archived MCP Puppeteer server permits remote code execution, and the maintainers will not provide a fix.",
+      "verdict": "unverifiable",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "related": [],
+      "url": "https://github.com/AlgortimoTD/molt-security-advisories/blob/main/rejected/2026/MSR-2026-0007.json"
+    },
+    {
+      "id": "MSR-2026-0009",
+      "claim": "Claude Code's Yes, and do not ask again setting exposed passwords and keys in 1,122 public copies of its local settings file.",
+      "verdict": "unverifiable",
+      "published": "2026-11-12",
+      "updated": "2026-11-12",
+      "related": [],
+      "url": "https://github.com/AlgortimoTD/molt-security-advisories/blob/main/rejected/2026/MSR-2026-0009.json"
     }
   ]
 }

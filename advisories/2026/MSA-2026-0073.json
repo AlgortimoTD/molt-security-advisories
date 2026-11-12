@@ -1,0 +1,249 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0073",
+  "title": "React Server Components typed-array responses can permit unauthenticated code execution",
+  "summary": "Crafted payloads can cause remote code execution in server-component frameworks in rare cases where responses carry multiple typed arrays and an attacker-controlled value.",
+  "status": "published",
+  "published": "2026-11-12",
+  "updated": "2026-11-12",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "The vendor restricts this flaw to extremely rare response conditions, an uncommon application configuration under this rubric. Affected applications still need the documented upgrade; the vendor rates it Critical."
+  },
+  "affected": [
+    {
+      "product": "react-server-dom-webpack",
+      "ecosystem": "npm",
+      "introduced": "19.0.0",
+      "fixed": "19.0.9"
+    },
+    {
+      "product": "react-server-dom-webpack",
+      "ecosystem": "npm",
+      "introduced": "19.1.0",
+      "fixed": "19.1.10"
+    },
+    {
+      "product": "react-server-dom-webpack",
+      "ecosystem": "npm",
+      "introduced": "19.2.0",
+      "fixed": "19.2.9"
+    },
+    {
+      "product": "react-server-dom-webpack",
+      "ecosystem": "npm",
+      "introduced": "19.3.0",
+      "fixed": "19.3.1"
+    },
+    {
+      "product": "react-server-dom-parcel",
+      "ecosystem": "npm",
+      "introduced": "19.0.0",
+      "fixed": "19.0.9"
+    },
+    {
+      "product": "react-server-dom-parcel",
+      "ecosystem": "npm",
+      "introduced": "19.1.0",
+      "fixed": "19.1.10"
+    },
+    {
+      "product": "react-server-dom-parcel",
+      "ecosystem": "npm",
+      "introduced": "19.2.0",
+      "fixed": "19.2.9"
+    },
+    {
+      "product": "react-server-dom-parcel",
+      "ecosystem": "npm",
+      "introduced": "19.3.0",
+      "fixed": "19.3.1"
+    },
+    {
+      "product": "react-server-dom-turbopack",
+      "ecosystem": "npm",
+      "introduced": "19.0.0",
+      "fixed": "19.0.9"
+    },
+    {
+      "product": "react-server-dom-turbopack",
+      "ecosystem": "npm",
+      "introduced": "19.1.0",
+      "fixed": "19.1.10"
+    },
+    {
+      "product": "react-server-dom-turbopack",
+      "ecosystem": "npm",
+      "introduced": "19.2.0",
+      "fixed": "19.2.9"
+    },
+    {
+      "product": "react-server-dom-turbopack",
+      "ecosystem": "npm",
+      "introduced": "19.3.0",
+      "fixed": "19.3.1"
+    }
+  ],
+  "exposure": "Requires a server and a framework, bundler or plugin supporting React Server Components plus the typed-array response condition. Client-only React applications are unaffected.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "npm",
+        "name": "react-server-dom-webpack",
+        "ranges": [
+          {
+            "introduced": "19.0.0",
+            "fixed": "19.0.9"
+          },
+          {
+            "introduced": "19.1.0",
+            "fixed": "19.1.10"
+          },
+          {
+            "introduced": "19.2.0",
+            "fixed": "19.2.9"
+          },
+          {
+            "introduced": "19.3.0",
+            "fixed": "19.3.1"
+          }
+        ]
+      },
+      "context": "any"
+    },
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "npm",
+        "name": "react-server-dom-parcel",
+        "ranges": [
+          {
+            "introduced": "19.0.0",
+            "fixed": "19.0.9"
+          },
+          {
+            "introduced": "19.1.0",
+            "fixed": "19.1.10"
+          },
+          {
+            "introduced": "19.2.0",
+            "fixed": "19.2.9"
+          },
+          {
+            "introduced": "19.3.0",
+            "fixed": "19.3.1"
+          }
+        ]
+      },
+      "context": "any"
+    },
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "npm",
+        "name": "react-server-dom-turbopack",
+        "ranges": [
+          {
+            "introduced": "19.0.0",
+            "fixed": "19.0.9"
+          },
+          {
+            "introduced": "19.1.0",
+            "fixed": "19.1.10"
+          },
+          {
+            "introduced": "19.2.0",
+            "fixed": "19.2.9"
+          },
+          {
+            "introduced": "19.3.0",
+            "fixed": "19.3.1"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade the affected react-server-dom packages to patched releases for their branch: 19.0.9, 19.1.10, 19.2.9 or 19.3.1. Check framework-managed dependencies and follow that framework's upgrade instructions.",
+      "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+    }
+  ],
+  "verification": [
+    "Confirm the installed version and the component used by running processes meet the documented fix or containment condition."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-xqc2-xf4c-x3h3",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/react/react/security/advisories/GHSA-xqc2-xf4c-x3h3",
+      "publisher": "React maintainers",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-12",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-12",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "cve": [
+    "CVE-2026-126187"
+  ],
+  "ghsa": [
+    "GHSA-xqc2-xf4c-x3h3"
+  ],
+  "vendor_severity": [
+    {
+      "source": "React advisory",
+      "value": "Critical, CVSS 4.0 9.5"
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://radar.cloudflare.com/security/zero-wire/rsc-typed-array-rce",
+      "kind": "feed",
+      "seen": "2026-11-12"
+    }
+  ]
+}

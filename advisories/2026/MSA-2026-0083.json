@@ -1,0 +1,87 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0083",
+  "title": "Cocos AI attested TLS can retain trust after workload state changes",
+  "summary": "A peer continues to trust a long-lived TLS connection after an attacker changes the attested workload code, memory-backed state or configuration. Attestation at connection establishment does not establish freshness for the connection lifetime.",
+  "status": "published",
+  "published": "2026-11-12",
+  "updated": "2026-11-12",
+  "cve": [
+    "CVE-2026-119345"
+  ],
+  "ghsa": [
+    "GHSA-ghwv-vrp2-2975"
+  ],
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "An attacker must already be able to modify attested workload state after the connection is established. This local-access prerequisite and specialized attestation configuration warrant a 30-day response."
+  },
+  "vendor_severity": [
+    {
+      "source": "GitHub Reviewed Advisory Database",
+      "value": "High, CVSS 4.0 7.2"
+    }
+  ],
+  "affected": [
+    {
+      "product": "github.com/ultravioletrs/cocos",
+      "ecosystem": "Go",
+      "fixed": "0.9.0",
+      "note": "The advisory lists versions through 0.8.2 inclusive."
+    }
+  ],
+  "exposure": "Applications relying on Cocos AI intra-handshake attested TLS for ongoing workload trust are exposed when an attacker can modify the attester state without closing the connection. Long-lived connections increase the stale-evidence window.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check the resolved github.com/ultravioletrs/cocos module and attested TLS usage. The advisory lists versions through 0.8.2 as affected and 0.9.0 as patched; verify any intervening version with the vendor."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update Cocos and maintain evidence freshness",
+      "details": "Upgrade to 0.9.0 or later, the listed patched version. The advisory proposes periodic or operator-defined post-handshake re-attestation as a workaround.",
+      "risk": "Medium. Upgrading and introducing re-attestation can change connection behavior and require integration validation."
+    }
+  ],
+  "verification": [
+    "Confirm the resolved Cocos module is at least 0.9.0 and the attestation configuration meets the application's evidence-freshness requirements."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-ghwv-vrp2-2975",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-12",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-12",
+      "change": "Initial record drafted from the directly inspected reviewed advisory for independent review."
+    }
+  ]
+}

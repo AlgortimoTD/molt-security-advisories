@@ -1,0 +1,107 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0065",
+  "title": "Exploited Chrome XML use-after-free permits code execution inside the sandbox",
+  "summary": "A crafted HTML page can exploit an XML use-after-free to execute code inside the browser sandbox. CISA added the vulnerability to its exploited-vulnerability catalog on November 10.",
+  "status": "published",
+  "published": "2026-11-12",
+  "updated": "2026-11-12",
+  "severity": {
+    "level": "critical",
+    "urgency": "24h",
+    "rationale": "Confirmed exploitation reaches browser code execution through untrusted pages. Agent browsing makes that content routinely reachable, warranting action within 24 hours."
+  },
+  "affected": [
+    {
+      "product": "Google Chrome Stable",
+      "fixed": "157.0.8103.50",
+      "note": "The vendor CVE description identifies Stable versions before this build. Other channels and Chromium-derived products require their own vendor fix mapping."
+    }
+  ],
+  "exposure": "Browsers rendering untrusted HTML are exposed. This CVE establishes execution inside the sandbox, not a sandbox escape. Test browsers confined to trusted content have less exposure.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "For Google Chrome Stable, read the executable version and update versions below 157.0.8103.50. For other channels or derived browsers, verify the vendor has incorporated the CVE-2026-125350 fix."
+      },
+      "context": "browsing"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Install the current patched vendor browser and restart it. Chrome Stable builds from 157.0.8103.50 address this CVE; verify other channels against their vendor notices.",
+      "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+    }
+  ],
+  "verification": [
+    "Confirm the installed version and the component used by running processes meet the documented fix or containment condition."
+  ],
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/125xxx/CVE-2026-125350.json",
+      "publisher": "CVE Program, vendor CNA",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json",
+      "publisher": "CISA",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "exploitation",
+        "summary",
+        "severity",
+        "remediation"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-12",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-12",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "cve": [
+    "CVE-2026-125350"
+  ],
+  "vendor_severity": [
+    {
+      "source": "Google CNA",
+      "value": "High"
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/1_Z0DIAC_1/status/2120778925232054352",
+      "kind": "social",
+      "seen": "2026-11-12"
+    }
+  ],
+  "exploitation": {
+    "status": "exploited-in-the-wild",
+    "kev": true,
+    "note": "Listed in CISA KEV on November 10, 2026."
+  }
+}

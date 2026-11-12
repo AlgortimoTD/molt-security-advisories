@@ -1,0 +1,49 @@
+{
+  "schema": "msr/1",
+  "id": "MSR-2026-0007",
+  "claim": "Prompt injection in the archived MCP Puppeteer server permits remote code execution, and the maintainers will not provide a fix.",
+  "verdict": "unverifiable",
+  "explanation": "The primary repository confirms that Puppeteer is an archived reference server and that no security patches will be provided. Those statements do not establish the specific prompt-injection-to-code-execution chain, its affected versions or its severity. The concrete exploit claim therefore remains unverifiable under this feed policy. This is an evidence gap, not a finding that the reported attack is false or that the archived server is safe.",
+  "published": "2026-11-12",
+  "updated": "2026-11-12",
+  "discovery": [
+    {
+      "url": "https://x.com/spektion/status/2120547768418578898",
+      "kind": "social",
+      "seen": "2026-11-12"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/modelcontextprotocol/servers-archived/main/README.md",
+      "publisher": "Model Context Protocol",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "explanation"
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/modelcontextprotocol/servers-archived/main/SECURITY.md",
+      "publisher": "Model Context Protocol",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "explanation"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-12",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-12",
+      "change": "Recorded the specific primary-evidence gap for independent review."
+    }
+  ]
+}

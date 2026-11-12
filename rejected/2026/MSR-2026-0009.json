@@ -1,0 +1,40 @@
+{
+  "schema": "msr/1",
+  "id": "MSR-2026-0009",
+  "claim": "Claude Code's Yes, and do not ask again setting exposed passwords and keys in 1,122 public copies of its local settings file.",
+  "verdict": "unverifiable",
+  "explanation": "Anthropic documents that standing permission approvals are saved as allow rules in .claude/settings.local.json. It also documents automatic git exclusion when Claude Code creates that file and tells users who create it manually to exclude it themselves. This confirms a permission-storage feature, but does not establish the claimed 1,122 exposed copies, their contents, or the asserted secret-persistence behavior. The incident count and exposure claim remain unverifiable under the tier 1 policy; this verdict does not establish that public copies contain no secrets.",
+  "published": "2026-11-12",
+  "updated": "2026-11-12",
+  "discovery": [
+    {
+      "url": "https://x.com/BTHaberler/status/2120803789040935374",
+      "kind": "social",
+      "seen": "2026-11-12"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://code.claude.com/docs/en/settings",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "explanation"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-12",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-12",
+      "change": "Recorded the specific primary-evidence gap for independent review."
+    }
+  ]
+}

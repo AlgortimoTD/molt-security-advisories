@@ -1,0 +1,176 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0077",
+  "title": "VS Code MCP inputs and agent-originated commands can execute unexpected local commands",
+  "summary": "MCP notification links and install-link variables can execute commands. Unvalidated legacy SSE endpoints can redirect requests and expose credentials. Agent-originated local-command syntax can also bypass expected terminal approval.",
+  "status": "published",
+  "published": "2026-11-12",
+  "updated": "2026-11-12",
+  "severity": {
+    "level": "high",
+    "urgency": "72h",
+    "rationale": "A malicious MCP server or prompt content can reach local commands and credentials under common integration prerequisites. Connection, click or tool-approval requirements limit reach; act within 72 hours."
+  },
+  "affected": [
+    {
+      "product": "Visual Studio Code",
+      "fixed": "1.145.3",
+      "note": "All four advisories list versions before 1.145.3."
+    }
+  ],
+  "exposure": "Elicitation needs a connected hostile server and a notification-link click. Install links need installation approval. SSE needs connection to a hostile server. The Agent Host path needs attacker-influenced child prompts and a granted related session tool operation.",
+  "detectors": [
+    {
+      "type": "executable-version",
+      "params": {
+        "executable": "code",
+        "ranges": [
+          {
+            "fixed": "1.145.3"
+          }
+        ]
+      },
+      "context": "any"
+    },
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check the actual VS Code installation version, including installations whose code command is absent from PATH. This record does not establish applicability to forks."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade VS Code to 1.145.3 or later. Connect only to trusted MCP servers and avoid untrusted install links and notification links. Until patched, remove affected SSE servers; prefer the Copilot harness to the Local harness and avoid session-wide tool grants for untrusted instructions.",
+      "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+    }
+  ],
+  "verification": [
+    "Confirm the installed version and the component used by running processes meet the documented fix or containment condition."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/microsoft/vscode/security/advisories/GHSA-66hq-jw93-462h",
+      "publisher": "Microsoft VS Code",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/microsoft/vscode/security/advisories/GHSA-4x35-6qr8-ww48",
+      "publisher": "Microsoft VS Code",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/microsoft/vscode/security/advisories/GHSA-crhv-2887-p3xr",
+      "publisher": "Microsoft VS Code",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/microsoft/vscode/security/advisories/GHSA-w9fm-7vcm-cvq4",
+      "publisher": "Microsoft VS Code",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-12",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-12",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "cve": [
+    "CVE-2026-120779",
+    "CVE-2026-119983",
+    "CVE-2026-114171",
+    "CVE-2026-120782"
+  ],
+  "ghsa": [
+    "GHSA-66hq-jw93-462h",
+    "GHSA-4x35-6qr8-ww48",
+    "GHSA-crhv-2887-p3xr",
+    "GHSA-w9fm-7vcm-cvq4"
+  ],
+  "vendor_severity": [
+    {
+      "source": "VS Code repository advisory",
+      "value": "High, CVSS 3.1 8.3",
+      "applies_to": "CVE-2026-120779"
+    },
+    {
+      "source": "VS Code repository advisories",
+      "value": "High, CVSS 3.1 7.7",
+      "applies_to": "CVE-2026-119983 and CVE-2026-114171"
+    },
+    {
+      "source": "VS Code repository advisory",
+      "value": "Moderate, CVSS 3.1 6.8",
+      "applies_to": "CVE-2026-120782"
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/botnewsnetwork/status/2120585686160130544",
+      "kind": "social",
+      "seen": "2026-11-12"
+    }
+  ]
+}
