@@ -1,0 +1,85 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0079",
+  "title": "LMCache run_script admin endpoint executes caller-supplied Python without authentication",
+  "summary": "Before 0.5.6, the admin /run_script endpoint was enabled on all interfaces without authentication. Final 0.5.6 disables it by default, but explicitly enabling it still exposes unauthenticated Python execution.",
+  "status": "published",
+  "published": "2026-11-12",
+  "updated": "2026-11-12",
+  "severity": {
+    "level": "critical",
+    "urgency": "24h",
+    "rationale": "An enabled, reachable admin endpoint executes arbitrary Python without authentication. The earlier default made this reachable without a special opt-in, warranting action within 24 hours."
+  },
+  "affected": [
+    {
+      "product": "LMCache admin run_script API",
+      "ecosystem": "PyPI",
+      "note": "Before 0.5.6, the endpoint was served by default. In 0.5.6 it is disabled by default and admin HTTP binds to loopback; explicit re-enablement still provides unauthenticated execution. No complete affected introduction range is established here."
+    }
+  ],
+  "exposure": "Any untrusted caller reaching an enabled /run_script endpoint can run Python in the LMCache process. Package version alone cannot prove safety when explicit settings override the hardened defaults.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check LMCache admin API reachability and run_script_api_enabled or --run-script-api-enabled. Upgrade releases before 0.5.6 and verify the endpoint stays disabled; a version check alone is insufficient."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade to 0.5.6 or later for hardened defaults and keep /run_script disabled. Verify the admin bind and network controls. Do not expose an explicitly enabled endpoint to untrusted callers.",
+      "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+    }
+  ],
+  "verification": [
+    "Confirm /run_script returns 404 with the feature disabled and untrusted networks cannot reach the admin service.",
+    "Check explicit configuration overrides after upgrade."
+  ],
+  "sources": [
+    {
+      "url": "https://blog.lmcache.ai/en/2026/10/20/lmcache-v0-5-6-release/",
+      "publisher": "LMCache Project",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-12",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-12",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/AgentFieldKit/status/2120631738007261509",
+      "kind": "social",
+      "seen": "2026-11-12"
+    }
+  ],
+  "related": [
+    "MSA-2026-0078"
+  ]
+}

@@ -1,0 +1,258 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0070",
+  "title": "Aspire CLI temporary files expose configuration and permit local build code execution",
+  "summary": "Insecure temporary-directory handling lets a local attacker influence generated MSBuild builds. The deprecated MCP scanner can also disclose sensitive configuration through temporary diagnostic files.",
+  "status": "published",
+  "published": "2026-11-12",
+  "updated": "2026-11-12",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "Both paths require local access on non-Windows systems. Shared temporary directories and CLI operations are prerequisites, warranting action within 30 days under the local-access rubric."
+  },
+  "affected": [
+    {
+      "product": "@microsoft/aspire-cli",
+      "ecosystem": "npm",
+      "introduced": "13.4.2",
+      "fixed": "13.6.5"
+    },
+    {
+      "product": "@microsoft/aspire-cli-linux-x64",
+      "ecosystem": "npm",
+      "introduced": "13.4.2",
+      "fixed": "13.6.5"
+    },
+    {
+      "product": "@microsoft/aspire-cli-linux-arm64",
+      "ecosystem": "npm",
+      "introduced": "13.4.2",
+      "fixed": "13.6.5"
+    },
+    {
+      "product": "@microsoft/aspire-cli-linux-musl-x64",
+      "ecosystem": "npm",
+      "introduced": "13.4.2",
+      "fixed": "13.6.5"
+    },
+    {
+      "product": "@microsoft/aspire-cli-osx-x64",
+      "ecosystem": "npm",
+      "introduced": "13.4.2",
+      "fixed": "13.6.5"
+    },
+    {
+      "product": "@microsoft/aspire-cli-osx-arm64",
+      "ecosystem": "npm",
+      "introduced": "13.4.2",
+      "fixed": "13.6.5"
+    },
+    {
+      "product": "Aspire.Cli",
+      "ecosystem": "NuGet",
+      "introduced": "13.2.0",
+      "fixed": "13.6.5"
+    },
+    {
+      "product": "Aspire.Cli.linux-x64",
+      "ecosystem": "NuGet",
+      "introduced": "13.3.0",
+      "fixed": "13.6.5"
+    },
+    {
+      "product": "Aspire.Cli.linux-arm64",
+      "ecosystem": "NuGet",
+      "introduced": "13.3.0",
+      "fixed": "13.6.5"
+    },
+    {
+      "product": "Aspire.Cli.linux-musl-x64",
+      "ecosystem": "NuGet",
+      "introduced": "13.3.0",
+      "fixed": "13.6.5"
+    },
+    {
+      "product": "Aspire.Cli.osx-x64",
+      "ecosystem": "NuGet",
+      "introduced": "13.3.0",
+      "fixed": "13.6.5"
+    },
+    {
+      "product": "Aspire.Cli.osx-arm64",
+      "ecosystem": "NuGet",
+      "introduced": "13.3.0",
+      "fixed": "13.6.5"
+    }
+  ],
+  "exposure": "Linux and macOS x64/Arm64 CLI installations are affected. Generated server/integration builds can encounter attacker-writable response-file ancestors. Agent or MCP initialization can expose scanner diagnostics through shared temporary files.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "npm",
+        "name": "@microsoft/aspire-cli",
+        "ranges": [
+          {
+            "fixed": "13.6.5",
+            "introduced": "13.4.2"
+          }
+        ]
+      },
+      "context": "any"
+    },
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "npm",
+        "name": "@microsoft/aspire-cli-linux-x64",
+        "ranges": [
+          {
+            "fixed": "13.6.5",
+            "introduced": "13.4.2"
+          }
+        ]
+      },
+      "context": "any"
+    },
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "npm",
+        "name": "@microsoft/aspire-cli-linux-arm64",
+        "ranges": [
+          {
+            "fixed": "13.6.5",
+            "introduced": "13.4.2"
+          }
+        ]
+      },
+      "context": "any"
+    },
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "npm",
+        "name": "@microsoft/aspire-cli-linux-musl-x64",
+        "ranges": [
+          {
+            "fixed": "13.6.5",
+            "introduced": "13.4.2"
+          }
+        ]
+      },
+      "context": "any"
+    },
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "npm",
+        "name": "@microsoft/aspire-cli-osx-x64",
+        "ranges": [
+          {
+            "fixed": "13.6.5",
+            "introduced": "13.4.2"
+          }
+        ]
+      },
+      "context": "any"
+    },
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "npm",
+        "name": "@microsoft/aspire-cli-osx-arm64",
+        "ranges": [
+          {
+            "fixed": "13.6.5",
+            "introduced": "13.4.2"
+          }
+        ]
+      },
+      "context": "any"
+    },
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check standalone and .NET-tool Aspire CLI packages: Aspire.Cli 13.2.0 to below 13.6.5, and listed platform packages 13.3.0 to below 13.6.5. Verify Linux/macOS package and running CLI versions."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Update Aspire CLI to 13.6.5 or later through its installation method. Update npm platform dependencies as well. Updating the .NET runtime or SDK alone does not update Aspire.",
+      "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+    }
+  ],
+  "verification": [
+    "Confirm the installed version and the component used by running processes meet the documented fix or containment condition."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-m63f-xhvm-6mv5",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-q6jf-24jf-m3cg",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-12",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-12",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "cve": [
+    "CVE-2026-120778",
+    "CVE-2026-120792"
+  ],
+  "ghsa": [
+    "GHSA-m63f-xhvm-6mv5",
+    "GHSA-q6jf-24jf-m3cg"
+  ],
+  "vendor_severity": [
+    {
+      "source": "Microsoft advisories",
+      "value": "High, CVSS 3.1 7.3; MSRC Important",
+      "applies_to": "Both CVEs"
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0069",
+  "title": "node-forge accepts forged RSA signatures with public exponent e=3 and can exhaust ASN.1 parser resources",
+  "summary": "Non-canonical DigestInfo encodings permit signature forgery for RSA keys with public exponent e=3. Separate nested BIT STRING decoding flaws bypass depth limits and consume excessive CPU or memory.",
+  "status": "published",
+  "published": "2026-11-12",
+  "updated": "2026-11-12",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "Practical signature forgery requires an unusual RSA verification key with public exponent e=3. The parser issue causes denial of service, placing these conditions in the rubric's 30-day category."
+  },
+  "affected": [
+    {
+      "product": "node-forge",
+      "ecosystem": "npm",
+      "fixed": "1.4.1",
+      "note": "Both advisories list versions through 1.4.0 inclusive."
+    }
+  ],
+  "exposure": "Exposed when verifying attacker-provided signatures with RSA keys with public exponent e=3 or parsing untrusted DER/PEM. Higher-level certificate, PKCS and TLS APIs can reach the affected parser.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "npm",
+        "name": "node-forge",
+        "ranges": [
+          {
+            "fixed": "1.4.1"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade node-forge to 1.4.1 or later. Avoid RSA verification keys with public exponent e=3. Disabling BIT STRING decoding is only a limited direct-parser workaround and changes parsed structures.",
+      "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+    }
+  ],
+  "verification": [
+    "Confirm the installed version and the component used by running processes meet the documented fix or containment condition."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-6qrw-m8cv-hcxf",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-rhr8-3pm8-cq29",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-12",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-12",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    },
+    {
+      "date": "2026-11-12",
+      "change": "Narrowed the RSA signature-forgery condition to public exponent e=3 throughout the record after re-reading the reviewed GitHub advisory."
+    }
+  ],
+  "cve": [
+    "CVE-2026-119192",
+    "CVE-2026-119191"
+  ],
+  "ghsa": [
+    "GHSA-6qrw-m8cv-hcxf",
+    "GHSA-rhr8-3pm8-cq29"
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub advisories",
+      "value": "High, CVSS 3.1 7.5",
+      "applies_to": "Both CVEs"
+    }
+  ]
+}

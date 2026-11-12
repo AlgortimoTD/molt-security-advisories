@@ -1,0 +1,182 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0066",
+  "title": "Chrome ServiceWorker use-after-free can execute code outside the sandbox",
+  "summary": "The ServiceWorker flaw permits code execution outside the sandbox through crafted HTML. Separate CSS, Layout and Accessibility use-after-free flaws permit execution inside the sandbox.",
+  "status": "published",
+  "published": "2026-11-12",
+  "updated": "2026-11-12",
+  "severity": {
+    "level": "critical",
+    "urgency": "24h",
+    "rationale": "A crafted page can execute code outside the sandbox without an additional configuration prerequisite in the vendor record. Unattended agent browsers need the fix within 24 hours."
+  },
+  "affected": [
+    {
+      "product": "Google Chrome Stable",
+      "fixed": "157.0.8103.78",
+      "note": "Stable: 157.0.8103.78/.79 on Windows and macOS; 157.0.8103.78 on Linux."
+    },
+    {
+      "product": "Google Chrome Extended Stable",
+      "fixed": "156.0.8078.100",
+      "note": "Windows and macOS. The release lists all four CVEs."
+    }
+  ],
+  "exposure": "Browsers processing attacker-controlled HTML are exposed, including sandboxed agent browsers. Test-only browsers restricted to trusted application content have lower exposure.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Read the browser executable version and its release channel. Stable needs 157.0.8103.78 or later; Windows/macOS Extended Stable needs 156.0.8078.100 or later. Do not compare Extended Stable against the Stable threshold."
+      },
+      "context": "browsing"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Update to the patched build for the installed release channel and restart browser processes.",
+      "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+    }
+  ],
+  "verification": [
+    "Confirm the installed version and the component used by running processes meet the documented fix or containment condition."
+  ],
+  "sources": [
+    {
+      "url": "https://chromereleases.googleblog.com/2026/11/stable-channel-update-for-desktop_01744469280.html",
+      "publisher": "Google Chrome Releases",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://chromereleases.googleblog.com/2026/11/extended-stable-update-for-desktop_01570615041.html",
+      "publisher": "Google Chrome Releases",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/126xxx/CVE-2026-126885.json",
+      "publisher": "CVE Program, vendor CNA",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/126xxx/CVE-2026-126895.json",
+      "publisher": "CVE Program, vendor CNA",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/126xxx/CVE-2026-126879.json",
+      "publisher": "CVE Program, vendor CNA",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/126xxx/CVE-2026-126911.json",
+      "publisher": "CVE Program, vendor CNA",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-12",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-12",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "cve": [
+    "CVE-2026-126885",
+    "CVE-2026-126895",
+    "CVE-2026-126879",
+    "CVE-2026-126911"
+  ],
+  "vendor_severity": [
+    {
+      "source": "Google Chrome Releases",
+      "value": "Critical",
+      "applies_to": "All four CVEs"
+    }
+  ]
+}

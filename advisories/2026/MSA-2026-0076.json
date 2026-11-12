@@ -1,0 +1,113 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0076",
+  "title": "MCP Gateway Registry server addresses permit requests into internal networks",
+  "summary": "Authenticated users allowed to register or edit servers can choose upstream addresses that make the gateway request internal services and sometimes return responses, potentially exposing metadata credentials.",
+  "status": "published",
+  "published": "2026-11-12",
+  "updated": "2026-11-12",
+  "severity": {
+    "level": "high",
+    "urgency": "72h",
+    "rationale": "Server-registration privileges can cross a network boundary and disclose cloud credentials. This limited privilege prerequisite with sensitive-data exposure warrants action within 72 hours."
+  },
+  "affected": [
+    {
+      "product": "mcp-gateway-registry",
+      "introduced": "1.0.3",
+      "fixed": "1.35.0",
+      "note": "Affected through 1.34.0 inclusive. The unrelated 1.25.0 management-API fix does not address this SSRF."
+    }
+  ],
+  "exposure": "Requires authenticated registration or modification permission. The registry network and attached role determine reachable services and secrets.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check the deployed mcp-gateway-registry version: 1.0.3 through 1.34.0 require updating to at least 1.35.0. Inspect stored upstream addresses as well as the running version."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade to 1.35.0 or later. Review and correct stored server addresses, which are not rewritten by the upgrade. Review registration logs; if unexpected activity cannot be ruled out, review attached-role activity and rotate its credentials. Limit registration permissions and outbound access.",
+      "risk": "Medium. Updating and restarting can interrupt dependent workflows."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed version is at least 1.35.0 and stored upstream addresses have been reviewed and corrected.",
+    "Confirm the registration-log and attached-role reviews and any indicated credential replacement are complete."
+  ],
+  "sources": [
+    {
+      "url": "https://aws.amazon.com/security/security-bulletins/2026-180-aws/",
+      "publisher": "AWS",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/agentic-community/mcp-gateway-registry/security/advisories/GHSA-fc39-fwh3-wv5r",
+      "publisher": "MCP Gateway Registry maintainers",
+      "tier": 1,
+      "retrieved": "2026-11-12",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-12",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-12",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "cve": [
+    "CVE-2026-125926"
+  ],
+  "ghsa": [
+    "GHSA-fc39-fwh3-wv5r"
+  ],
+  "vendor_severity": [
+    {
+      "source": "Project advisory",
+      "value": "High, CVSS 3.1 8.5"
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/xcademialtd/status/2120830907909320864",
+      "kind": "social",
+      "seen": "2026-11-12"
+    }
+  ]
+}
