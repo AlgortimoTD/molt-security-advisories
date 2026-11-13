@@ -1,0 +1,104 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0084",
+  "title": "pgEdge RAG Server hybrid queries can exhaust database and server resources",
+  "summary": "Unauthenticated queries rebuild a BM25 index from the entire corpus. Work grows with corpus size, enabling denial of service.",
+  "status": "published",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "Untrusted callers can exhaust retrieval workers and database resources. Availability impact warrants a 30-day response under the feed rubric."
+  },
+  "affected": [
+    {
+      "product": "pgEdge RAG Server",
+      "ecosystem": "Go",
+      "fixed": "2.0.0",
+      "note": "Vendor lists 1.0.0 and earlier, including alpha and beta releases. The GitHub database separately maps the fix commit to a Go pseudo-version."
+    }
+  ],
+  "exposure": "Exposed query endpoints with hybrid search enabled are affected; it is enabled by default.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check the deployed pgEdge RAG Server release, query endpoint access and hybrid-search configuration. Vendor release 2.0.0 contains the fix."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade to 2.0.0 or later. Until then, use an authenticating, rate-limiting proxy or disable hybrid search per pipeline. These mitigations do not replace upgrading.",
+      "risk": "Medium. Disabling hybrid search or capping corpus reads reduces keyword recall."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed release and review search.bm25_max_documents against corpus size."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/pgEdge/pgedge-rag-server/security/advisories/GHSA-5qg5-rgp6-j5m5",
+      "publisher": "pgEdge",
+      "tier": 1,
+      "retrieved": "2026-11-13",
+      "supports": [
+        "summary",
+        "affected",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification",
+        "ghsa",
+        "vendor_severity"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-5qg5-rgp6-j5m5",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-13",
+      "supports": [
+        "summary",
+        "affected",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification",
+        "cve",
+        "ghsa",
+        "vendor_severity"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-13",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-13",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "cve": [
+    "CVE-2026-125327"
+  ],
+  "ghsa": [
+    "GHSA-5qg5-rgp6-j5m5"
+  ],
+  "vendor_severity": [
+    {
+      "source": "pgEdge",
+      "value": "High, CVSS 3.1 7.5"
+    }
+  ]
+}

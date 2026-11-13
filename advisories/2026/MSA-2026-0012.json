@@ -5,7 +5,7 @@
   "summary": "The IPv4 TCP connection setup flaw can lead to remote code execution. Ubuntu describes an unreleased exploit using MPTCP and warns that the underlying flaw is not specific to MPTCP.",
   "status": "published",
   "published": "2026-11-03",
-  "updated": "2026-11-03",
+  "updated": "2026-11-13",
   "severity": {
     "level": "critical",
     "urgency": "24h",
@@ -15,7 +15,12 @@
     {
       "product": "Linux kernel",
       "introduced": "4.4",
-      "note": "Affected branches require vendor-specific backports. Ubuntu blog lists proposed fixes, while the current CVE tracker marks packages as work in progress; confirm the exact release and flavor."
+      "note": "Affected branches require distribution-specific backports. Ubuntu 22.04 LTS and newer have fixes in the -updates pocket; fixes for 20.04 LTS, 18.04 LTS and 16.04 LTS are still pending in ESM according to the bulletin updated on 2026-11-09. Check the exact release and kernel flavor."
+    },
+    {
+      "product": "Ubuntu 22.04 LTS linux-fips kernel",
+      "fixed": "5.15.0-203.213+fips1",
+      "note": "USN-9027-2 lists linux-image-5.15.0-203-fips at this package version through Ubuntu Pro FIPS Updates. This is not a generic upstream kernel threshold."
     }
   ],
   "exposure": "Relevant to exposed IPv4 TCP handling. Disabling MPTCP alone is not a complete fix for the underlying vulnerability.",
@@ -30,9 +35,9 @@
   ],
   "remediation": [
     {
-      "action": "Remediate the affected component",
-      "details": "Apply the distribution fix and reboot. Ubuntu offers testing fixes through proposed for 22.04 and newer; use acceptance testing and confirm current package status before installation.",
-      "risk": "Medium. Kernel replacement requires a reboot; proposed packages need local acceptance testing."
+      "action": "Apply the distribution security update",
+      "details": "Install the fixed package for the exact distribution release and kernel flavor, then reboot. Ubuntu 22.04 LTS and newer have fixes in -updates; enabling -proposed is no longer necessary. Fixes for 20.04 LTS, 18.04 LTS and 16.04 LTS are still pending in ESM according to the bulletin updated on 2026-11-09; check the vendor CVE tracker for availability. FIPS Updates require the matching Ubuntu Pro channel.",
+      "risk": "Medium. Reboot interrupts workloads; kernel ABI changes can require rebuilding third-party modules."
     }
   ],
   "verification": [
@@ -43,7 +48,7 @@
       "url": "https://ubuntu.com/blog/fixes-available-in-proposed-pocket-for-cve-2026-98432",
       "publisher": "Canonical Ubuntu",
       "tier": 1,
-      "retrieved": "2026-11-03",
+      "retrieved": "2026-11-13",
       "supports": [
         "affected",
         "cve",
@@ -57,22 +62,22 @@
       ]
     },
     {
-      "url": "https://ubuntu.com/security/CVE-2026-98432",
+      "url": "https://ubuntu.com/security/notices/USN-9027-2",
       "publisher": "Canonical Ubuntu",
       "tier": 1,
-      "retrieved": "2026-11-03",
+      "retrieved": "2026-11-13",
       "supports": [
         "affected",
         "cve",
-        "vendor_severity",
-        "remediation"
+        "remediation",
+        "verification"
       ]
     }
   ],
   "review": {
     "author_model": "gpt-6.1-sol",
     "reviewer_model": "claude-opus-5-5",
-    "reviewed": "2026-11-03",
+    "reviewed": "2026-11-13",
     "verdict": "approve",
     "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
   },
@@ -84,6 +89,14 @@
     {
       "date": "2026-11-03",
       "change": "Removed the unsupported laboratory qualifier from the description of the unreleased exploit."
+    },
+    {
+      "date": "2026-11-13",
+      "change": "Re-read the updated Ubuntu bulletin and FIPS notice. Replaced stale proposed-only guidance with archive updates and added the documented Ubuntu 22.04 FIPS fixed package."
+    },
+    {
+      "date": "2026-11-13",
+      "change": "Clarified that Ubuntu 20.04 LTS and older ESM fixes remain pending in the updated bulletin; limited the FIPS notice evidence mapping to the fields it supports."
     }
   ],
   "cve": [
