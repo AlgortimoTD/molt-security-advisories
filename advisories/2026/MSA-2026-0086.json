@@ -1,0 +1,117 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0086",
+  "title": "Soup Sieve descendant selectors can exhaust CPU on deeply nested markup",
+  "summary": "Small, deeply nested HTML or XML can make ordinary descendant selectors consume excessive CPU, including through Beautiful Soup. Soup Sieve 4.0 fixes the matching algorithm with default caching.",
+  "status": "published",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "Untrusted fetched markup can stall scrapers and agent retrieval workers without attacker control of the selector. The documented impact is denial of service, warranting a 30-day response."
+  },
+  "affected": [
+    {
+      "product": "soupsieve",
+      "ecosystem": "PyPI",
+      "fixed": "4.0.0",
+      "note": "Versions before 4.0 are affected. NOCACHE retains vulnerable matching even after upgrading."
+    }
+  ],
+  "exposure": "Applications selecting only trusted documents are outside this exposure. Scrapers processing untrusted markup with descendant combinators are exposed.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "PyPI",
+        "name": "soupsieve",
+        "ranges": [
+          {
+            "fixed": "4.0.0"
+          }
+        ]
+      },
+      "context": "any"
+    },
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check whether selectors use NOCACHE with descendant combinators on untrusted documents, even on version 4.0 or later."
+      },
+      "context": "browsing"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade to 4.0 or later and retain default caching. Avoid NOCACHE for untrusted input. Before upgrading, limit document depth and selection time.",
+      "risk": "Low. Test selector results after the caching change."
+    }
+  ],
+  "verification": [
+    "Confirm the runtime version and that untrusted-input selection uses caching."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/facelessuser/soupsieve/security/advisories/GHSA-mmhr-3c5m-f64f",
+      "publisher": "Soup Sieve",
+      "tier": 1,
+      "retrieved": "2026-11-13",
+      "supports": [
+        "summary",
+        "affected",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification",
+        "ghsa",
+        "vendor_severity"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-mmhr-3c5m-f64f",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-13",
+      "supports": [
+        "summary",
+        "affected",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification",
+        "cve",
+        "ghsa",
+        "vendor_severity"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-13",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-13",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "cve": [
+    "CVE-2026-126190"
+  ],
+  "ghsa": [
+    "GHSA-mmhr-3c5m-f64f"
+  ],
+  "vendor_severity": [
+    {
+      "source": "Soup Sieve",
+      "value": "High, CVSS 3.1 7.5"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0089",
+  "title": "Codex CLI non-interactive runs now require explicit project trust",
+  "summary": "Codex 0.169.0 fixes project-trust handling: exec keeps untrusted project configuration and MCP servers disabled even with workspace-write. Explicit trust persists for future sessions and includes MCP commands outside the sandbox.",
+  "status": "published",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "severity": {
+    "level": "low",
+    "urgency": "next-update",
+    "rationale": "This release tightens a trust boundary for unattended runs in untrusted repositories. The sources do not establish an affected version range or exploitation, so this record describes the documented hardening."
+  },
+  "affected": [
+    {
+      "product": "Codex CLI",
+      "fixed": "0.169.0",
+      "note": "Release containing the documented fix. The sources do not give an affected version range."
+    }
+  ],
+  "exposure": "Relevant to codex exec automation processing untrusted repositories with workspace-write permissions.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check Codex CLI version and project-trust settings used by non-interactive jobs. Review explicit trust grants separately from sandbox write permissions."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Use 0.169.0 or later for the documented behavior; grant --trust only after reviewing project configuration and MCP commands.",
+      "risk": "Medium. Jobs relying on implicit project trust can lose configured tools."
+    }
+  ],
+  "verification": [
+    "Use a harmless untrusted fixture to confirm project configuration and MCP servers stay disabled under workspace-write without explicit trust."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.169.0",
+      "publisher": "OpenAI Codex",
+      "tier": 1,
+      "retrieved": "2026-11-13",
+      "supports": [
+        "summary",
+        "affected",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/openai/codex/pull/60041",
+      "publisher": "OpenAI Codex",
+      "tier": 1,
+      "retrieved": "2026-11-13",
+      "supports": [
+        "summary",
+        "affected",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-13",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-13",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ]
+}

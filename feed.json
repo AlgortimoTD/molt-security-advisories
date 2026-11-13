@@ -2,7 +2,7 @@
   "schema": "msa-feed/1",
   "publisher": "MOLT Security Advisories",
   "homepage": "https://github.com/AlgortimoTD/molt-security-advisories",
-  "updated": "2026-11-12",
+  "updated": "2026-11-13",
   "advisories": [
     {
       "schema": "msa/1",
@@ -1277,7 +1277,7 @@
       "summary": "The IPv4 TCP connection setup flaw can lead to remote code execution. Ubuntu describes an unreleased exploit using MPTCP and warns that the underlying flaw is not specific to MPTCP.",
       "status": "published",
       "published": "2026-11-03",
-      "updated": "2026-11-03",
+      "updated": "2026-11-13",
       "severity": {
         "level": "critical",
         "urgency": "24h",
@@ -1287,7 +1287,12 @@
         {
           "product": "Linux kernel",
           "introduced": "4.4",
-          "note": "Affected branches require vendor-specific backports. Ubuntu blog lists proposed fixes, while the current CVE tracker marks packages as work in progress; confirm the exact release and flavor."
+          "note": "Affected branches require distribution-specific backports. Ubuntu 22.04 LTS and newer have fixes in the -updates pocket; fixes for 20.04 LTS, 18.04 LTS and 16.04 LTS are still pending in ESM according to the bulletin updated on 2026-11-09. Check the exact release and kernel flavor."
+        },
+        {
+          "product": "Ubuntu 22.04 LTS linux-fips kernel",
+          "fixed": "5.15.0-203.213+fips1",
+          "note": "USN-9027-2 lists linux-image-5.15.0-203-fips at this package version through Ubuntu Pro FIPS Updates. This is not a generic upstream kernel threshold."
         }
       ],
       "exposure": "Relevant to exposed IPv4 TCP handling. Disabling MPTCP alone is not a complete fix for the underlying vulnerability.",
@@ -1302,9 +1307,9 @@
       ],
       "remediation": [
         {
-          "action": "Remediate the affected component",
-          "details": "Apply the distribution fix and reboot. Ubuntu offers testing fixes through proposed for 22.04 and newer; use acceptance testing and confirm current package status before installation.",
-          "risk": "Medium. Kernel replacement requires a reboot; proposed packages need local acceptance testing."
+          "action": "Apply the distribution security update",
+          "details": "Install the fixed package for the exact distribution release and kernel flavor, then reboot. Ubuntu 22.04 LTS and newer have fixes in -updates; enabling -proposed is no longer necessary. Fixes for 20.04 LTS, 18.04 LTS and 16.04 LTS are still pending in ESM according to the bulletin updated on 2026-11-09; check the vendor CVE tracker for availability. FIPS Updates require the matching Ubuntu Pro channel.",
+          "risk": "Medium. Reboot interrupts workloads; kernel ABI changes can require rebuilding third-party modules."
         }
       ],
       "verification": [
@@ -1315,7 +1320,7 @@
           "url": "https://ubuntu.com/blog/fixes-available-in-proposed-pocket-for-cve-2026-98432",
           "publisher": "Canonical Ubuntu",
           "tier": 1,
-          "retrieved": "2026-11-03",
+          "retrieved": "2026-11-13",
           "supports": [
             "affected",
             "cve",
@@ -1329,22 +1334,22 @@
           ]
         },
         {
-          "url": "https://ubuntu.com/security/CVE-2026-98432",
+          "url": "https://ubuntu.com/security/notices/USN-9027-2",
           "publisher": "Canonical Ubuntu",
           "tier": 1,
-          "retrieved": "2026-11-03",
+          "retrieved": "2026-11-13",
           "supports": [
             "affected",
             "cve",
-            "vendor_severity",
-            "remediation"
+            "remediation",
+            "verification"
           ]
         }
       ],
       "review": {
         "author_model": "gpt-6.1-sol",
         "reviewer_model": "claude-opus-5-5",
-        "reviewed": "2026-11-03",
+        "reviewed": "2026-11-13",
         "verdict": "approve",
         "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
       },
@@ -1356,6 +1361,14 @@
         {
           "date": "2026-11-03",
           "change": "Removed the unsupported laboratory qualifier from the description of the unreleased exploit."
+        },
+        {
+          "date": "2026-11-13",
+          "change": "Re-read the updated Ubuntu bulletin and FIPS notice. Replaced stale proposed-only guidance with archive updates and added the documented Ubuntu 22.04 FIPS fixed package."
+        },
+        {
+          "date": "2026-11-13",
+          "change": "Clarified that Ubuntu 20.04 LTS and older ESM fixes remain pending in the updated bulletin; limited the FIPS notice evidence mapping to the fields it supports."
         }
       ],
       "cve": [
@@ -9012,6 +9025,505 @@
         {
           "date": "2026-11-12",
           "change": "Initial record drafted from the directly inspected reviewed advisory for independent review."
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0084",
+      "title": "pgEdge RAG Server hybrid queries can exhaust database and server resources",
+      "summary": "Unauthenticated queries rebuild a BM25 index from the entire corpus. Work grows with corpus size, enabling denial of service.",
+      "status": "published",
+      "published": "2026-11-13",
+      "updated": "2026-11-13",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "Untrusted callers can exhaust retrieval workers and database resources. Availability impact warrants a 30-day response under the feed rubric."
+      },
+      "affected": [
+        {
+          "product": "pgEdge RAG Server",
+          "ecosystem": "Go",
+          "fixed": "2.0.0",
+          "note": "Vendor lists 1.0.0 and earlier, including alpha and beta releases. The GitHub database separately maps the fix commit to a Go pseudo-version."
+        }
+      ],
+      "exposure": "Exposed query endpoints with hybrid search enabled are affected; it is enabled by default.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check the deployed pgEdge RAG Server release, query endpoint access and hybrid-search configuration. Vendor release 2.0.0 contains the fix."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 2.0.0 or later. Until then, use an authenticating, rate-limiting proxy or disable hybrid search per pipeline. These mitigations do not replace upgrading.",
+          "risk": "Medium. Disabling hybrid search or capping corpus reads reduces keyword recall."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed release and review search.bm25_max_documents against corpus size."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/pgEdge/pgedge-rag-server/security/advisories/GHSA-5qg5-rgp6-j5m5",
+          "publisher": "pgEdge",
+          "tier": 1,
+          "retrieved": "2026-11-13",
+          "supports": [
+            "summary",
+            "affected",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification",
+            "ghsa",
+            "vendor_severity"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-5qg5-rgp6-j5m5",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-13",
+          "supports": [
+            "summary",
+            "affected",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification",
+            "cve",
+            "ghsa",
+            "vendor_severity"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-13",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-13",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-125327"
+      ],
+      "ghsa": [
+        "GHSA-5qg5-rgp6-j5m5"
+      ],
+      "vendor_severity": [
+        {
+          "source": "pgEdge",
+          "value": "High, CVSS 3.1 7.5"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0085",
+      "title": "Pillow TIFF saving can disclose process memory or corrupt the heap",
+      "summary": "Untrusted image metadata can override encoder geometry when saving TIFF through libtiff. Saved output can contain process memory; Predictor=2 can instead cause heap corruption and a crash. Code execution is not established.",
+      "status": "published",
+      "published": "2026-11-13",
+      "updated": "2026-11-13",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "The documented paths require TIFF output through libtiff and particular metadata handling or a crafted palette TIFF. Service memory disclosure and crashes warrant a 30-day response."
+      },
+      "affected": [
+        {
+          "product": "Pillow",
+          "ecosystem": "PyPI",
+          "fixed": "13.0.0",
+          "note": "The advisory lists versions through 12.3.0 as affected."
+        }
+      ],
+      "exposure": "Image conversion tools are exposed when they preserve untrusted EXIF or tiffinfo, or re-save crafted palette TIFFs with inherited compression.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "PyPI",
+            "name": "Pillow",
+            "ranges": [
+              {
+                "fixed": "13.0.0"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade Pillow to 13.0.0 or later.",
+          "risk": "Medium. Upgrades can require compatibility changes and service restarts."
+        }
+      ],
+      "verification": [
+        "Confirm the runtime uses the patched Pillow release; test TIFF conversion with representative inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/python-pillow/Pillow/security/advisories/GHSA-xcvg-w56q-r89m",
+          "publisher": "Pillow",
+          "tier": 1,
+          "retrieved": "2026-11-13",
+          "supports": [
+            "summary",
+            "affected",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification",
+            "ghsa",
+            "vendor_severity"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-xcvg-w56q-r89m",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-13",
+          "supports": [
+            "summary",
+            "affected",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification",
+            "cve",
+            "ghsa",
+            "vendor_severity"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-13",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-13",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-128067"
+      ],
+      "ghsa": [
+        "GHSA-xcvg-w56q-r89m"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Pillow",
+          "value": "High"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0086",
+      "title": "Soup Sieve descendant selectors can exhaust CPU on deeply nested markup",
+      "summary": "Small, deeply nested HTML or XML can make ordinary descendant selectors consume excessive CPU, including through Beautiful Soup. Soup Sieve 4.0 fixes the matching algorithm with default caching.",
+      "status": "published",
+      "published": "2026-11-13",
+      "updated": "2026-11-13",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "Untrusted fetched markup can stall scrapers and agent retrieval workers without attacker control of the selector. The documented impact is denial of service, warranting a 30-day response."
+      },
+      "affected": [
+        {
+          "product": "soupsieve",
+          "ecosystem": "PyPI",
+          "fixed": "4.0.0",
+          "note": "Versions before 4.0 are affected. NOCACHE retains vulnerable matching even after upgrading."
+        }
+      ],
+      "exposure": "Applications selecting only trusted documents are outside this exposure. Scrapers processing untrusted markup with descendant combinators are exposed.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "PyPI",
+            "name": "soupsieve",
+            "ranges": [
+              {
+                "fixed": "4.0.0"
+              }
+            ]
+          },
+          "context": "any"
+        },
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check whether selectors use NOCACHE with descendant combinators on untrusted documents, even on version 4.0 or later."
+          },
+          "context": "browsing"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 4.0 or later and retain default caching. Avoid NOCACHE for untrusted input. Before upgrading, limit document depth and selection time.",
+          "risk": "Low. Test selector results after the caching change."
+        }
+      ],
+      "verification": [
+        "Confirm the runtime version and that untrusted-input selection uses caching."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/facelessuser/soupsieve/security/advisories/GHSA-mmhr-3c5m-f64f",
+          "publisher": "Soup Sieve",
+          "tier": 1,
+          "retrieved": "2026-11-13",
+          "supports": [
+            "summary",
+            "affected",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification",
+            "ghsa",
+            "vendor_severity"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-mmhr-3c5m-f64f",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-13",
+          "supports": [
+            "summary",
+            "affected",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification",
+            "cve",
+            "ghsa",
+            "vendor_severity"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-13",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-13",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-126190"
+      ],
+      "ghsa": [
+        "GHSA-mmhr-3c5m-f64f"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Soup Sieve",
+          "value": "High, CVSS 3.1 7.5"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0088",
+      "title": "The my-mcp-server-driving-license-ocr package sends document images to a hardcoded destination",
+      "summary": "The malicious MCP OCR package sends supplied image URLs or bytes to an undisclosed hardcoded destination over plaintext HTTP. It overrides the configured API URL.",
+      "status": "published",
+      "published": "2026-11-13",
+      "updated": "2026-11-13",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "An agent tool can disclose sensitive document images to an unintended recipient. This confidentiality loss warrants containment within 72 hours."
+      },
+      "affected": [
+        {
+          "product": "my-mcp-server-driving-license-ocr",
+          "ecosystem": "PyPI",
+          "note": "Exactly 0.1.3 is identified as malicious; no patched version is listed."
+        }
+      ],
+      "exposure": "The analyze_image tool processes caller-supplied documents. Installation alone does not establish that images were transmitted.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Inspect package metadata, lockfiles and MCP configuration for my-mcp-server-driving-license-ocr exactly 0.1.3 without running it."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Stop using and remove the malicious release; no patched release is listed.",
+          "risk": "Medium. Removing the tool interrupts OCR workflows."
+        }
+      ],
+      "verification": [
+        "Confirm the named release and its MCP tool are absent. Review which documents were submitted."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-wg5f-m5mv-gmjg",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-13",
+          "supports": [
+            "summary",
+            "affected",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification",
+            "ghsa"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-13",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-13",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "ghsa": [
+        "GHSA-wg5f-m5mv-gmjg"
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/w0rmsign/status/2121174984395780402",
+          "kind": "social",
+          "seen": "2026-11-13"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0089",
+      "title": "Codex CLI non-interactive runs now require explicit project trust",
+      "summary": "Codex 0.169.0 fixes project-trust handling: exec keeps untrusted project configuration and MCP servers disabled even with workspace-write. Explicit trust persists for future sessions and includes MCP commands outside the sandbox.",
+      "status": "published",
+      "published": "2026-11-13",
+      "updated": "2026-11-13",
+      "severity": {
+        "level": "low",
+        "urgency": "next-update",
+        "rationale": "This release tightens a trust boundary for unattended runs in untrusted repositories. The sources do not establish an affected version range or exploitation, so this record describes the documented hardening."
+      },
+      "affected": [
+        {
+          "product": "Codex CLI",
+          "fixed": "0.169.0",
+          "note": "Release containing the documented fix. The sources do not give an affected version range."
+        }
+      ],
+      "exposure": "Relevant to codex exec automation processing untrusted repositories with workspace-write permissions.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check Codex CLI version and project-trust settings used by non-interactive jobs. Review explicit trust grants separately from sandbox write permissions."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Use 0.169.0 or later for the documented behavior; grant --trust only after reviewing project configuration and MCP commands.",
+          "risk": "Medium. Jobs relying on implicit project trust can lose configured tools."
+        }
+      ],
+      "verification": [
+        "Use a harmless untrusted fixture to confirm project configuration and MCP servers stay disabled under workspace-write without explicit trust."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/openai/codex/releases/tag/rust-v0.169.0",
+          "publisher": "OpenAI Codex",
+          "tier": 1,
+          "retrieved": "2026-11-13",
+          "supports": [
+            "summary",
+            "affected",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/openai/codex/pull/60041",
+          "publisher": "OpenAI Codex",
+          "tier": 1,
+          "retrieved": "2026-11-13",
+          "supports": [
+            "summary",
+            "affected",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-13",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-13",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
         }
       ]
     }

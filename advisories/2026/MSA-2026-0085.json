@@ -1,0 +1,110 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0085",
+  "title": "Pillow TIFF saving can disclose process memory or corrupt the heap",
+  "summary": "Untrusted image metadata can override encoder geometry when saving TIFF through libtiff. Saved output can contain process memory; Predictor=2 can instead cause heap corruption and a crash. Code execution is not established.",
+  "status": "published",
+  "published": "2026-11-13",
+  "updated": "2026-11-13",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "The documented paths require TIFF output through libtiff and particular metadata handling or a crafted palette TIFF. Service memory disclosure and crashes warrant a 30-day response."
+  },
+  "affected": [
+    {
+      "product": "Pillow",
+      "ecosystem": "PyPI",
+      "fixed": "13.0.0",
+      "note": "The advisory lists versions through 12.3.0 as affected."
+    }
+  ],
+  "exposure": "Image conversion tools are exposed when they preserve untrusted EXIF or tiffinfo, or re-save crafted palette TIFFs with inherited compression.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "PyPI",
+        "name": "Pillow",
+        "ranges": [
+          {
+            "fixed": "13.0.0"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade Pillow to 13.0.0 or later.",
+      "risk": "Medium. Upgrades can require compatibility changes and service restarts."
+    }
+  ],
+  "verification": [
+    "Confirm the runtime uses the patched Pillow release; test TIFF conversion with representative inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/python-pillow/Pillow/security/advisories/GHSA-xcvg-w56q-r89m",
+      "publisher": "Pillow",
+      "tier": 1,
+      "retrieved": "2026-11-13",
+      "supports": [
+        "summary",
+        "affected",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification",
+        "ghsa",
+        "vendor_severity"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-xcvg-w56q-r89m",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-13",
+      "supports": [
+        "summary",
+        "affected",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification",
+        "cve",
+        "ghsa",
+        "vendor_severity"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-13",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-13",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "cve": [
+    "CVE-2026-128067"
+  ],
+  "ghsa": [
+    "GHSA-xcvg-w56q-r89m"
+  ],
+  "vendor_severity": [
+    {
+      "source": "Pillow",
+      "value": "High"
+    }
+  ]
+}
