@@ -1,0 +1,113 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0090",
+  "title": "Soup Sieve untrusted selector compilation can exhaust CPU",
+  "summary": "Crafted CSS digit escapes trigger exponential regex backtracking during selector compilation, including through Beautiful Soup. This differs from the descendant-matching issue already recorded separately.",
+  "status": "published",
+  "published": "2026-11-14",
+  "updated": "2026-11-14",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "Exposure requires untrusted selector strings, rather than untrusted markup alone. The documented impact is denial of service in the worker, warranting a 30-day response."
+  },
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-14",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-14",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "cve": [
+    "CVE-2026-126191"
+  ],
+  "ghsa": [
+    "GHSA-6655-6qjp-jx7x"
+  ],
+  "vendor_severity": [
+    {
+      "source": "Soup Sieve",
+      "value": "High, CVSS 3.1 7.5"
+    }
+  ],
+  "affected": [
+    {
+      "product": "soupsieve",
+      "ecosystem": "PyPI",
+      "fixed": "3.0.0",
+      "note": "Vendor advisory lists <=2.9.2; the reviewed database lists <=2.10. Both identify the fix in 3.0, but the database recommends 3.0.2 or later because 3.0 was yanked."
+    }
+  ],
+  "exposure": "Scraping and extraction tools that compile attacker-controlled selectors are exposed. Developer-controlled selectors do not meet this prerequisite.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check the installed soupsieve version and whether untrusted selectors reach compile() or BeautifulSoup.select(). Treat 2.x as affected; use 3.0.2 or later for upgrading."
+      },
+      "context": "browsing"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Upgrade Soup Sieve",
+      "details": "Use 3.0.2 or later on Python 3.11.5 or later. The changelog requires that Python minimum because older interpreters have broken possessive quantifiers.",
+      "risk": "Medium. The 3.0 series changes selector behavior and drops Python 3.10 support."
+    }
+  ],
+  "verification": [
+    "Confirm the loaded package and Python versions; test normal extraction rules after upgrading."
+  ],
+  "related": [
+    "MSA-2026-0086"
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/facelessuser/soupsieve/security/advisories/GHSA-6655-6qjp-jx7x",
+      "publisher": "Soup Sieve",
+      "tier": 1,
+      "retrieved": "2026-11-14",
+      "supports": [
+        "title",
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-6655-6qjp-jx7x",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-14",
+      "supports": [
+        "affected",
+        "remediation",
+        "detectors",
+        "cve",
+        "ghsa"
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/facelessuser/soupsieve/main/docs/src/markdown/about/changelog.md",
+      "publisher": "Soup Sieve",
+      "tier": 1,
+      "retrieved": "2026-11-14",
+      "supports": [
+        "affected",
+        "remediation",
+        "verification"
+      ]
+    }
+  ]
+}
