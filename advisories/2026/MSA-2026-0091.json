@@ -1,0 +1,115 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0091",
+  "title": "dnspython text-format WKS records can exhaust memory and CPU",
+  "summary": "An unchecked WKS service number causes oversized bitmap allocation and inefficient growth when parsing attacker-controlled DNS record text. Resource exhaustion can terminate the process.",
+  "status": "published",
+  "published": "2026-11-14",
+  "updated": "2026-11-14",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "Developer or agent DNS tooling must parse attacker-controlled zonefile-format records to be exposed. The documented impact is denial of service, warranting a 30-day response."
+  },
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-14",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-14",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "cve": [
+    "CVE-2026-128089"
+  ],
+  "ghsa": [
+    "GHSA-vvf4-9x63-8xvv"
+  ],
+  "vendor_severity": [
+    {
+      "source": "dnspython",
+      "value": "High, CVSS 3.1 7.5"
+    }
+  ],
+  "affected": [
+    {
+      "product": "dnspython",
+      "ecosystem": "PyPI",
+      "fixed": "2.9.2",
+      "note": "Versions before 2.9.2 are affected."
+    }
+  ],
+  "exposure": "The attacker must control record type and rdata text passed to the zonefile-format parser. This advisory does not establish exposure through ordinary DNS wire-format replies.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "PyPI",
+        "name": "dnspython",
+        "ranges": [
+          {
+            "fixed": "2.9.2"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Upgrade dnspython",
+      "details": "Use 2.9.2 or later. The fixing release requires Python 3.11 or later.",
+      "risk": "Medium if the application still uses an older Python interpreter; validate dependencies before upgrading."
+    }
+  ],
+  "verification": [
+    "Confirm the loaded dnspython version is 2.9.2 or later and run normal zonefile parsing checks."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/rthalley/dnspython/security/advisories/GHSA-vvf4-9x63-8xvv",
+      "publisher": "dnspython",
+      "tier": 1,
+      "retrieved": "2026-11-14",
+      "supports": [
+        "title",
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-vvf4-9x63-8xvv",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-14",
+      "supports": [
+        "affected",
+        "remediation",
+        "verification",
+        "cve",
+        "ghsa"
+      ]
+    },
+    {
+      "url": "https://github.com/rthalley/dnspython/releases/tag/v2.9.2",
+      "publisher": "dnspython",
+      "tier": 1,
+      "retrieved": "2026-11-14",
+      "supports": [
+        "remediation",
+        "verification"
+      ]
+    }
+  ]
+}

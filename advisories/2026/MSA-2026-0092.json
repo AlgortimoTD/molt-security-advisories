@@ -1,0 +1,72 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0092",
+  "title": "Claude Code fixes a security issue in zstd response decoding",
+  "summary": "Anthropic reports a security fix for decoding zstd-compressed responses in Claude Code 2.1.325. The release notes do not describe the impact, attack prerequisites or affected version range.",
+  "status": "published",
+  "published": "2026-11-14",
+  "updated": "2026-11-14",
+  "severity": {
+    "level": "low",
+    "urgency": "next-update",
+    "rationale": "The vendor confirms a decoder security fix but supplies too little detail to establish a higher impact level. This provisional next-update classification reflects limited evidence and should be reassessed when details appear."
+  },
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-14",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-14",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "affected": [
+    {
+      "product": "Claude Code",
+      "fixed": "2.1.325",
+      "note": "Release containing the documented security fix; no affected range is supplied."
+    }
+  ],
+  "exposure": "Claude Code response decoding is the named component. The release notes do not establish which response sources or platforms can trigger the issue.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Run claude --version and check whether the installed release includes the 2.1.325 zstd response-decoding security fix."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Install the documented security fix",
+      "details": "Update to Claude Code 2.1.325 or later.",
+      "risk": "Updating can change behavior; check dependent workflows."
+    }
+  ],
+  "verification": [
+    "Confirm claude --version reports 2.1.325 or later."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.325",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "retrieved": "2026-11-14",
+      "supports": [
+        "title",
+        "summary",
+        "affected",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ]
+}
