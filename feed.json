@@ -2,7 +2,7 @@
   "schema": "msa-feed/1",
   "publisher": "MOLT Security Advisories",
   "homepage": "https://github.com/AlgortimoTD/molt-security-advisories",
-  "updated": "2026-11-14",
+  "updated": "2026-11-15",
   "advisories": [
     {
       "schema": "msa/1",
@@ -2424,27 +2424,31 @@
       "schema": "msa/1",
       "id": "MSA-2026-0025",
       "title": "Malicious Claude Code extension builds in Cursor attempted persistent SSH backdoors",
-      "summary": "Cursor confirms modified Anthropic.claude-code builds 2.1.312 and 2.1.313 for macOS and Windows in its marketplace. They collected host details and attempted persistent SSH access; these builds were not developed by Anthropic.",
+      "summary": "Cursor confirms modified Anthropic.claude-code builds 2.1.312 and 2.1.313 for macOS and Windows in its marketplace. They collected host details and attempted persistent SSH access; these builds were not developed by Anthropic. Cursor's November 13 investigation says an exposed Fireworks access key allowed theft of historical non-Privacy Mode agent traces. Credentials in the traces enabled access to internal SaaS tools and subsequently the marketplace cache.",
       "status": "published",
       "published": "2026-11-04",
-      "updated": "2026-11-04",
+      "updated": "2026-11-15",
       "severity": {
-        "level": "high",
-        "urgency": "72h",
-        "rationale": "Malicious extension artifacts crossed a trusted distribution channel and installed persistence. Backdoor access usually failed without elevated editor privileges, but removal and credential assessment remain necessary."
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "Cursor confirms attackers stole credentials from historical agent traces and used stolen credentials to distribute malicious extension builds. Vendor-confirmed exploitation reaching credentials warrants a 24-hour response, even though the distribution window has closed and the attacker server is offline."
       },
       "affected": [
         {
           "product": "Anthropic.claude-code artifacts from Cursor VS Code Extension Marketplace",
           "note": "Modified macOS and Windows builds 2.1.312 and 2.1.313 distributed on October 29, 2026. Version numbers alone do not distinguish these artifacts from official builds."
+        },
+        {
+          "product": "Cursor historical coding agent traces",
+          "note": "Limited stored non-Privacy Mode traces, mostly from 2025; Cursor directly notified affected customers. No client version threshold applies."
         }
       ],
-      "exposure": "Limited to the identified Cursor marketplace artifacts. Cursor reports no evidence that official distributions or other extension versions were affected.",
+      "exposure": "The extension compromise is limited to the identified Cursor marketplace artifacts. Cursor reports no evidence that official distributions or other extension versions were affected. The separate trace-data exposure affected notified non-Privacy Mode users; Cursor says Privacy Mode prompts and code, the Cursor app, official updates and live traffic were unaffected.",
       "detectors": [
         {
           "type": "manual",
           "params": {
-            "instructions": "Compare extension installation history and VSIX hashes with the Cursor notice; inspect its SSH and persistence indicators. An absent SSH key alone does not prove no payload executed."
+            "instructions": "Compare extension installation history and VSIX hashes with the Cursor notice; inspect its SSH and persistence indicators. An absent SSH key alone does not prove no payload executed. Check vendor notifications for exposed trace data and specific credentials requiring rotation."
           },
           "context": "any"
         }
@@ -2454,24 +2458,48 @@
           "action": "Remediate the affected component",
           "details": "Remove the malicious extension and its standalone persistence, unauthorized SSH key and tunnel processes. Isolate systems with execution evidence, assess rebuilding, and rotate accessible credentials and sessions from a trusted system.",
           "risk": "High. Isolation, persistence removal and credential rotation can interrupt workflows."
+        },
+        {
+          "action": "Rotate credentials identified in vendor notifications",
+          "details": "Team administrators notified of trace-related exposure should rotate the specific keys listed by Cursor. Extension remediation remains necessary for the malicious artifacts.",
+          "risk": "Credential rotation can interrupt integrations."
         }
       ],
       "verification": [
-        "Verify extension and persistence removal using the vendor indicators and review telemetry for payload execution."
+        "Verify extension and persistence removal using the vendor indicators and review telemetry for payload execution.",
+        "Confirm all credentials listed in the vendor exposure notice have been rotated."
       ],
       "sources": [
         {
           "url": "https://cursor.com/blog/claude-code-extension-security-notice",
           "publisher": "Cursor",
           "tier": 1,
-          "retrieved": "2026-11-04",
+          "retrieved": "2026-11-15",
           "supports": [
             "affected",
             "remediation",
             "summary",
             "exposure",
             "detectors",
-            "verification"
+            "verification",
+            "exploitation",
+            "severity"
+          ]
+        },
+        {
+          "url": "https://cursor.com/blog/security-incident-update",
+          "publisher": "Cursor",
+          "tier": 1,
+          "retrieved": "2026-11-15",
+          "supports": [
+            "summary",
+            "affected",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification",
+            "exploitation",
+            "severity"
           ]
         }
       ],
@@ -2485,12 +2513,17 @@
           "url": "https://x.com/AgentBleed/status/2117662172402639058",
           "kind": "social",
           "seen": "2026-11-04"
+        },
+        {
+          "url": "https://x.com/wifeydoteth/status/2121513694882324898",
+          "kind": "social",
+          "seen": "2026-11-15"
         }
       ],
       "review": {
         "author_model": "gpt-6.1-sol",
         "reviewer_model": "claude-opus-5-5",
-        "reviewed": "2026-11-04",
+        "reviewed": "2026-11-15",
         "verdict": "approve",
         "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
       },
@@ -2498,8 +2531,20 @@
         {
           "date": "2026-11-04",
           "change": "Initial record drafted for independent review."
+        },
+        {
+          "date": "2026-11-15",
+          "change": "Added vendor-confirmed trace credential exposure and the link to marketplace tampering from the November 13 investigation, with notification-based remediation."
+        },
+        {
+          "date": "2026-11-15",
+          "change": "Recorded vendor-confirmed exploitation involving stolen trace credentials and malicious extension distribution; raised severity to critical with a 24-hour response and clarified the separate exposure scopes."
         }
-      ]
+      ],
+      "exploitation": {
+        "status": "exploited-in-the-wild",
+        "note": "Cursor confirms theft of historical traces containing credentials, subsequent unauthorized SaaS access and malicious extension distribution. The October 29 notice reports payload execution and persistence; the November 13 update links the stages of the incident."
+      }
     },
     {
       "schema": "msa/1",
@@ -9824,6 +9869,321 @@
             "remediation",
             "verification"
           ]
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0093",
+      "title": "Jet Admin Cloud prompt injection can disclose configuration credentials",
+      "summary": "A remote attacker with a free account can use prompt injection to retrieve .env files and credentials. The CVE reports mitigation through a sandbox component around October 29, 2026.",
+      "status": "published",
+      "published": "2026-11-15",
+      "updated": "2026-11-15",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Credential disclosure warrants a 72-hour response. A free account is an accessible prerequisite; the reported mitigation needs confirmation for the hosted service."
+      },
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-15",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-15",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-123965"
+      ],
+      "vendor_severity": [
+        {
+          "source": "CISA CNA via CVE Program",
+          "value": "9.3 Critical (CVSS 4.0); 9.9 Critical (CVSS 3.1)"
+        }
+      ],
+      "affected": [
+        {
+          "product": "Jet Admin Cloud Platform",
+          "note": "CVE lists all versions of this hosted service; no fixed version is specified."
+        }
+      ],
+      "exposure": "The documented attack requires a free account. The published vectors say PR:N, but the description explicitly requires an account.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check use of Jet Admin Cloud Platform and ask the provider to confirm the sandbox mitigation for CVE-2026-123965."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Confirm hosted mitigation",
+          "details": "Confirm the reported sandbox mitigation with Jet Admin; no client upgrade version is specified.",
+          "risk": "Provider confirmation may be needed before restoring sensitive workflows."
+        }
+      ],
+      "verification": [
+        "Obtain provider confirmation that the sandbox mitigation covers the service in use."
+      ],
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/123xxx/CVE-2026-123965.json",
+          "publisher": "CISA CNA via CVE Program",
+          "tier": 1,
+          "retrieved": "2026-11-15",
+          "supports": [
+            "title",
+            "summary",
+            "cve",
+            "vendor_severity",
+            "affected",
+            "exposure",
+            "severity",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/justelite/status/2121927635903373367",
+          "kind": "social",
+          "seen": "2026-11-15"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0094",
+      "title": "Semantic Kernel Python in-memory vector filters can execute code",
+      "summary": "Microsoft identifies remote code execution in the Python SDK InMemoryVectorStore filter functionality. Versions before 1.39.4 are affected.",
+      "status": "published",
+      "published": "2026-11-15",
+      "updated": "2026-11-15",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Code execution requires the affected vector-store filter functionality; the vendor vector specifies low privileges. Agent retrieval workflows accepting untrusted filters can meet this prerequisite."
+      },
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-15",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-15",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2026-26030"
+      ],
+      "ghsa": [
+        "GHSA-xjw9-4gw8-4rqx"
+      ],
+      "vendor_severity": [
+        {
+          "source": "Microsoft vendor advisory",
+          "value": "9.9 Critical",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H"
+        }
+      ],
+      "affected": [
+        {
+          "product": "semantic-kernel",
+          "ecosystem": "PyPI",
+          "fixed": "1.39.4",
+          "note": "Affected versions: <1.39.4."
+        }
+      ],
+      "exposure": "Applications using InMemoryVectorStore filters are exposed. The advisory does not establish that every Semantic Kernel integration permits attacker-controlled filtering.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "PyPI",
+            "name": "semantic-kernel",
+            "ranges": [
+              {
+                "fixed": "1.39.4"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Upgrade the Python SDK",
+          "details": "Upgrade to 1.39.4 or later. Microsoft recommends avoiding InMemoryVectorStore in production as a workaround.",
+          "risk": "Updating or replacing the store requires retrieval compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm semantic-kernel is at least 1.39.4 and test dependent retrieval workflows."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/microsoft/semantic-kernel/security/advisories/GHSA-xjw9-4gw8-4rqx",
+          "publisher": "Microsoft",
+          "tier": 1,
+          "retrieved": "2026-11-15",
+          "supports": [
+            "title",
+            "summary",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "affected",
+            "exposure",
+            "severity",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/PakCryptOrg/status/2121567570968871264",
+          "kind": "social",
+          "seen": "2026-11-15"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0095",
+      "title": "LangChain serialization injection can extract environment secrets",
+      "summary": "Unescaped lc dictionaries pass through dumps/dumpd and become LangChain objects during load/loads. With the former secrets_from_env=True default, injected structures can extract environment secrets, including through model-controlled response fields.",
+      "status": "published",
+      "published": "2026-11-15",
+      "updated": "2026-11-15",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Secret extraction through untrusted agent data warrants a 72-hour response. Exposure requires the affected serialization and deserialization path, rather than every use of LangChain."
+      },
+      "review": {
+        "author_model": "gpt-6.1-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-15",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-15",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "cve": [
+        "CVE-2025-68664"
+      ],
+      "ghsa": [
+        "GHSA-c67j-w6g6-q2cm"
+      ],
+      "vendor_severity": [
+        {
+          "source": "LangChain vendor advisory",
+          "value": "9.3 Critical",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:L/A:N"
+        }
+      ],
+      "affected": [
+        {
+          "product": "langchain-core",
+          "ecosystem": "PyPI",
+          "fixed": "0.3.81",
+          "note": "Affected: <0.3.81."
+        },
+        {
+          "product": "langchain-core",
+          "ecosystem": "PyPI",
+          "introduced": "1.0.0",
+          "fixed": "1.2.5"
+        }
+      ],
+      "exposure": "Untrusted dictionaries must pass through the affected APIs. The vendor also identifies astream_events(version=\"v1\") and astream_log; astream_events(version=\"v2\") is unaffected.",
+      "detectors": [
+        {
+          "type": "package-version",
+          "params": {
+            "ecosystem": "PyPI",
+            "name": "langchain-core",
+            "ranges": [
+              {
+                "fixed": "0.3.81"
+              },
+              {
+                "introduced": "1.0.0",
+                "fixed": "1.2.5"
+              }
+            ]
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Upgrade langchain-core",
+          "details": "Install 0.3.81 or later on the 0.3 line, or 1.2.5 or later on the 1.x line. Retain restrictive deserialization defaults.",
+          "risk": "New object allowlists, disabled environment-secret loading and Jinja2 blocking can break existing deserialization."
+        }
+      ],
+      "verification": [
+        "Check the installed branch and patched version, then test required serialization with the new defaults."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/langchain-ai/langchain/security/advisories/GHSA-c67j-w6g6-q2cm",
+          "publisher": "LangChain",
+          "tier": 1,
+          "retrieved": "2026-11-15",
+          "supports": [
+            "title",
+            "summary",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "affected",
+            "exposure",
+            "severity",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2025/68xxx/CVE-2025-68664.json",
+          "publisher": "CVE Program",
+          "tier": 1,
+          "retrieved": "2026-11-15",
+          "supports": [
+            "cve",
+            "affected",
+            "summary",
+            "vendor_severity"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/turb0disaster/status/2121239946900173252",
+          "kind": "social",
+          "seen": "2026-11-15"
         }
       ]
     }
