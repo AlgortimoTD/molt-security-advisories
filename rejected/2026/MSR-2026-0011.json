@@ -1,0 +1,45 @@
+{
+  "schema": "msr/1",
+  "id": "MSR-2026-0011",
+  "claim": "This week, 4,837 hijacked GitHub accounts opened dependency-audit probe pull requests across 61,764 repositories before deploying malicious workflow payloads.",
+  "verdict": "unverifiable",
+  "explanation": "GitHub documents that untrusted pull requests processed by privileged workflows can expose repository secrets and write access. That general risk does not establish this specific campaign, the claimed account and repository counts, its timing or its payload sequence. No qualifying primary incident record was identified for those claims. This verdict records a primary-evidence gap, not proof that the reported campaign did not occur.",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "discovery": [
+    {
+      "url": "https://x.com/stretchcloud/status/2120887590358532137",
+      "kind": "social",
+      "seen": "2026-11-16"
+    },
+    {
+      "url": "https://x.com/ayahaustin/status/2120865302313419028",
+      "kind": "social",
+      "seen": "2026-11-16"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://docs.github.com/en/actions/reference/security/secure-use",
+      "publisher": "GitHub",
+      "tier": 1,
+      "retrieved": "2026-11-16",
+      "supports": [
+        "explanation"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-16",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-16",
+      "change": "Recorded the primary-evidence gap for the specific account-hijacking campaign and counts."
+    }
+  ]
+}

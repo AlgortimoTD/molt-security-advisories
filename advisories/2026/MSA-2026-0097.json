@@ -1,0 +1,110 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0097",
+  "title": "OpenHuman MCP tool descriptions can inject instructions into agent turns",
+  "summary": "Untrusted MCP tool descriptions enter the model context without sanitization. The prompt-injection detector scans user input but misses tool definitions, allowing malicious instructions to influence agent actions.",
+  "status": "published",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-16",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-16",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "cve": [
+    "CVE-2026-54140"
+  ],
+  "ghsa": [
+    "GHSA-g6j9-89xv-v752"
+  ],
+  "severity": {
+    "level": "high",
+    "urgency": "72h",
+    "rationale": "A compromised configured MCP server can steer tools toward unauthorized actions or credential disclosure. Connecting that server is a meaningful prerequisite common in agent workflows."
+  },
+  "vendor_severity": [
+    {
+      "source": "OpenHuman vendor advisory",
+      "value": "High, CVSS 3.1 8.3"
+    }
+  ],
+  "affected": [
+    {
+      "product": "OpenHuman",
+      "fixed": "0.57.13",
+      "note": "Affected versions: <0.57.13."
+    }
+  ],
+  "exposure": "Requires a configured MCP server controlled or compromised by an attacker. Its tool descriptions can influence each agent turn during the session.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check the OpenHuman application version and configured MCP servers. Versions before 0.57.13 need the documented fix."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Upgrade OpenHuman",
+      "details": "Use 0.57.13 or later, which adds remote tool-description sanitization and length limits.",
+      "risk": "Test required MCP integrations after updating."
+    }
+  ],
+  "verification": [
+    "Confirm the running application is 0.57.13 or later and trusted MCP tools still work."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/tinyhumansai/openhuman/security/advisories/GHSA-g6j9-89xv-v752",
+      "publisher": "OpenHuman",
+      "tier": 1,
+      "retrieved": "2026-11-16",
+      "supports": [
+        "summary",
+        "affected",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors"
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/54xxx/CVE-2026-54140.json",
+      "publisher": "CVE Program",
+      "tier": 1,
+      "retrieved": "2026-11-16",
+      "supports": [
+        "cve",
+        "affected"
+      ]
+    },
+    {
+      "url": "https://github.com/tinyhumansai/openhuman/releases/tag/v0.57.13",
+      "publisher": "OpenHuman",
+      "tier": 1,
+      "retrieved": "2026-11-16",
+      "supports": [
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/SeanMathena/status/2122027007751954792",
+      "kind": "social",
+      "seen": "2026-11-16"
+    }
+  ]
+}
