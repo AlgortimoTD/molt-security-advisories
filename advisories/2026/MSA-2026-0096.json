@@ -1,0 +1,110 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0096",
+  "title": "LiteLLM authenticated users can change proxy configuration and execute code",
+  "summary": "The proxy configuration update endpoint lacks an administrator role check. An authenticated user can register Python handlers for code execution, read server files and overwrite account configuration.",
+  "status": "published",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-16",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-16",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "cve": [
+    "CVE-2026-35029"
+  ],
+  "ghsa": [
+    "GHSA-53mr-6c8q-9789"
+  ],
+  "severity": {
+    "level": "high",
+    "urgency": "72h",
+    "rationale": "Authenticated code execution and file disclosure threaten shared agent gateways. An existing account or key is a meaningful but commonly met prerequisite."
+  },
+  "vendor_severity": [
+    {
+      "source": "LiteLLM vendor advisory",
+      "value": "High, CVSS 4.0 8.7"
+    }
+  ],
+  "affected": [
+    {
+      "product": "litellm",
+      "ecosystem": "PyPI",
+      "fixed": "1.83.0",
+      "note": "Affected versions: <1.83.0."
+    }
+  ],
+  "exposure": "Requires authenticated access to the LiteLLM proxy. This is an authorization flaw, not an unauthenticated access claim.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "PyPI",
+        "name": "litellm",
+        "ranges": [
+          {
+            "fixed": "1.83.0"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Upgrade LiteLLM",
+      "details": "Use 1.83.0 or later, which requires proxy_admin for configuration updates. Until upgraded, restrict API key distribution; the vendor lists no configuration workaround.",
+      "risk": "Updating can interrupt gateway requests; test dependent integrations."
+    }
+  ],
+  "verification": [
+    "Confirm the running proxy uses litellm 1.83.0 or later and non-administrator access cannot update configuration."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/BerriAI/litellm/security/advisories/GHSA-53mr-6c8q-9789",
+      "publisher": "LiteLLM",
+      "tier": 1,
+      "retrieved": "2026-11-16",
+      "supports": [
+        "summary",
+        "affected",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-53mr-6c8q-9789",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-16",
+      "supports": [
+        "cve",
+        "ghsa",
+        "affected",
+        "remediation"
+      ]
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/mashnu_AI/status/2122156674437828720",
+      "kind": "social",
+      "seen": "2026-11-16"
+    }
+  ]
+}

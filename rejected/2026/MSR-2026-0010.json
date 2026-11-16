@@ -1,0 +1,40 @@
+{
+  "schema": "msr/1",
+  "id": "MSR-2026-0010",
+  "claim": "Claude Code for VS Code conceals symlink targets in permission prompts, allowing approval outside the project, and Anthropic will not fix it.",
+  "verdict": "unverifiable",
+  "explanation": "Anthropic documents permission checks against both requested and resolved paths, and says prompts for writes resolving outside working directories name the resolved path. This does not establish the reported VS Code prompt behavior, affected versions or refusal to fix it. The inspected primary documentation is insufficient to verify that specific claim; it does not prove the report false or establish that all extension versions behave safely.",
+  "published": "2026-11-16",
+  "updated": "2026-11-16",
+  "discovery": [
+    {
+      "url": "https://x.com/infrastack_ai/status/2121997799550234819",
+      "kind": "social",
+      "seen": "2026-11-16"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://code.claude.com/docs/en/permissions",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "retrieved": "2026-11-16",
+      "supports": [
+        "explanation"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-16",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-16",
+      "change": "Recorded the primary-evidence gap for the specific extension prompt and remediation-status claim."
+    }
+  ]
+}
