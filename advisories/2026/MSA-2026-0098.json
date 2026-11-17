@@ -1,0 +1,253 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0098",
+  "title": "aiohttp HTTP and WebSocket parsing can exhaust resources and replay requests",
+  "summary": "Small or compressed WebSocket messages can bypass receive-queue limits; concatenated compressed streams can exhaust CPU in clients and servers. Server flaws include unbounded buffering during upgrade handling, pure-Python request replay after a declined upgrade, integer overflow bypassing the C WebSocket message limit, base64 multipart size-limit bypass, excessive form fields and costly multi-wildcard domain matching.",
+  "status": "published",
+  "published": "2026-11-17",
+  "updated": "2026-11-17",
+  "cve": [
+    "CVE-2026-128132",
+    "CVE-2026-128131",
+    "CVE-2026-128130",
+    "CVE-2026-128129",
+    "CVE-2026-128128",
+    "CVE-2026-128127",
+    "CVE-2026-128126",
+    "CVE-2026-128124"
+  ],
+  "ghsa": [
+    "GHSA-5rmc-48h2-hvcm",
+    "GHSA-h4cc-hm5h-fmm9",
+    "GHSA-28qf-cpwq-vmc2",
+    "GHSA-pw86-h8fm-j323",
+    "GHSA-3rp8-rxj8-mvjw",
+    "GHSA-24c4-3p7v-29cm",
+    "GHSA-xgw8-8ccx-rmqh",
+    "GHSA-jm3w-gw2p-xjfj"
+  ],
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "Untrusted peers can exhaust a client or server worker, and the pure-Python parser can process requests more than once. These conditions warrant a 30-day response for affected HTTP integrations; no code execution is established."
+  },
+  "vendor_severity": [
+    {
+      "source": "GitHub Reviewed Advisory Database",
+      "value": "High for each of the eight advisories"
+    }
+  ],
+  "affected": [
+    {
+      "product": "aiohttp",
+      "ecosystem": "PyPI",
+      "fixed": "3.14.4",
+      "note": "All eight reviewed advisories list versions through 3.14.3 as affected."
+    }
+  ],
+  "exposure": "HTTP integrations processing untrusted peers are exposed according to the feature used. Compressed payload and WebSocket queue issues affect clients as well as servers. Request replay needs the pure-Python parser; integer overflow affects the C WebSocket reader. Other server triggers require delayed upgrade handling, multipart reads, Request.post(), or a domain mask with multiple wildcards.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "PyPI",
+        "name": "aiohttp",
+        "ranges": [
+          {
+            "fixed": "3.14.4"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Upgrade aiohttp",
+      "details": "Use 3.14.4 or later. Prefer upgrading over switching parser implementations, because separate flaws affect each implementation.",
+      "risk": "The release adds a default 1000-field form limit and changes parsing behavior; test legitimate forms and WebSocket traffic."
+    }
+  ],
+  "verification": [
+    "Confirm the loaded aiohttp package is 3.14.4 or later and restart dependent processes.",
+    "Test legitimate compressed responses, WebSocket sessions, multipart uploads and forms."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-5rmc-48h2-hvcm",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "title",
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-h4cc-hm5h-fmm9",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "title",
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-28qf-cpwq-vmc2",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "title",
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-pw86-h8fm-j323",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "title",
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-3rp8-rxj8-mvjw",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "title",
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-24c4-3p7v-29cm",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "title",
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-xgw8-8ccx-rmqh",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "title",
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-jm3w-gw2p-xjfj",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "title",
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/aio-libs/aiohttp/releases/tag/v3.14.4",
+      "publisher": "aiohttp",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "affected",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-17",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-17",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ]
+}

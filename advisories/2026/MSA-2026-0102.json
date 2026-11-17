@@ -1,0 +1,117 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0102",
+  "title": "SvelteKit experimental remote function parsing can block the event loop",
+  "summary": "A crafted request can stall parsing in applications that enable experimental remote functions and use form, query or command remote functions.",
+  "status": "published",
+  "published": "2026-11-17",
+  "updated": "2026-11-17",
+  "cve": [
+    "CVE-2026-128120"
+  ],
+  "ghsa": [
+    "GHSA-3r8g-jcqq-3p5j"
+  ],
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "The documented impact is denial of service in a server worker. Experimental remote functions must be enabled and used, limiting exposure and supporting a 30-day response."
+  },
+  "vendor_severity": [
+    {
+      "source": "SvelteKit",
+      "value": "High, CVSS 3.1 7.5"
+    }
+  ],
+  "affected": [
+    {
+      "product": "@sveltejs/kit",
+      "ecosystem": "npm",
+      "fixed": "3.1.1",
+      "introduced": "2.42.0",
+      "note": "Affected versions: >=2.42.0, <=3.1.0."
+    }
+  ],
+  "exposure": "Only applications using the experimental remote functions flag and form, query or command remote functions meet the documented prerequisite.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "npm",
+        "name": "@sveltejs/kit",
+        "ranges": [
+          {
+            "fixed": "3.1.1",
+            "introduced": "2.42.0"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Upgrade SvelteKit",
+      "details": "Use SvelteKit 3.1.1 or later, whose release notes describe linear-time remote form parsing.",
+      "risk": "Updating from the affected 2.x series crosses a major version; test application compatibility."
+    }
+  ],
+  "verification": [
+    "Confirm @sveltejs/kit is 3.1.1 or later and test legitimate remote function calls."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/sveltejs/kit/security/advisories/GHSA-3r8g-jcqq-3p5j",
+      "publisher": "SvelteKit",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "title",
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-3r8g-jcqq-3p5j",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "affected",
+        "cve",
+        "ghsa"
+      ]
+    },
+    {
+      "url": "https://github.com/sveltejs/kit/releases/tag/@sveltejs/kit@3.1.1",
+      "publisher": "SvelteKit",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-17",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-17",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ]
+}

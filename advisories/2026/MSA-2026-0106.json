@@ -1,0 +1,105 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0106",
+  "title": "mail-parser sender address extraction can trust sender-controlled header text",
+  "summary": "get_server_ipaddress() can misidentify sender-controlled text as a sender IP address. The fix selects candidates by header position and stops at a trusted hop that supplies no usable address.",
+  "status": "published",
+  "published": "2026-11-17",
+  "updated": "2026-11-17",
+  "cve": [
+    "CVE-2026-129297"
+  ],
+  "ghsa": [
+    "GHSA-72px-j8gh-p79x"
+  ],
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "The flaw affects integrity of sender attribution in mail-processing integrations. Exposure depends on a consumer trusting this helper for a security decision, limiting the direct impact to that integration."
+  },
+  "vendor_severity": [
+    {
+      "source": "mail-parser",
+      "value": "High, CVSS 3.1 7.5"
+    }
+  ],
+  "affected": [
+    {
+      "product": "mail-parser",
+      "ecosystem": "PyPI",
+      "fixed": "4.6.2",
+      "note": "Versions through 4.6.1 are affected."
+    }
+  ],
+  "exposure": "Agent mail tools that use get_server_ipaddress() for sender attribution need review. Parsing mail alone does not establish that the returned address controls a security decision.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "PyPI",
+        "name": "mail-parser",
+        "ranges": [
+          {
+            "fixed": "4.6.2"
+          }
+        ]
+      },
+      "context": "browsing"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Upgrade and handle unknown sender addresses",
+      "details": "Use mail-parser 4.6.2 or later. Until upgraded, derive attribution from authenticated signals outside this library instead of trusting get_server_ipaddress().",
+      "risk": "The helper now returns None for ambiguous bare addresses and trusted hops without addresses; callers must handle it."
+    }
+  ],
+  "verification": [
+    "Confirm mail-parser is 4.6.2 or later and that callers handle None without treating it as a trusted sender."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/SpamScope/mail-parser/security/advisories/GHSA-72px-j8gh-p79x",
+      "publisher": "mail-parser",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "title",
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-72px-j8gh-p79x",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "affected",
+        "cve",
+        "ghsa"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-17",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-17",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ]
+}

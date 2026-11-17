@@ -1,0 +1,42 @@
+{
+  "schema": "msr/1",
+  "id": "MSR-2026-0012",
+  "claim": "The @univerjs-pro/sheets-pivot-chart npm releases 1.5.0 and 1.5.1 were incorrectly flagged as malicious and removed.",
+  "verdict": "unverifiable",
+  "explanation": "The inspected GitHub Reviewed Advisory Database record currently labels both versions as malware and lists no patched version. It supplies generic containment guidance rather than a package-specific technical explanation. That record does not establish that the classification was erroneous or that the releases are safe. No qualifying vendor correction or primary withdrawal was identified. This verdict records the evidence gap for the false-positive claim; it does not independently adjudicate the disputed package contents.",
+  "published": "2026-11-17",
+  "updated": "2026-11-17",
+  "discovery": [
+    {
+      "url": "https://x.com/JFrogSecurity/status/2122282678359605484",
+      "kind": "social",
+      "seen": "2026-11-17"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-h6jf-g8cj-x4v3",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "claim",
+        "explanation",
+        "verdict"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-17",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-17",
+      "change": "Recorded the false-positive claim as unverifiable against the current reviewed malware entry."
+    }
+  ]
+}

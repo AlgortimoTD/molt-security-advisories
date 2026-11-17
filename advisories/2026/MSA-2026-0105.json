@@ -1,0 +1,111 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0105",
+  "title": "mail-parser email header expressions can exhaust parsing workers",
+  "summary": "Two header-parsing regular expressions have polynomial runtime on attacker-controlled mail. Ordinary parse_from_string, parse_from_bytes and parse_from_file calls can spend excessive CPU on small messages.",
+  "status": "published",
+  "published": "2026-11-17",
+  "updated": "2026-11-17",
+  "cve": [
+    "CVE-2026-129295"
+  ],
+  "ghsa": [
+    "GHSA-r7w7-vpq8-c5vv"
+  ],
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "Untrusted mail can keep a parsing worker busy, affecting agent mail ingestion. The vendor documents availability impact without confidentiality or integrity loss, warranting a 30-day response."
+  },
+  "vendor_severity": [
+    {
+      "source": "mail-parser",
+      "value": "High"
+    }
+  ],
+  "affected": [
+    {
+      "product": "mail-parser",
+      "ecosystem": "PyPI",
+      "fixed": "4.6.1",
+      "introduced": "4.2.0",
+      "note": "Affected versions: >=4.2.0, <4.6.1."
+    }
+  ],
+  "exposure": "Mail ingestion and analysis processes parsing messages they did not author are exposed. No unusual parsing option or malformed message is required.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "PyPI",
+        "name": "mail-parser",
+        "ranges": [
+          {
+            "fixed": "4.6.1",
+            "introduced": "4.2.0"
+          }
+        ]
+      },
+      "context": "browsing"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Upgrade mail-parser",
+      "details": "Use mail-parser 4.6.1 or later, which replaces the affected parsing logic. If an immediate upgrade is not possible, cap total header size before parsing and enforce a wall-clock timeout around each parse as interim mitigations.",
+      "risk": "Updating can interrupt dependent workflows; test compatibility before resuming them."
+    }
+  ],
+  "verification": [
+    "Confirm the loaded mail-parser package is 4.6.1 or later and test ordinary email parsing."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/SpamScope/mail-parser/security/advisories/GHSA-r7w7-vpq8-c5vv",
+      "publisher": "mail-parser",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "title",
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-r7w7-vpq8-c5vv",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "affected",
+        "cve",
+        "ghsa"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-17",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-17",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    },
+    {
+      "date": "2026-11-17",
+      "change": "Added the vendor's interim mitigations: cap total header size before parsing and enforce a wall-clock timeout around each parse."
+    }
+  ]
+}
