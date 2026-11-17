@@ -1,0 +1,110 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0104",
+  "title": "termux-sync backup restore can write files outside the intended destination",
+  "summary": "Restore trusts paths from a backup manifest and extracts tar members without a destination boundary. A malicious backup can overwrite writable startup files or scripts, leading to code execution when they are used.",
+  "status": "published",
+  "published": "2026-11-17",
+  "updated": "2026-11-17",
+  "cve": [
+    "CVE-2026-86046"
+  ],
+  "ghsa": [
+    "GHSA-259w-wmqg-fp76"
+  ],
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "Exploitation requires the victim to restore an attacker-controlled backup; the vendor scores local attack reach with required user interaction. File overwrites can lead to code execution on later use, but this restoration prerequisite is not commonly met in agent environments, supporting a 30-day response."
+  },
+  "vendor_severity": [
+    {
+      "source": "termux-sync",
+      "value": "High"
+    }
+  ],
+  "affected": [
+    {
+      "product": "termux-sync",
+      "ecosystem": "PyPI",
+      "fixed": "1.2.4",
+      "note": "Versions through 1.2.3 are affected."
+    }
+  ],
+  "exposure": "Requires restoring an attacker-controlled backup, including one modified in a shared or compromised storage backend. Writes are limited by the Termux user permissions.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "PyPI",
+        "name": "termux-sync",
+        "ranges": [
+          {
+            "fixed": "1.2.4"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Upgrade before restoring backups",
+      "details": "Use termux-sync 1.2.4 or later before restoring untrusted backups.",
+      "risk": "Updating can interrupt dependent workflows; test compatibility before resuming them."
+    }
+  ],
+  "verification": [
+    "Confirm the restore command uses termux-sync 1.2.4 or later before processing a backup."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/djunekz/termux-sync/security/advisories/GHSA-259w-wmqg-fp76",
+      "publisher": "termux-sync",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "title",
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-259w-wmqg-fp76",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "affected",
+        "remediation",
+        "cve",
+        "ghsa"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-17",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-17",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    },
+    {
+      "date": "2026-11-17",
+      "change": "Corrected severity to medium with a 30-day response after re-reading the vendor's local attack reach, required user interaction and attacker-controlled backup prerequisite."
+    }
+  ]
+}

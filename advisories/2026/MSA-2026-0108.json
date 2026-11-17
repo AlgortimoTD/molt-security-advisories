@@ -1,0 +1,106 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0108",
+  "title": "Cursor Agent can create an executable MCP configuration through prompt injection",
+  "summary": "When a sensitive MCP configuration file is absent, an indirect prompt injection can cause Cursor Agent to create it without approval. Registering a new MCP server through that file can execute code.",
+  "status": "published",
+  "published": "2026-11-17",
+  "updated": "2026-11-17",
+  "cve": [
+    "CVE-2025-54135"
+  ],
+  "ghsa": [
+    "GHSA-4cxx-hrm3-49rm"
+  ],
+  "severity": {
+    "level": "high",
+    "urgency": "72h",
+    "rationale": "The attack requires a separate prompt injection and an absent sensitive file, both plausible in a new coding workspace. Execution through MCP configuration warrants a 72-hour response rather than treating the issue as unrestricted remote code execution."
+  },
+  "vendor_severity": [
+    {
+      "source": "Cursor",
+      "value": "High, CVSS 3.1 8.5"
+    }
+  ],
+  "affected": [
+    {
+      "product": "Cursor",
+      "ecosystem": "application",
+      "fixed": "1.3.9",
+      "note": "The vendor advisory header lists <=1.2.1, while the CVE description identifies versions below 1.3.9. Both identify 1.3.9 as fixed."
+    }
+  ],
+  "exposure": "Requires attacker-influenced agent context and a sensitive workspace MCP file that does not already exist. The vendor distinguishes creating a missing dotfile from editing an existing one.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Read the Cursor application version. Versions below 1.3.9 need review against CVE-2025-54135; upgrade to 1.3.9 or later. The primary sources differ on the exact affected upper boundary."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Upgrade Cursor",
+      "details": "Use Cursor 1.3.9 or later, which requires approval for agent writes to MCP-sensitive files.",
+      "risk": "Updating can interrupt dependent workflows; test compatibility before resuming them."
+    }
+  ],
+  "verification": [
+    "Confirm the running Cursor application is 1.3.9 or later."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/cursor/cursor/security/advisories/GHSA-4cxx-hrm3-49rm",
+      "publisher": "Cursor",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "title",
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2025/54xxx/CVE-2025-54135.json",
+      "publisher": "CVE Program",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "affected",
+        "cve",
+        "ghsa"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-17",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-17",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/PapaRichens/status/2122425021817610449",
+      "kind": "social",
+      "seen": "2026-11-17"
+    }
+  ]
+}

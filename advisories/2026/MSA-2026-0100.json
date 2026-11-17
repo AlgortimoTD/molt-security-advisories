@@ -1,0 +1,106 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0100",
+  "title": "Kubeshark destructive MCP tool arguments can redirect privileged cluster images",
+  "summary": "start_kubeshark treats a pod_regex beginning with a flag as a Helm override. An attacker influencing that argument can redirect deployed images and compromise nodes and the cluster.",
+  "status": "published",
+  "published": "2026-11-17",
+  "updated": "2026-11-17",
+  "cve": [
+    "CVE-2026-129236"
+  ],
+  "ghsa": [
+    "GHSA-8vf2-hxg5-crqh"
+  ],
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "Impact includes cluster-admin compromise, but reach requires an explicit non-default destructive-tool flag, privileged deployment credentials and an actively driven agent. These substantial configuration prerequisites place this record at medium under the agent-environment rubric."
+  },
+  "vendor_severity": [
+    {
+      "source": "Kubeshark",
+      "value": "High, CVSS 3.1 7.2"
+    }
+  ],
+  "affected": [
+    {
+      "product": "Kubeshark CLI",
+      "ecosystem": "Go",
+      "fixed": "53.4.0",
+      "introduced": "53.1.0",
+      "note": "The vendor release range is >=53.1.0 and <53.4.0; Go module pseudo-versions have a separate mapping in the reviewed database."
+    }
+  ],
+  "exposure": "The local stdio MCP server must run with --allow-destructive and hold permission to deploy the privileged Kubeshark DaemonSet. The attacker must influence agent tool arguments; this is not an unauthenticated network listener.",
+  "detectors": [
+    {
+      "type": "executable-version",
+      "params": {
+        "executable": "kubeshark",
+        "ranges": [
+          {
+            "introduced": "53.1.0",
+            "fixed": "53.4.0"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Upgrade or disable destructive MCP tools",
+      "details": "Use Kubeshark 53.4.0 or later. Until then, omit --allow-destructive, keep untrusted content away from the MCP server and restrict its Kubernetes permissions.",
+      "risk": "Updating can interrupt dependent workflows; test compatibility before resuming them."
+    }
+  ],
+  "verification": [
+    "Confirm the CLI is 53.4.0 or later, or that destructive MCP tools are unavailable. Review the deployment permissions granted to the MCP process."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/kubeshark/kubeshark/security/advisories/GHSA-8vf2-hxg5-crqh",
+      "publisher": "Kubeshark",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "title",
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-8vf2-hxg5-crqh",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "affected",
+        "cve",
+        "ghsa"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-17",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-17",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ]
+}

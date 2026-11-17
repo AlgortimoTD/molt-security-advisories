@@ -1,0 +1,116 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0103",
+  "title": "NLTK dependency graph rendering can execute a planted Graphviz binary",
+  "summary": "dot2img resolves Graphviz dot without the trusted executable ownership checks or environment scrubbing used by other NLTK wrappers. A local attacker can plant a binary in a writable PATH directory for execution as the rendering user.",
+  "status": "published",
+  "published": "2026-11-17",
+  "updated": "2026-11-17",
+  "cve": [
+    "CVE-2026-128134"
+  ],
+  "ghsa": [
+    "GHSA-7mxv-7h3q-9324"
+  ],
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "Exploitation needs local write access to a directory on the victim process PATH and dependency graph rendering. These local prerequisites support a 30-day response despite the possible code execution."
+  },
+  "vendor_severity": [
+    {
+      "source": "NLTK",
+      "value": "High, CVSS 3.1 7.8"
+    }
+  ],
+  "affected": [
+    {
+      "product": "nltk",
+      "ecosystem": "PyPI",
+      "fixed": "3.10.4",
+      "note": "Versions through 3.10.3 are affected. Advisory headers and the reviewed database identify 3.10.4 as patched; older fix-status paragraphs in the advisory describe pre-release work."
+    }
+  ],
+  "exposure": "POSIX processes calling dot2img or rendering a DependencyGraph in a notebook are exposed when an attacker can replace dot in a directory on their PATH.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "PyPI",
+        "name": "nltk",
+        "ranges": [
+          {
+            "fixed": "3.10.4"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Upgrade NLTK and protect executable search paths",
+      "details": "Use NLTK 3.10.4 or later. Remove group/world-writable directories from the rendering process PATH and keep Graphviz in a directory writable only by the user or root.",
+      "risk": "The release tightens data-path and external-tool checks; legitimate integrations may need adjustment."
+    }
+  ],
+  "verification": [
+    "Confirm the loaded NLTK version is 3.10.4 or later and test dependency graph rendering with trusted Graphviz."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/nltk/nltk/security/advisories/GHSA-7mxv-7h3q-9324",
+      "publisher": "NLTK",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "title",
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-7mxv-7h3q-9324",
+      "publisher": "GitHub Reviewed Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "affected",
+        "remediation",
+        "cve",
+        "ghsa"
+      ]
+    },
+    {
+      "url": "https://github.com/nltk/nltk/releases/tag/v3.10.4",
+      "publisher": "NLTK",
+      "tier": 1,
+      "retrieved": "2026-11-17",
+      "supports": [
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.1-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-17",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-17",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ]
+}
