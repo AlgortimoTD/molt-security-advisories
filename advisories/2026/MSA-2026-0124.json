@@ -1,0 +1,86 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0124",
+  "title": "Axon downloads and executes rtkx without an integrity check",
+  "summary": "The rtk-install and auto-bootstrap paths download an rtkx binary and execute it without checking a checksum, signature or attestation.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "low",
+    "urgency": "next-update",
+    "rationale": "The missing check weakens defense against a separate supply-chain compromise. The upstream-compromise prerequisite makes this a hardening issue under the feed rubric."
+  },
+  "affected": [
+    {
+      "product": "axon-mcp",
+      "ecosystem": "PyPI",
+      "note": "The advisory lists <=0.1.0 and no patched version."
+    }
+  ],
+  "exposure": "Exploitation requires compromise of the rtkx release pipeline or release credentials. The advisory describes a missing control, not an observed distribution compromise.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check axon-mcp version and whether the documented exposure conditions apply."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Avoid running the unverified bootstrap binary until its provenance and integrity can be established. The reviewed advisory provides no fixed release.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Inspect the installed bootstrap path and confirm integrity verification occurs before any downloaded binary executes."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-r7wg-f7r2-8wf7",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub Advisory Database",
+      "value": "High"
+    }
+  ],
+  "ghsa": [
+    "GHSA-r7wg-f7r2-8wf7"
+  ],
+  "cve": [
+    "CVE-2026-76818"
+  ]
+}

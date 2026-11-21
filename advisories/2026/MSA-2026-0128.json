@@ -1,0 +1,87 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0128",
+  "title": "sqlite-mcp read-only mode can be bypassed with injected statements",
+  "summary": "Statement chaining in execute_query and injection in describe_table can bypass the default read-only mode. ATTACH can modify the protected database, read other SQLite files or create SQLite files.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "The flaw undermines read-only access and permits database changes. Its documented effects concern the SQLite service and files accessible to its process."
+  },
+  "affected": [
+    {
+      "product": "github.com/StacklokLabs/sqlite-mcp",
+      "ecosystem": "Go",
+      "fixed": "0.1.2",
+      "note": "Affected: <0.1.2."
+    }
+  ],
+  "exposure": "An attacker must reach the MCP tools. The server has no built-in authentication and defaults to listening on all interfaces. Existing non-SQLite files are not arbitrarily overwritten.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check github.com/StacklokLabs/sqlite-mcp version and whether the documented exposure conditions apply."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade to 0.1.2. Until then, restrict access and mount only the intended database read-only at the filesystem or container layer.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-q433-mp6c-8v4f",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub Advisory Database",
+      "value": "High"
+    }
+  ],
+  "ghsa": [
+    "GHSA-q433-mp6c-8v4f"
+  ],
+  "cve": [
+    "CVE-2026-130008"
+  ]
+}

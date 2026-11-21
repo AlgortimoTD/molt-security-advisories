@@ -1,0 +1,107 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0141",
+  "title": "PHP interrupted session shutdown can retain a freed filename pointer",
+  "summary": "A fatal error during session cleanup can preserve a script-filename pointer after request memory is freed. Later requests in the same worker can trigger use-after-free and a crash.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "The demonstrated impact is memory corruption and worker crashes after specialized failing session cleanup. Code execution through this specific field has not been demonstrated."
+  },
+  "affected": [
+    {
+      "product": "PHP session extension",
+      "note": "Affected: >=8.3.0,<8.3.37; >=8.4.0,<8.4.28; >=8.5.0,<8.5.13. PHP 8.2 is unaffected."
+    }
+  ],
+  "exposure": "The application must allow cleanup to fail in the documented manner, and subsequent requests must reuse the same worker. Authentication requirements depend on that application path.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check PHP session extension version, affected release line and the documented exposure conditions."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade to 8.3.37, 8.4.28 or 8.5.13 on the corresponding line.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/php/php-src/security/advisories/GHSA-g3vh-838c-65v7",
+      "publisher": "PHP",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://www.php.net/ChangeLog-8.php",
+      "publisher": "PHP",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "cve",
+        "ghsa",
+        "affected",
+        "remediation"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "PHP",
+      "value": "Critical"
+    }
+  ],
+  "ghsa": [
+    "GHSA-g3vh-838c-65v7"
+  ],
+  "cve": [
+    "CVE-2026-129481"
+  ],
+  "discovery": [
+    {
+      "url": "https://radar.cloudflare.com/zero-wire/php-november-2026-security-release-phpaftershell",
+      "kind": "feed",
+      "seen": "2026-11-21"
+    }
+  ],
+  "related": [
+    "MSA-2026-0027"
+  ]
+}

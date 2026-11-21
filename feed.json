@@ -2,7 +2,7 @@
   "schema": "msa-feed/1",
   "publisher": "MOLT Security Advisories",
   "homepage": "https://github.com/AlgortimoTD/molt-security-advisories",
-  "updated": "2026-11-17",
+  "updated": "2026-11-21",
   "advisories": [
     {
       "schema": "msa/1",
@@ -2810,7 +2810,7 @@
       "summary": "Datalayer documents missing authentication and browser-origin checks on standalone HTTP management routes. Attackers can replace the active notebook backend or stop it. A later Host-header check can also be bypassed in insecure no-auth mode.",
       "status": "published",
       "published": "2026-11-04",
-      "updated": "2026-11-04",
+      "updated": "2026-11-21",
       "severity": {
         "level": "high",
         "urgency": "72h",
@@ -2839,7 +2839,8 @@
         {
           "product": "jupyter-mcp-server",
           "ecosystem": "PyPI",
-          "note": "The original authentication and DNS-rebinding advisories list versions through 1.0.2 and no patched version."
+          "note": "Reviewed GitHub Advisory Database entries now map the original flaws through 1.0.2 to patched 1.0.3; the vendor advisory pages still list no patched version. The later Host-header bypass has a separate fix.",
+          "fixed": "1.0.3"
         },
         {
           "product": "jupyter-mcp-server Host-header bypass",
@@ -2861,7 +2862,7 @@
       "remediation": [
         {
           "action": "Remediate the affected component",
-          "details": "Require bearer authentication on management routes and enforce browser-origin checks. Upgrade past the later bypass to 2.1.3 or later and verify these controls before exposure. The original advisories do not identify a patched release.",
+          "details": "Upgrade to 2.1.3 or later for the later bypass and verify bearer authentication and browser-origin checks on management routes. The reviewed database maps the original flaws to fixed 1.0.3, while the vendor pages still list no patched release.",
           "risk": "Medium. Authentication and listener changes can interrupt clients."
         }
       ],
@@ -2873,7 +2874,7 @@
           "url": "https://github.com/datalayer/jupyter-mcp-server/security/advisories/GHSA-24pw-rf5p-mgp7",
           "publisher": "Datalayer",
           "tier": 1,
-          "retrieved": "2026-11-04",
+          "retrieved": "2026-11-21",
           "supports": [
             "affected",
             "cve",
@@ -2890,7 +2891,7 @@
           "url": "https://github.com/datalayer/jupyter-mcp-server/security/advisories/GHSA-9x8x-crjq-g64h",
           "publisher": "Datalayer",
           "tier": 1,
-          "retrieved": "2026-11-04",
+          "retrieved": "2026-11-21",
           "supports": [
             "affected",
             "cve",
@@ -2907,7 +2908,7 @@
           "url": "https://github.com/datalayer/jupyter-mcp-server/security/advisories/GHSA-f8rf-rcrx-h6r9",
           "publisher": "Datalayer",
           "tier": 1,
-          "retrieved": "2026-11-04",
+          "retrieved": "2026-11-21",
           "supports": [
             "affected",
             "cve",
@@ -2919,6 +2920,26 @@
             "verification",
             "severity"
           ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-24pw-rf5p-mgp7",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "affected",
+            "remediation"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-9x8x-crjq-g64h",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "affected",
+            "remediation"
+          ]
         }
       ],
       "discovery": [
@@ -2929,9 +2950,9 @@
         }
       ],
       "review": {
-        "author_model": "gpt-6.1-sol",
+        "author_model": "gpt-6.2-sol",
         "reviewer_model": "claude-opus-5-5",
-        "reviewed": "2026-11-04",
+        "reviewed": "2026-11-21",
         "verdict": "approve",
         "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
       },
@@ -2943,6 +2964,10 @@
         {
           "date": "2026-11-04",
           "change": "Added the vendor severity for each advisory, including the two published CVSS scores and vectors, after independent review identified the omissions."
+        },
+        {
+          "date": "2026-11-21",
+          "change": "Recorded the reviewed database mapping of the original flaws to patched 1.0.3, while preserving the vendor-page discrepancy and the later 2.1.3 bypass fix."
         }
       ],
       "ghsa": [
@@ -11639,6 +11664,4142 @@
           "url": "https://x.com/PapaRichens/status/2122425021817610449",
           "kind": "social",
           "seen": "2026-11-17"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0110",
+      "title": "Git LFS SSH URL handling can inject commands on the remote host",
+      "summary": "Git LFS fails to quote the path in SSH object-transfer and authentication commands. A crafted remote URL can inject commands if the remote SSH service passes them to a shell without sanitization.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Remote command execution depends on remote service command handling. SSH-based source workflows commonly meet the transport prerequisite."
+      },
+      "affected": [
+        {
+          "product": "Git LFS",
+          "fixed": "3.8.1",
+          "note": "Affected since 0.5.0; fixed in 3.8.1."
+        }
+      ],
+      "exposure": "The remote SSH endpoint must execute unsanitized commands. This flaw concerns commands sent to the remote host, not unconditional local execution.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check Git LFS version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 3.8.1 or later. Disabling SSH transfers alone does not prevent SSH authentication requests; remote services must also sanitize incoming commands.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-w3f2-pr6x-wwjc",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-w3f2-pr6x-wwjc"
+      ],
+      "cve": [
+        "CVE-2026-69260"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0111",
+      "title": "Git LFS HTTP redirects can disclose cookies to another origin",
+      "summary": "Git LFS can forward Cookie headers to an unintended destination after an HTTP redirect. The advisory explicitly states that Authorization headers are not forwarded to inappropriate hosts.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "The flaw can disclose credentials carried in cookies across an origin boundary. Authenticated source and CI workflows can supply these headers."
+      },
+      "affected": [
+        {
+          "product": "Git LFS",
+          "fixed": "3.8.1",
+          "note": "Affected since 0.5.0; fixed in 3.8.1."
+        }
+      ],
+      "exposure": "LFS requests must carry sensitive cookies and encounter redirects to another origin.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check Git LFS version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade Git LFS to 3.8.1 or later.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-x7xj-4j4f-88xr",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-x7xj-4j4f-88xr"
+      ],
+      "cve": [
+        "CVE-2026-69261"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0112",
+      "title": "MCP Python SDK OAuth clients can disclose credentials to a server-selected endpoint",
+      "summary": "An untrusted MCP server can redirect OAuth client credentials, authorization codes and proof material to its chosen token endpoint because issuer validation and credential binding are incomplete.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Unattended OAuth clients can disclose credentials without a person approving the destination. Interactive sign-in requires user interaction."
+      },
+      "affected": [
+        {
+          "product": "mcp",
+          "ecosystem": "PyPI",
+          "note": "Affected: >=1.9.1,<1.30.0 and >=2.0.0a1,<2.2.0."
+        }
+      ],
+      "exposure": "HTTP OAuth clients holding legitimate authorization-server credentials are exposed when connecting to untrusted MCP servers. Stdio clients and MCP servers built with the SDK are not affected.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check mcp version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 1.30.0 or 2.2.0 on the corresponding line. Set issuer= for ClientCredentialsOAuthProvider and PrivateKeyJWTOAuthProvider; migrate RFC7523OAuthClientProvider. Clear issuer-less stored registrations or bind pre-registered records to their issuer. Rotate possibly disclosed secrets and revoke tokens.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed version, explicit issuer binding and refreshed registration storage. Verify mismatched issuer metadata is rejected with a harmless fixture."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-qx49-fqc8-xw99",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-qx49-fqc8-xw99"
+      ],
+      "cve": [
+        "CVE-2026-115563"
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/VectorWireAI/status/2123741043099304046",
+          "kind": "social",
+          "seen": "2026-11-21"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0113",
+      "title": "Chrome GPU out-of-bounds write can execute code outside the sandbox",
+      "summary": "A crafted HTML page can exploit a GPU out-of-bounds write in Google Chrome before 158.0.8127.36 to execute arbitrary code outside the sandbox.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "Untrusted web content can reach code execution outside the browser sandbox. Agents routinely open such content without a person reviewing each page."
+      },
+      "affected": [
+        {
+          "product": "Google Chrome Stable",
+          "fixed": "158.0.8127.36",
+          "note": "The Google CNA CVE record identifies Google Chrome versions before 158.0.8127.36 as affected."
+        }
+      ],
+      "exposure": "Agent browsers rendering untrusted HTML are exposed, including browsers with the sandbox enabled. Trusted test-only browsing reduces exposure. Other channels and derived browsers require vendor-specific fix mappings.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check Google Chrome Stable version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Install the patched Stable release for the platform and restart browser processes. Verify separate fix mappings for other channels and derived products.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/131xxx/CVE-2026-131031.json",
+          "publisher": "CVE Program, Google CNA",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        },
+        {
+          "date": "2026-11-21",
+          "change": "Limited Chrome claims to the Google CNA CVE record because the release post could not substantiate platform builds or unrelated fixes."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "Google CNA CVE record",
+          "value": "Critical (Chromium security severity)"
+        }
+      ],
+      "cve": [
+        "CVE-2026-131031"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0114",
+      "title": "Exploited LiteLLM custom guardrail sandbox escape permits proxy code execution",
+      "summary": "The custom-code guardrail endpoint allows bytecode techniques to escape its Python sandbox and execute code in the proxy process. CISA added this flaw to KEV on November 18.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "CISA confirms exploitation of a flaw reaching code execution in a credential-bearing AI proxy. The administrator credential prerequisite remains relevant."
+      },
+      "affected": [
+        {
+          "product": "litellm",
+          "ecosystem": "PyPI",
+          "note": "The reviewed database lists >=1.81.8,<1.83.10 and patched 1.83.10, while its patch instructions say 1.83.11."
+        }
+      ],
+      "exposure": "Default configurations require a proxy-admin credential to reach POST /guardrails/test_custom_code. The default Docker image runs the proxy as root.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check litellm version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Use 1.83.11 or later, following the more conservative patch instructions. If upgrading is delayed, block POST /guardrails/test_custom_code at the reverse proxy or gateway.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-wxxx-gvqv-xp7p",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json",
+          "publisher": "CISA",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "exploitation",
+            "summary",
+            "severity",
+            "remediation"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-wxxx-gvqv-xp7p"
+      ],
+      "cve": [
+        "CVE-2026-40217"
+      ],
+      "related": [
+        "MSA-2026-0096"
+      ],
+      "exploitation": {
+        "status": "exploited-in-the-wild",
+        "kev": true,
+        "note": "CISA KEV dateAdded: 2026-11-18."
+      },
+      "discovery": [
+        {
+          "url": "https://x.com/CyberRevealed/status/2123423295034806590",
+          "kind": "social",
+          "seen": "2026-11-21"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0115",
+      "title": "OpenJDK accelerated Base64 decoding can corrupt memory on affected x86-64 processors",
+      "summary": "Crafted Base64 input can cause an out-of-bounds write in the accelerated decoder. AWS identifies x86-64 processors with AVX-512 VBMI as affected; native Graviton workloads are not affected.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Remote unauthenticated input can corrupt runtime memory, but requires the affected processor feature and decoder path. This is conditional exposure, not every Java deployment."
+      },
+      "affected": [
+        {
+          "product": "Amazon Corretto",
+          "note": "AWS identifies specific fixed Corretto builds for release lines 17, 21, 25 and 27. Compare the complete build with the bulletin; other Java distributions need their own mappings."
+        }
+      ],
+      "exposure": "Applications must decode attacker-controlled Base64 using the affected intrinsic on supported x86-64 hardware. AWS describes affected OpenJDK code from 17.0.6 onward.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check Amazon Corretto version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Install the fixed Corretto build for the release line and restart Java applications. AWS documents -XX:-UseBASE64Intrinsics as an interim mitigation.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Check the running JVM build, hardware prerequisites and intrinsic setting after restart."
+      ],
+      "sources": [
+        {
+          "url": "https://aws.amazon.com/security/security-bulletins/2026-189-aws/",
+          "publisher": "AWS",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        },
+        {
+          "date": "2026-11-21",
+          "change": "Added the AWS Important rating published in the security bulletin."
+        }
+      ],
+      "cve": [
+        "CVE-2026-114938"
+      ],
+      "discovery": [
+        {
+          "url": "https://radar.cloudflare.com/zero-wire/java4shell",
+          "kind": "feed",
+          "seen": "2026-11-21"
+        },
+        {
+          "url": "https://x.com/TechMash365/status/2123899284173275457",
+          "kind": "social",
+          "seen": "2026-11-21"
+        },
+        {
+          "url": "https://x.com/tgorospe/status/2123767370846232951",
+          "kind": "social",
+          "seen": "2026-11-21"
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "AWS",
+          "value": "Important"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0116",
+      "title": "Ruby string case conversion can overflow a heap buffer",
+      "summary": "Changing the case of crafted strings in some single-byte encodings can write one byte past the output buffer. Ruby confirms proof-of-concept code execution in some scenarios.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Attacker-controlled strings can reach runtime memory corruption and possible code execution. Reaching the affected encoding and case-conversion path is a prerequisite."
+      },
+      "affected": [
+        {
+          "product": "Ruby",
+          "note": "Affected: <=3.3.13, >=3.4.0,<=3.4.12, >=4.0.0,<=4.0.9. Patched: 3.3.14, 3.4.13, 4.0.10."
+        }
+      ],
+      "exposure": "Applications changing case of untrusted strings in affected encodings, including ISO-8859-1 and Windows-1252, are exposed. The vendor does not establish that every Ruby application reaches the flaw.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check Ruby version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to Ruby 3.3.14, 3.4.13 or 4.0.10 on the corresponding line and restart dependent processes.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/ruby/ruby/security/advisories/GHSA-34m4-m9fh-gqp5",
+          "publisher": "Ruby",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "Ruby",
+          "value": "Critical"
+        }
+      ],
+      "ghsa": [
+        "GHSA-34m4-m9fh-gqp5"
+      ],
+      "discovery": [
+        {
+          "url": "https://radar.cloudflare.com/zero-wire/ruby2shell",
+          "kind": "feed",
+          "seen": "2026-11-21"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0117",
+      "title": "Phoenix chat template formatting can disclose server secrets",
+      "summary": "Format string injection in applyChatTemplate can expose environment variables and PHOENIX_SECRET. That key enables session-token forgery and decryption of stored credentials.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "A reachable development and AI observability service can disclose administrator and model credentials. The documented impact warrants urgent credential protection."
+      },
+      "affected": [
+        {
+          "product": "arize-phoenix",
+          "ecosystem": "PyPI",
+          "fixed": "15.7.0",
+          "note": "Affected: >=13.0.0,<15.7.0."
+        }
+      ],
+      "exposure": "The endpoint is unauthenticated in default no-auth deployments. With authentication enabled, any account is sufficient.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check arize-phoenix version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade arize-phoenix to 15.7.0 or later.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-gfv3-m769-5xm3",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "Critical"
+        }
+      ],
+      "ghsa": [
+        "GHSA-gfv3-m769-5xm3"
+      ],
+      "cve": [
+        "CVE-2026-53998"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0118",
+      "title": "augment-vir grep search patterns permit shell command injection",
+      "summary": "The grep() helper places caller-controlled search patterns in a Bash command. Command substitution inside a pattern runs as the Node.js process user.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Search tooling can turn untrusted arguments into process-level execution. Agent tool arguments commonly cross this trust boundary."
+      },
+      "affected": [
+        {
+          "product": "@augment-vir/node",
+          "ecosystem": "npm",
+          "fixed": "31.73.5",
+          "note": "Affected: <31.73.5."
+        }
+      ],
+      "exposure": "A downstream application must pass untrusted input to the pattern or patterns field of grep(). Installing the package alone does not establish reachability.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check @augment-vir/node version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade @augment-vir/node to 31.73.5 or later.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-xvcc-vqjv-phqh",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-xvcc-vqjv-phqh"
+      ],
+      "cve": [
+        "CVE-2026-63496"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0119",
+      "title": "Chainguard SDK AWS token verification permits cross-service replay",
+      "summary": "VerifyToken accepts audience and identity binding headers without requiring them in AWS SigV4 SignedHeaders. An attacker can rewrite them on a captured signed GetCallerIdentity request.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Replay can impersonate a workload at an attacker-selected audience. This directly affects identity federation used in developer supply chains."
+      },
+      "affected": [
+        {
+          "product": "chainguard.dev/sdk",
+          "ecosystem": "Go",
+          "fixed": "0.1.107",
+          "note": "Affected: <=0.1.106."
+        }
+      ],
+      "exposure": "A relying party must use auth/aws.VerifyToken. The attacker needs a valid victim-signed request within its validity window.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check chainguard.dev/sdk version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade chainguard.dev/sdk to 0.1.107 or later.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-wq26-3j2m-4hvv",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-wq26-3j2m-4hvv"
+      ],
+      "cve": [
+        "CVE-2026-71861"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0120",
+      "title": "install-artifact-from-github loads native addons without integrity verification",
+      "summary": "Downloaded native addons are written and loaded without a cryptographic integrity check. An attacker who can influence the download can execute native code during installation.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "The installer executes downloaded native code in developer and CI environments. Exploitation requires control of the download, rather than merely reading a package name."
+      },
+      "affected": [
+        {
+          "product": "install-artifact-from-github",
+          "ecosystem": "npm",
+          "fixed": "1.7.0",
+          "note": "Affected: <=1.6.0."
+        }
+      ],
+      "exposure": "Native-addon installation must use the affected downloader. Download influence can come from a configurable mirror or the distribution path.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check install-artifact-from-github version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade install-artifact-from-github to 1.7.0 or later.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-88q3-gch3-5396",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-88q3-gch3-5396"
+      ],
+      "cve": [
+        "CVE-2026-73864"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0121",
+      "title": "LLMKube model sources can expose controller and node files",
+      "summary": "Model.spec.source accepts arbitrary local paths and file URIs. The controller reads these paths or mounts them through a hostPath volume in the inference workload.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "A namespace-level actor can read controller credentials or node files. This crosses the intended workload boundary in AI development infrastructure."
+      },
+      "affected": [
+        {
+          "product": "github.com/defilantech/llmkube",
+          "ecosystem": "Go",
+          "fixed": "0.9.0",
+          "note": "Affected: <=0.8.28."
+        }
+      ],
+      "exposure": "An attacker needs permission to create or update Model and InferenceService resources and get permission on Pod logs in the target namespace. Model caching enables the hostPath path and is enabled by default.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check github.com/defilantech/llmkube version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade github.com/defilantech/llmkube to 0.9.0 or later.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-jw3m-8q7m-f35r",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        },
+        {
+          "date": "2026-11-21",
+          "change": "Added pod-log read permission to the documented attacker prerequisites."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-jw3m-8q7m-f35r"
+      ],
+      "cve": [
+        "CVE-2026-68903"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0122",
+      "title": "Miren Runtime accepts unverified TLS identities as cluster superusers",
+      "summary": "The RPC listener requests client certificates without validating their chain. A forged certificate receives an identity that bypasses cluster authorization.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Unauthenticated callers can obtain full control of applications, sandboxes and cluster resources. The explicit documented impact is control-plane compromise and credential risk."
+      },
+      "affected": [
+        {
+          "product": "miren.dev/runtime",
+          "ecosystem": "Go",
+          "fixed": "0.11.1",
+          "note": "Affected: <0.11.1."
+        }
+      ],
+      "exposure": "Any party reaching the RPC listener can present a self-signed certificate. Restricting network access reduces reach but does not fix certificate verification.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check miren.dev/runtime version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 0.11.1 or later. Follow Miren guidance to redeploy applications and rotate credentials referenced in environment variables.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-8fh7-7q4q-cq52",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "Critical"
+        }
+      ],
+      "ghsa": [
+        "GHSA-8fh7-7q4q-cq52"
+      ],
+      "cve": [
+        "CVE-2026-75521"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0123",
+      "title": "mssql-mcp tool arguments can bypass SQL safety controls",
+      "summary": "Unvalidated identifiers, predicates and stateFilter values are interpolated into SQL batches. Injection can execute during preview before confirmation and row-limit safeguards.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Agent-controlled inputs can modify or disclose data outside the intended tool restrictions. Reader-tier injection also defeats assumptions about read-only tooling."
+      },
+      "affected": [
+        {
+          "product": "@connorbritain/mssql-mcp-core",
+          "ecosystem": "npm",
+          "fixed": "0.6.0",
+          "note": "Affected core <=0.5.0; server <=0.5.2; reader/writer <=0.4.2. Fixed core/server 0.6.0; reader/writer 0.5.0."
+        }
+      ],
+      "exposure": "Attackers must influence MCP tool arguments. Database effects follow the configured login privileges; OS execution additionally requires privileged SQL configuration.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check @connorbritain/mssql-mcp-core version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade core and server to 0.6.0, reader and writer to 0.5.0. Migrate free-form whereClause inputs to structured filters; this is a breaking interface change.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-2m9m-6cr5-9x25",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-2m9m-6cr5-9x25"
+      ],
+      "cve": [
+        "CVE-2026-63129"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0124",
+      "title": "Axon downloads and executes rtkx without an integrity check",
+      "summary": "The rtk-install and auto-bootstrap paths download an rtkx binary and execute it without checking a checksum, signature or attestation.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "low",
+        "urgency": "next-update",
+        "rationale": "The missing check weakens defense against a separate supply-chain compromise. The upstream-compromise prerequisite makes this a hardening issue under the feed rubric."
+      },
+      "affected": [
+        {
+          "product": "axon-mcp",
+          "ecosystem": "PyPI",
+          "note": "The advisory lists <=0.1.0 and no patched version."
+        }
+      ],
+      "exposure": "Exploitation requires compromise of the rtkx release pipeline or release credentials. The advisory describes a missing control, not an observed distribution compromise.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check axon-mcp version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Avoid running the unverified bootstrap binary until its provenance and integrity can be established. The reviewed advisory provides no fixed release.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Inspect the installed bootstrap path and confirm integrity verification occurs before any downloaded binary executes."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-r7wg-f7r2-8wf7",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-r7wg-f7r2-8wf7"
+      ],
+      "cve": [
+        "CVE-2026-76818"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0125",
+      "title": "Gortex MCP write tools can escape indexed repository roots",
+      "summary": "Absolute paths and missing symlink checks let write_file, edit_file and move_inline write outside indexed repositories. Planting executable configuration can lead to later code execution.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Agent tool arguments can overwrite executable configuration outside the promised repository boundary. Execution follows when that configuration is used."
+      },
+      "affected": [
+        {
+          "product": "github.com/zzet/gortex",
+          "ecosystem": "Go",
+          "fixed": "0.55.0",
+          "note": "Affected: <0.55.0."
+        }
+      ],
+      "exposure": "An attacker must influence a write-capable MCP tool call. File access remains limited by the daemon account permissions.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check github.com/zzet/gortex version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade github.com/zzet/gortex to 0.55.0 or later.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-w42c-h7hr-f67p",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-w42c-h7hr-f67p"
+      ],
+      "cve": [
+        "CVE-2026-62964"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0126",
+      "title": "Todoist MCP HTTP server permits browser DNS rebinding",
+      "summary": "A malicious website can rebind its origin to the local HTTP MCP server and invoke Todoist tools using the server-held API key, including write and delete operations.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "The attack needs optional HTTP mode and a malicious browser page. Documented impact is access to one connected Todoist service, including destructive data changes."
+      },
+      "affected": [
+        {
+          "product": "@doist/todoist-mcp",
+          "ecosystem": "npm",
+          "fixed": "10.3.3",
+          "note": "Affected: <=10.3.2."
+        }
+      ],
+      "exposure": "The optional todoist-mcp-http entrypoint must be running while an untrusted page is open. The stdio entrypoint is not browser-reachable.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check @doist/todoist-mcp version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade @doist/todoist-mcp to 10.3.3 or later.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-833v-v58w-294h",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "Critical"
+        }
+      ],
+      "ghsa": [
+        "GHSA-833v-v58w-294h"
+      ],
+      "cve": [
+        "CVE-2026-76807"
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/theeventmonitor/status/2123580122422775916",
+          "kind": "social",
+          "seen": "2026-11-21"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0127",
+      "title": "Obsidian sync MCP no-auth HTTP mode permits browser access to vaults",
+      "summary": "Missing Host and Origin checks let a malicious website use DNS rebinding to read, create, edit, move and delete notes through the HTTP MCP endpoint.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "The documented no-auth local mode permits unauthorized vault access from a website. The impact is confined to the connected vault service."
+      },
+      "affected": [
+        {
+          "product": "obsidian-sync-mcp",
+          "ecosystem": "npm",
+          "fixed": "0.5.7",
+          "note": "Affected: <=0.5.6."
+        }
+      ],
+      "exposure": "The server must run without MCP_AUTH_TOKEN. Token-enabled deployments are not affected by the described browser attack. Filesystem and CouchDB-backed vaults share the vulnerable path.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check obsidian-sync-mcp version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 0.5.7. Set MCP_AUTH_TOKEN on untrusted networks; Host and Origin checks alone do not authenticate non-browser clients.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-mx6p-3fg7-v6pj",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-mx6p-3fg7-v6pj"
+      ],
+      "cve": [
+        "CVE-2026-77283"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0128",
+      "title": "sqlite-mcp read-only mode can be bypassed with injected statements",
+      "summary": "Statement chaining in execute_query and injection in describe_table can bypass the default read-only mode. ATTACH can modify the protected database, read other SQLite files or create SQLite files.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "The flaw undermines read-only access and permits database changes. Its documented effects concern the SQLite service and files accessible to its process."
+      },
+      "affected": [
+        {
+          "product": "github.com/StacklokLabs/sqlite-mcp",
+          "ecosystem": "Go",
+          "fixed": "0.1.2",
+          "note": "Affected: <0.1.2."
+        }
+      ],
+      "exposure": "An attacker must reach the MCP tools. The server has no built-in authentication and defaults to listening on all interfaces. Existing non-SQLite files are not arbitrarily overwritten.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check github.com/StacklokLabs/sqlite-mcp version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 0.1.2. Until then, restrict access and mount only the intended database read-only at the filesystem or container layer.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-q433-mp6c-8v4f",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-q433-mp6c-8v4f"
+      ],
+      "cve": [
+        "CVE-2026-130008"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0129",
+      "title": "fzf-tmux geometry arguments can execute commands",
+      "summary": "Attached layout-size arguments reach Bash arithmetic without validation. Popup geometry also permits injection of tmux options that can lead to command execution.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "Execution requires control of command-line geometry values rather than ordinary search results. This is a conditional local tool invocation issue."
+      },
+      "affected": [
+        {
+          "product": "fzf-tmux",
+          "fixed": "0.74.5",
+          "note": "Affected fzf releases: <=0.74.4."
+        }
+      ],
+      "exposure": "A wrapper or invocation must accept attacker-influenced geometry arguments. The arithmetic path triggers during option parsing, even outside tmux.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check fzf-tmux version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade fzf and its bundled fzf-tmux script to 0.74.5 or later.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-w6x2-f5m4-xw82",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-w6x2-f5m4-xw82"
+      ],
+      "cve": [
+        "CVE-2026-121716"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0130",
+      "title": "containerd image manifest processing can crash the daemon",
+      "summary": "Malformed digests in subject-annotated descriptors cause an unrecovered panic during transfer-service pulls or imports. Repeated Kubernetes image-pull retries can repeatedly crash the daemon.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "A crafted image can disrupt container operations, but the documented impact is denial of service. Developer and CI image pulls can reach this path."
+      },
+      "affected": [
+        {
+          "product": "containerd",
+          "note": "Affected: >=2.2.0,<2.2.10; >=2.3.0,<2.3.7; >=2.4.0,<2.4.2."
+        }
+      ],
+      "exposure": "The affected transfer-service path includes default CRI PullImage requests. An attacker must get an untrusted image pulled or imported.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check containerd version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to containerd 2.2.10, 2.3.7 or 2.4.2 on the corresponding line. Until then, restrict image sources to trusted registries.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-vwhp-8p66-mq4f",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-vwhp-8p66-mq4f"
+      ],
+      "cve": [
+        "CVE-2026-95839"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0131",
+      "title": "CodeWhale shell classification and automation defaults bypass approvals",
+      "summary": "Shell commands using execution-capable search flags can be classified as read-only and auto-approved. Separately, omitted automation auto_approve defaults to true and creates recurring tasks with bypassed approvals.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Agent-supplied arguments can cross the advertised approval boundary and execute commands silently. Automation can preserve that capability in recurring runs."
+      },
+      "affected": [
+        {
+          "product": "CodeWhale",
+          "fixed": "0.9.0",
+          "note": "codewhale (npm) and codewhale-tui (crates.io) <=0.8.67 are affected; fixed in 0.9.0."
+        }
+      ],
+      "exposure": "The shell issue affects the interactive Agent profile even without YOLO. The automation issue follows an approved automation_create call when the caller omits auto_approve.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check CodeWhale version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade CodeWhale to 0.9.0 or later.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-8hp3-xxrg-v9c8",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-3mgh-93r5-r7jf",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-8hp3-xxrg-v9c8",
+        "GHSA-3mgh-93r5-r7jf"
+      ],
+      "cve": [
+        "CVE-2026-83817",
+        "CVE-2026-83816"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0132",
+      "title": "k8s-mcp-server default SSE transport exposes unauthenticated Kubernetes tools",
+      "summary": "Default SSE/HTTP dispatch lacks caller authentication and Origin checks. Any reachable client can invoke tools with the configured cluster privileges, including destructive tools.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "The MCP listener exposes privileged Kubernetes operations without credentials. Cluster credentials and workload integrity require urgent protection."
+      },
+      "affected": [
+        {
+          "product": "github.com/reza-gholizade/k8s-mcp-server",
+          "ecosystem": "Go",
+          "fixed": "1.1.0",
+          "note": "Affected: <1.1.0."
+        }
+      ],
+      "exposure": "Default SSE mode binds all interfaces and registers write tools unless read-only mode is selected. A client must reach the listener.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check github.com/reza-gholizade/k8s-mcp-server version and whether the documented exposure conditions apply."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade github.com/reza-gholizade/k8s-mcp-server to 1.1.0 or later.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-m932-63jc-4jqq",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-m932-63jc-4jqq"
+      ],
+      "cve": [
+        "CVE-2026-130007"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0133",
+      "title": "Flyto2 Core file modules and HTTP guards permit sandbox and network escapes",
+      "summary": "Unguarded file-writing modules can write outside FLYTO_SANDBOX_DIR. HTTP helpers separately discard validated DNS addresses or follow pagination targets without revalidation, allowing readable requests to internal services.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "A caller able to run modules can overwrite host configuration or obtain internal data. Agent recipes can pass attacker-influenced paths and URLs."
+      },
+      "affected": [
+        {
+          "product": "flyto-core",
+          "note": "Affected: <=2.26.7. Fixed: 2.26.8.",
+          "ecosystem": "PyPI"
+        }
+      ],
+      "exposure": "Attackers must influence module or recipe arguments. DNS rebinding additionally requires attacker-controlled DNS and a resolution race; pagination needs a controlled response.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check flyto-core version, affected release line and the documented exposure conditions."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 2.26.8 or later and verify both file confinement and outbound URL restrictions.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-p34x-fmph-9fjx",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-pfg2-w999-497v",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-2mr3-rxrq-238c",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-6pm8-6f34-9v3g",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        },
+        {
+          "date": "2026-11-21",
+          "change": "Added the published GitHub Advisory Database severity for each included advisory."
+        }
+      ],
+      "ghsa": [
+        "GHSA-p34x-fmph-9fjx",
+        "GHSA-pfg2-w999-497v",
+        "GHSA-2mr3-rxrq-238c",
+        "GHSA-6pm8-6f34-9v3g"
+      ],
+      "cve": [
+        "CVE-2026-77312",
+        "CVE-2026-77313",
+        "CVE-2026-77315",
+        "CVE-2026-77316"
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "Critical",
+          "applies_to": "GHSA-p34x-fmph-9fjx"
+        },
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High",
+          "applies_to": "GHSA-pfg2-w999-497v"
+        },
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High",
+          "applies_to": "GHSA-2mr3-rxrq-238c"
+        },
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High",
+          "applies_to": "GHSA-6pm8-6f34-9v3g"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0134",
+      "title": "NLTK launcher and file extraction paths permit code execution or overwrite",
+      "summary": "Relative prover9/mace4 locations can execute planted binaries. Unvalidated Java launcher tokens bypass JAR restrictions. ZIP extraction can follow pre-planted hardlinks and overwrite files outside the data root.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "The flaws require local planting or attacker control of specialized launcher configuration. They cross intended execution and file boundaries but are not unconditional remote execution."
+      },
+      "affected": [
+        {
+          "product": "nltk",
+          "note": "Prover9/Mace: <=3.10.3. Java bypass: >=3.10.3,<3.10.4. ZIP hardlinks: >=3.9.4,<=3.10.3. All fixed in 3.10.4.",
+          "ecosystem": "PyPI"
+        }
+      ],
+      "exposure": "Prover9 requires a relative binary_location and a writable resolved directory. Java requires control of launcher arguments and a JAR or argument file. Extraction requires a pre-existing hardlink inside the data root.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check nltk version, affected release line and the documented exposure conditions."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 3.10.4 before using these helpers or downloading corpora.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-cc5r-64rf-75hg",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-x8q7-6c7m-52gw",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-wr3g-j6qj-xpgh",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        },
+        {
+          "date": "2026-11-21",
+          "change": "Added the published GitHub Advisory Database severity for each included advisory."
+        }
+      ],
+      "ghsa": [
+        "GHSA-cc5r-64rf-75hg",
+        "GHSA-x8q7-6c7m-52gw",
+        "GHSA-wr3g-j6qj-xpgh"
+      ],
+      "cve": [
+        "CVE-2026-129234",
+        "CVE-2026-128138",
+        "CVE-2026-128135"
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High",
+          "applies_to": "GHSA-cc5r-64rf-75hg"
+        },
+        {
+          "source": "GitHub Advisory Database",
+          "value": "Critical",
+          "applies_to": "GHSA-x8q7-6c7m-52gw"
+        },
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High",
+          "applies_to": "GHSA-wr3g-j6qj-xpgh"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0135",
+      "title": "NLTK regular expressions, graph traversal and XML corpora can exhaust workers",
+      "summary": "Untrusted regex patterns incur expensive compilation before match timeouts. Deep dependency or custom WordNet graphs can exhaust recursion. Large XML comments and CDATA sections cause quadratic CPU work.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "The documented impact is worker denial of service from untrusted patterns or corpora. Specialized APIs must process the crafted input."
+      },
+      "affected": [
+        {
+          "product": "nltk",
+          "note": "Regex compile: >=3.10.0,<=3.10.3. XML: >=3.6,<=3.10.3. Dependency and WordNet traversal: <=3.10.3. All fixed in 3.10.4.",
+          "ecosystem": "PyPI"
+        }
+      ],
+      "exposure": "WordNet traversal requires a custom or foreign lexical resource, not the bundled default corpus. Other paths require untrusted tokenizer/search patterns, dependency parses or XML corpus input.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check nltk version, affected release line and the documented exposure conditions."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 3.10.4 or later before processing untrusted patterns and corpora.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-32p6-cwhc-8r78",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-8846-p9w9-5frf",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-rh8m-wqhc-qmrf",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-j8g8-j4j7-8j54",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-32p6-cwhc-8r78",
+        "GHSA-8846-p9w9-5frf",
+        "GHSA-rh8m-wqhc-qmrf",
+        "GHSA-j8g8-j4j7-8j54"
+      ],
+      "cve": [
+        "CVE-2026-129229",
+        "CVE-2026-129223",
+        "CVE-2026-129222",
+        "CVE-2026-128139"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0136",
+      "title": "Mistune Markdown image and link parsing can exhaust CPU",
+      "summary": "Nested image openers and empty-label links trigger separate quadratic-time parsing paths in the default renderer without plugins. Small crafted Markdown documents can occupy a worker for extended periods.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "Untrusted documentation or model output can reach a denial of service in Markdown rendering. The documented flaws do not establish code execution."
+      },
+      "affected": [
+        {
+          "product": "mistune",
+          "note": "Affected: <3.3.4. Fixed: 3.3.4.",
+          "ecosystem": "PyPI"
+        }
+      ],
+      "exposure": "Applications rendering attacker-controlled Markdown with the affected inline image or link parser are exposed.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check mistune version, affected release line and the documented exposure conditions."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 3.3.4 or later.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-ww7q-mxrj-5ffg",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-phmp-hrw4-r36r",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-ww7q-mxrj-5ffg",
+        "GHSA-phmp-hrw4-r36r"
+      ],
+      "cve": [
+        "CVE-2026-97699",
+        "CVE-2026-97698"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0137",
+      "title": "Guard Core built-in patterns can block the application event loop",
+      "summary": "Built-in penetration-detection regexes run without the timeout wrapper used for custom patterns. A crafted request causes quadratic processing without recording a detection match.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "The security middleware itself permits unauthenticated denial of service. Running the regex on the event loop can block all endpoints in the process."
+      },
+      "affected": [
+        {
+          "product": "guard-core",
+          "note": "Affected: >=3.5.0,<=3.12.0. Fixed: 3.13.0.",
+          "ecosystem": "PyPI"
+        }
+      ],
+      "exposure": "Applications using the affected built-in detection patterns can be attacked through ordinary request content under the default configuration.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check guard-core version, affected release line and the documented exposure conditions."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 3.13.0 or later.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-r7hm-rjvg-xx7j",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-r7hm-rjvg-xx7j"
+      ],
+      "cve": [
+        "CVE-2026-129302"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0139",
+      "title": "PHP session writes and serializer mismatches can deserialize attacker-controlled objects",
+      "summary": "Interrupted file-session writes can retain old serialized data. Separately, upload-progress sessions written and read with different serializers can turn attacker-controlled bytes into objects and trigger application gadget chains.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Both paths can lead to remote code execution with a suitable application gadget chain. Session-content influence and interruption or shared-store serializer mismatch are required."
+      },
+      "affected": [
+        {
+          "product": "PHP session extension",
+          "note": "Affected: <8.2.36; >=8.3.0,<8.3.37; >=8.4.0,<8.4.28; >=8.5.0,<8.5.13."
+        }
+      ],
+      "exposure": "The interrupted-write flaw affects the default files handler. Serializer mismatch requires upload progress and shared session access with different serializers; separate FPM pools do not ensure separate stores.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check PHP session extension version, affected release line and the documented exposure conditions."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 8.2.36, 8.3.37, 8.4.28 or 8.5.13 on the corresponding line.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/php/php-src/security/advisories/GHSA-fm2m-fjf5-v3cp",
+          "publisher": "PHP",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/php/php-src/security/advisories/GHSA-658j-r8rw-q6mx",
+          "publisher": "PHP",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://www.php.net/ChangeLog-8.php",
+          "publisher": "PHP",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "cve",
+            "ghsa",
+            "affected",
+            "remediation"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "PHP",
+          "value": "Critical"
+        }
+      ],
+      "ghsa": [
+        "GHSA-fm2m-fjf5-v3cp",
+        "GHSA-658j-r8rw-q6mx"
+      ],
+      "cve": [
+        "CVE-2026-126714",
+        "CVE-2026-115560"
+      ],
+      "discovery": [
+        {
+          "url": "https://radar.cloudflare.com/zero-wire/php-november-2026-security-release-phpaftershell",
+          "kind": "feed",
+          "seen": "2026-11-21"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0140",
+      "title": "PHP-FPM persistent connections permit request smuggling and code execution",
+      "summary": "Unread request-body bytes can be accepted as a new FastCGI request on a reused connection. Forged parameters can bypass front-end routing and execute PHP as the worker.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Remote code execution needs persistent backend connections and a specific unread-input path. These preconditions prevent treating every PHP installation as exposed."
+      },
+      "affected": [
+        {
+          "product": "PHP-FPM",
+          "note": "Affected supported lines: <8.2.36; >=8.3.0,<8.3.37; >=8.4.0,<8.4.28; >=8.5.0,<8.5.13. Introduced in PHP 5.6.0."
+        }
+      ],
+      "exposure": "The application must open php://input without fully consuming it, the front end must reuse backend connections, and the attacker must know an existing script path. Front ends closing each FastCGI connection avoid the demonstrated attack. LSAPI shares the cleanup issue without established code execution.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check PHP-FPM version, affected release line and the documented exposure conditions."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 8.2.36, 8.3.37, 8.4.28 or 8.5.13 on the corresponding line.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/php/php-src/security/advisories/GHSA-qc49-hpvq-g2w6",
+          "publisher": "PHP",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://www.php.net/ChangeLog-8.php",
+          "publisher": "PHP",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "cve",
+            "ghsa",
+            "affected",
+            "remediation"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "PHP",
+          "value": "Critical"
+        }
+      ],
+      "ghsa": [
+        "GHSA-qc49-hpvq-g2w6"
+      ],
+      "cve": [
+        "CVE-2026-129289"
+      ],
+      "discovery": [
+        {
+          "url": "https://radar.cloudflare.com/zero-wire/php-november-2026-security-release-phpaftershell",
+          "kind": "feed",
+          "seen": "2026-11-21"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0141",
+      "title": "PHP interrupted session shutdown can retain a freed filename pointer",
+      "summary": "A fatal error during session cleanup can preserve a script-filename pointer after request memory is freed. Later requests in the same worker can trigger use-after-free and a crash.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "The demonstrated impact is memory corruption and worker crashes after specialized failing session cleanup. Code execution through this specific field has not been demonstrated."
+      },
+      "affected": [
+        {
+          "product": "PHP session extension",
+          "note": "Affected: >=8.3.0,<8.3.37; >=8.4.0,<8.4.28; >=8.5.0,<8.5.13. PHP 8.2 is unaffected."
+        }
+      ],
+      "exposure": "The application must allow cleanup to fail in the documented manner, and subsequent requests must reuse the same worker. Authentication requirements depend on that application path.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check PHP session extension version, affected release line and the documented exposure conditions."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 8.3.37, 8.4.28 or 8.5.13 on the corresponding line.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/php/php-src/security/advisories/GHSA-g3vh-838c-65v7",
+          "publisher": "PHP",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://www.php.net/ChangeLog-8.php",
+          "publisher": "PHP",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "cve",
+            "ghsa",
+            "affected",
+            "remediation"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "PHP",
+          "value": "Critical"
+        }
+      ],
+      "ghsa": [
+        "GHSA-g3vh-838c-65v7"
+      ],
+      "cve": [
+        "CVE-2026-129481"
+      ],
+      "discovery": [
+        {
+          "url": "https://radar.cloudflare.com/zero-wire/php-november-2026-security-release-phpaftershell",
+          "kind": "feed",
+          "seen": "2026-11-21"
+        }
+      ],
+      "related": [
+        "MSA-2026-0027"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0142",
+      "title": "Flowise public chatflow responses disclose MCP bearer tokens",
+      "summary": "The public-chatflows endpoint exposes MCP server bearer tokens. A caller can reuse a leaked token to invoke the chatflow despite its API-key protection and consume model quota.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "An unauthenticated response can disclose a usable bearer credential. The issue is especially relevant to model-backed automation exposed through MCP."
+      },
+      "affected": [
+        {
+          "product": "Flowise",
+          "note": "CVE range: 3.1.3 through 3.1.4. No fixed version is established in the inspected record.",
+          "ecosystem": "npm"
+        }
+      ],
+      "exposure": "A reachable affected public chatflow with MCP server configuration is required. The vendor has ended core operations and archived the project.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check Flowise version, affected release line and the documented exposure conditions."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Remove untrusted access to affected public chatflows and replace the unsupported deployment with a maintained implementation or reviewed fix. No vendor fixed version is established here.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm unauthenticated access to public chatflows with MCP server configuration has been removed.",
+        "Confirm any exposed MCP bearer tokens have been rotated and the old tokens no longer authorize chatflow invocation."
+      ],
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/130xxx/CVE-2026-130796.json",
+          "publisher": "CVE Program, VulnCheck CNA",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://flowiseai.com/sunset",
+          "publisher": "Flowise",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "affected",
+            "exposure",
+            "remediation"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        },
+        {
+          "date": "2026-11-21",
+          "change": "Replaced the unsupported fixed-version verification with access-removal and credential-rotation checks."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "CVE Program, VulnCheck CNA",
+          "value": "High (CVSS v3.1 8.2; CVSS v4.0 8.8)"
+        }
+      ],
+      "cve": [
+        "CVE-2026-130796"
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/atikbytes/status/2123260526189015443",
+          "kind": "social",
+          "seen": "2026-11-21"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0143",
+      "title": "AWS document loader MCP test-mode handling bypasses base-directory confinement",
+      "summary": "When DOCUMENT_BASE_DIR is unset or empty, test or CI environment variables can bypass file access checks. Crafted document content can lead the client to read outside the intended directory or write PNG slide images.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "The flaw needs a specific CI or test environment and missing base-directory configuration. Agent document processing can supply the untrusted content that reaches it."
+      },
+      "affected": [
+        {
+          "product": "awslabs.document-loader-mcp-server",
+          "note": "Affected: 1.0.10 through 1.0.20; PNG writing applies to 1.0.12 through 1.0.20. Fixed: 1.0.21. Earlier releases did not provide base-directory confinement.",
+          "ecosystem": "PyPI"
+        }
+      ],
+      "exposure": "DOCUMENT_BASE_DIR must be missing or empty and CI, GITHUB_ACTIONS or PYTEST_CURRENT_TEST must be present.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check awslabs.document-loader-mcp-server version, affected release line and the documented exposure conditions."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 1.0.21 or later. Until then, set DOCUMENT_BASE_DIR to the actual document directory, never the filesystem root.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/130xxx/CVE-2026-130901.json",
+          "publisher": "CVE Program, Amazon CNA",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "CVE Program, Amazon CNA",
+          "value": "Medium (CVSS v3.1 5.3; CVSS v4.0 5.8)"
+        }
+      ],
+      "cve": [
+        "CVE-2026-130901"
+      ],
+      "discovery": [
+        {
+          "url": "https://x.com/Rachidmarcil/status/2124061324439355572",
+          "kind": "social",
+          "seen": "2026-11-21"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0144",
+      "title": "nginx HTTP/2 flow control and conditional module flaws corrupt worker memory",
+      "summary": "HTTP/2 flow control can cause a heap overflow. F5 states that code execution also needs ASLR disabled or bypassed. The same releases fix use-after-free flaws in the resolver, HTTP/2, HTTP/3 and mail proxy.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Network traffic can corrupt a reverse-proxy worker, but code execution requires defeating ASLR. HTTP/2 is common in developer and agent service front ends."
+      },
+      "affected": [
+        {
+          "product": "nginx Open Source",
+          "note": "First affected: flow control 1.9.5; resolver 0.6.18; HTTP/2 use-after-free 1.19.7; HTTP/3 1.25.0; mail proxy 0.5.33. Stable 1.30.7 and mainline 1.31.9 fix all five."
+        }
+      ],
+      "exposure": "The corresponding HTTP/2, HTTP/3, resolver or mail proxy path must be used. For the HTTP/2 flow-control flaw, F5 identifies data-plane exposure and an ASLR prerequisite for code execution. NGINX Plus needs its own fix mapping.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check nginx Open Source version, affected release line and the documented exposure conditions."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to nginx 1.30.7 or 1.31.9 on the corresponding line, or a vendor build carrying the fix, and restart workers.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://nginx.org/en/security_advisories.html",
+          "publisher": "nginx",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/123xxx/CVE-2026-123007.json",
+          "publisher": "CVE Program, F5 CNA",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "nginx",
+          "value": "major",
+          "applies_to": "CVE-2026-123007 and CVE-2026-113425"
+        },
+        {
+          "source": "nginx",
+          "value": "medium",
+          "applies_to": "CVE-2026-123634, CVE-2026-123633 and CVE-2026-121810"
+        },
+        {
+          "source": "F5 CNA",
+          "value": "High (CVSS v3.1 8.1), Critical (CVSS v4.0 9.2)",
+          "applies_to": "CVE-2026-123007"
+        }
+      ],
+      "cve": [
+        "CVE-2026-123007",
+        "CVE-2026-123634",
+        "CVE-2026-123633",
+        "CVE-2026-121810",
+        "CVE-2026-113425"
+      ],
+      "discovery": [
+        {
+          "url": "https://radar.cloudflare.com/zero-wire/nginx2root",
+          "kind": "feed",
+          "seen": "2026-11-21"
+        },
+        {
+          "url": "https://x.com/zoomeye_team/status/2123234709346148542",
+          "kind": "social",
+          "seen": "2026-11-21"
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0145",
+      "title": "qbee SSH key management can follow symlinks into privileged files",
+      "summary": "The privileged file helper follows attacker-controlled symlinks. A local account managed by the SSH Keys bundle can redirect provisioned keys into the root account key file. Other paths permit overwrite or ownership changes under additional conditions.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "This is local privilege escalation through SSH configuration management. A managed local account and a later privileged configuration application are required."
+      },
+      "affected": [
+        {
+          "product": "qbee-agent",
+          "note": "The advisory recommends release 2026.27 or later. Its Go package fix is 0.0.0-20260615134032-0fdf8e411de5."
+        }
+      ],
+      "exposure": "The primary path requires an untrusted local account whose SSH keys are managed by the bundle. Kernel protected_symlinks does not block that home-directory path.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check qbee-agent version, affected release line and the documented exposure conditions."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to qbee-agent 2026.27 or later. Temporarily disable the SSH Keys bundle for untrusted accounts if upgrading is delayed.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-xhv5-8fpq-g7hf",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-xhv5-8fpq-g7hf"
+      ],
+      "cve": [
+        "CVE-2026-62336"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0146",
+      "title": "Exploited Puppet report deserialization permits server code execution",
+      "summary": "A crafted rich-data report submitted with any CA-signed agent certificate can execute code as the Puppet Server service account. Weak automatic certificate signing can remove the authentication barrier.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "CISA confirms exploitation of a flaw reaching server code execution. Configuration-management infrastructure can hold privileged deployment capabilities."
+      },
+      "affected": [
+        {
+          "product": "Puppet Enterprise",
+          "note": "Affected: >=2023.8.0,<2023.8.13; >=2025.0.0,<2025.12.1; >=2026.0.0,<2026.0.1."
+        }
+      ],
+      "exposure": "The attacker needs a CA-signed agent certificate, or a weak autosigning policy that issues one without strong verification.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check Puppet Enterprise version, affected release line and the documented exposure conditions."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to Puppet Enterprise 2023.8.13, 2025.12.1 or 2026.0.1, bundling puppet-agent 8.22.2 or 9.1.3, and restart Puppet Server.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/115xxx/CVE-2026-115731.json",
+          "publisher": "CVE Program, Perforce CNA",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json",
+          "publisher": "CISA",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "exploitation",
+            "summary",
+            "severity"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "CVE Program, Perforce CNA",
+          "value": "Critical (CVSS v4.0 9.4)"
+        }
+      ],
+      "cve": [
+        "CVE-2026-115731"
+      ],
+      "exploitation": {
+        "status": "exploited-in-the-wild",
+        "kev": true,
+        "note": "CISA KEV dateAdded: 2026-11-17."
+      }
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0147",
+      "title": "Effect template literal validation can block the event loop",
+      "summary": "Schema.TemplateLiteral patterns with multiple string spans compile into ambiguous regex wildcards. Non-matching untrusted input can cause cubic backtracking during decoding.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "The flaw causes denial of service during schema validation, including RPC and HTTP payloads. The affected schema shape must be used."
+      },
+      "affected": [
+        {
+          "product": "effect",
+          "note": "Affected: <=3.22.0. Fixed: 3.22.1.",
+          "ecosystem": "npm"
+        }
+      ],
+      "exposure": "Applications must decode untrusted input against a template containing two or more Schema.String spans.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check effect version, affected release line and the documented exposure conditions."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 3.22.1. If delayed, bound input before template decoding; adding maxLength after decoding does not prevent the expensive regex.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-7589-6fvf-x4pw",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-7589-6fvf-x4pw"
+      ],
+      "cve": [
+        "CVE-2026-121707"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0149",
+      "title": "OpenID4VP certificate chain building can trust forged credentials",
+      "summary": "Chain building stops on equality of subject distinguished names without verifying cryptographic closure to the trust anchor. An attacker can supply a self-signed certificate reusing that name.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "Public credential verification can accept an attacker-controlled issuer as trusted. This undermines the authentication boundary of consumers using this security library."
+      },
+      "affected": [
+        {
+          "product": "@openeudi/openid4vp",
+          "note": "Affected: <=0.8.0. Fixed: 0.8.1.",
+          "ecosystem": "npm"
+        }
+      ],
+      "exposure": "A relying party must verify OpenID4VP presentations through the affected TrustEvaluator path. Other OpenID implementations are not established as affected.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check @openeudi/openid4vp version and the documented exposure conditions against the cited advisory."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 0.8.1 or later.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-4c2f-96cf-f5fc",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-4c2f-96cf-f5fc"
+      ],
+      "cve": [
+        "CVE-2026-75522"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0150",
+      "title": "gosaml2 malformed encrypted assertions can panic before validation",
+      "summary": "An AES-GCM CipherValue shorter than the nonce size causes an unchecked slice operation. A crafted SAML response can trigger the panic before signature or content validation completes.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "Unauthenticated input can cause a panic in a security dependency. The documented impact is denial of service, not authentication bypass or code execution."
+      },
+      "affected": [
+        {
+          "product": "github.com/russellhaering/gosaml2",
+          "note": "Affected: <=0.11.0. Fixed: 0.12.0.",
+          "ecosystem": "Go"
+        }
+      ],
+      "exposure": "The service provider must parse the crafted encrypted assertion. No valid SAML signature is required.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check github.com/russellhaering/gosaml2 version and the documented exposure conditions against the cited advisory."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 0.12.0 or later.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-5hj8-q7fv-qrj6",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-5hj8-q7fv-qrj6"
+      ],
+      "cve": [
+        "CVE-2026-128073"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0151",
+      "title": "libp2p RSA DER decoding can block the Node event loop before authentication",
+      "summary": "Malformed length fields in a public key cause an unbounded synchronous loop and large transient allocation. Repeated Identify messages can repeatedly stall the process or exhaust its memory.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "A remote peer can deny service through a cryptographic parser before identity checks. The documented impact is CPU and memory exhaustion."
+      },
+      "affected": [
+        {
+          "product": "@libp2p/crypto",
+          "note": "Affected: <=5.1.21. Fixed: 5.1.22.",
+          "ecosystem": "npm"
+        }
+      ],
+      "exposure": "js-libp2p nodes processing untrusted Identify public keys can reach the decoder before peer identity or signature checks.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check @libp2p/crypto version and the documented exposure conditions against the cited advisory."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 5.1.22 or later.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-rvfr-cqwq-rc4j",
+          "publisher": "GitHub Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "GitHub Advisory Database",
+          "value": "High"
+        }
+      ],
+      "ghsa": [
+        "GHSA-rvfr-cqwq-rc4j"
+      ],
+      "cve": [
+        "CVE-2026-110789"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0152",
+      "title": "PHP fatal-error backtraces can retain or access freed memory",
+      "summary": "Magic-method backtrace argument collection can access freed values and permit code execution. A separate shutdown path can repopulate a backtrace global after cleanup, causing later requests to use stale memory.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "high",
+        "urgency": "72h",
+        "rationale": "The magic-method path has confirmed code execution under specific runtime settings and address assumptions. The shutdown-global path demonstrates crashes, without code execution through those entry points."
+      },
+      "affected": [
+        {
+          "product": "PHP engine",
+          "note": "Affected: >=8.5.0,<8.5.13. Fixed: 8.5.13."
+        }
+      ],
+      "exposure": "Magic methods require fatal_error_backtraces=1 and zend.exception_ignore_args=0; php.ini-production blocks that demonstrated path. The shutdown issue needs specific INI restoration diagnostics and an early diagnostic in a later request on the same worker.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check PHP engine version and the documented exposure conditions against the cited advisory."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 8.5.13. Temporarily disable fatal_error_backtraces administratively and restart workers; prevent request-specific overrides from re-enabling it.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/php/php-src/security/advisories/GHSA-8mjj-2r7p-4hg2",
+          "publisher": "PHP",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/php/php-src/security/advisories/GHSA-2fjv-p558-g82m",
+          "publisher": "PHP",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://www.php.net/ChangeLog-8.php",
+          "publisher": "PHP",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "cve",
+            "ghsa",
+            "affected",
+            "remediation"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "PHP",
+          "value": "Critical"
+        }
+      ],
+      "ghsa": [
+        "GHSA-8mjj-2r7p-4hg2",
+        "GHSA-2fjv-p558-g82m"
+      ],
+      "cve": [
+        "CVE-2026-129474",
+        "CVE-2026-129182"
+      ],
+      "discovery": [
+        {
+          "url": "https://radar.cloudflare.com/zero-wire/php-november-2026-security-release-phpaftershell",
+          "kind": "feed",
+          "seen": "2026-11-21"
+        }
+      ],
+      "related": [
+        "MSA-2026-0027"
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0153",
+      "title": "PHP startup timezone diagnostics can leave a stale cache pointer",
+      "summary": "A file-based PHP startup diagnostic can create a timezone cache that is freed before an early request diagnostic uses it. Crafted requests can crash fresh workers; code execution was demonstrated locally with known addresses.",
+      "status": "published",
+      "published": "2026-11-21",
+      "updated": "2026-11-21",
+      "severity": {
+        "level": "medium",
+        "urgency": "30d",
+        "rationale": "The flaw requires a non-thread-safe build, suitable startup logging and an early request diagnostic. Worker crashes are demonstrated; remote code execution still has additional unproven address requirements."
+      },
+      "affected": [
+        {
+          "product": "PHP date extension",
+          "note": "Affected supported lines: <8.2.36; >=8.3.0,<8.3.37; >=8.4.0,<8.4.28; >=8.5.0,<8.5.13."
+        }
+      ],
+      "exposure": "The startup diagnostic must use PHP file-based error_log; the FPM log alone is insufficient. The vulnerable window is before the worker completes its first normal request.",
+      "detectors": [
+        {
+          "type": "manual",
+          "params": {
+            "instructions": "Check PHP date extension version and the documented exposure conditions against the cited advisory."
+          },
+          "context": "any"
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update or contain the affected component",
+          "details": "Upgrade to 8.2.36, 8.3.37, 8.4.28 or 8.5.13. Until then, correct startup diagnostics or use a logging destination avoiding file timestamps, and restart the master and workers.",
+          "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+        }
+      ],
+      "verification": [
+        "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/php/php-src/security/advisories/GHSA-gr4f-wgx5-jpfv",
+          "publisher": "PHP",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "summary",
+            "affected",
+            "cve",
+            "ghsa",
+            "vendor_severity",
+            "severity",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://www.php.net/ChangeLog-8.php",
+          "publisher": "PHP",
+          "tier": 1,
+          "retrieved": "2026-11-21",
+          "supports": [
+            "cve",
+            "ghsa",
+            "affected",
+            "remediation"
+          ]
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-21",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-21",
+          "change": "Initial record drafted from directly inspected primary sources for independent review."
+        }
+      ],
+      "vendor_severity": [
+        {
+          "source": "PHP",
+          "value": "Critical"
+        }
+      ],
+      "ghsa": [
+        "GHSA-gr4f-wgx5-jpfv"
+      ],
+      "cve": [
+        "CVE-2026-129496"
+      ],
+      "discovery": [
+        {
+          "url": "https://radar.cloudflare.com/zero-wire/php-november-2026-security-release-phpaftershell",
+          "kind": "feed",
+          "seen": "2026-11-21"
         }
       ]
     }

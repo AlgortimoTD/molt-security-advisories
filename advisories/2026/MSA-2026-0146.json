@@ -1,0 +1,98 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0146",
+  "title": "Exploited Puppet report deserialization permits server code execution",
+  "summary": "A crafted rich-data report submitted with any CA-signed agent certificate can execute code as the Puppet Server service account. Weak automatic certificate signing can remove the authentication barrier.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "critical",
+    "urgency": "24h",
+    "rationale": "CISA confirms exploitation of a flaw reaching server code execution. Configuration-management infrastructure can hold privileged deployment capabilities."
+  },
+  "affected": [
+    {
+      "product": "Puppet Enterprise",
+      "note": "Affected: >=2023.8.0,<2023.8.13; >=2025.0.0,<2025.12.1; >=2026.0.0,<2026.0.1."
+    }
+  ],
+  "exposure": "The attacker needs a CA-signed agent certificate, or a weak autosigning policy that issues one without strong verification.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check Puppet Enterprise version, affected release line and the documented exposure conditions."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade to Puppet Enterprise 2023.8.13, 2025.12.1 or 2026.0.1, bundling puppet-agent 8.22.2 or 9.1.3, and restart Puppet Server.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/115xxx/CVE-2026-115731.json",
+      "publisher": "CVE Program, Perforce CNA",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json",
+      "publisher": "CISA",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "exploitation",
+        "summary",
+        "severity"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "CVE Program, Perforce CNA",
+      "value": "Critical (CVSS v4.0 9.4)"
+    }
+  ],
+  "cve": [
+    "CVE-2026-115731"
+  ],
+  "exploitation": {
+    "status": "exploited-in-the-wild",
+    "kev": true,
+    "note": "CISA KEV dateAdded: 2026-11-17."
+  }
+}

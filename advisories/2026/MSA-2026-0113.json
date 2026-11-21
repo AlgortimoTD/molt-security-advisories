@@ -1,0 +1,87 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0113",
+  "title": "Chrome GPU out-of-bounds write can execute code outside the sandbox",
+  "summary": "A crafted HTML page can exploit a GPU out-of-bounds write in Google Chrome before 158.0.8127.36 to execute arbitrary code outside the sandbox.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "critical",
+    "urgency": "24h",
+    "rationale": "Untrusted web content can reach code execution outside the browser sandbox. Agents routinely open such content without a person reviewing each page."
+  },
+  "affected": [
+    {
+      "product": "Google Chrome Stable",
+      "fixed": "158.0.8127.36",
+      "note": "The Google CNA CVE record identifies Google Chrome versions before 158.0.8127.36 as affected."
+    }
+  ],
+  "exposure": "Agent browsers rendering untrusted HTML are exposed, including browsers with the sandbox enabled. Trusted test-only browsing reduces exposure. Other channels and derived browsers require vendor-specific fix mappings.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check Google Chrome Stable version and whether the documented exposure conditions apply."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Install the patched Stable release for the platform and restart browser processes. Verify separate fix mappings for other channels and derived products.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/131xxx/CVE-2026-131031.json",
+      "publisher": "CVE Program, Google CNA",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    },
+    {
+      "date": "2026-11-21",
+      "change": "Limited Chrome claims to the Google CNA CVE record because the release post could not substantiate platform builds or unrelated fixes."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "Google CNA CVE record",
+      "value": "Critical (Chromium security severity)"
+    }
+  ],
+  "cve": [
+    "CVE-2026-131031"
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0151",
+  "title": "libp2p RSA DER decoding can block the Node event loop before authentication",
+  "summary": "Malformed length fields in a public key cause an unbounded synchronous loop and large transient allocation. Repeated Identify messages can repeatedly stall the process or exhaust its memory.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "A remote peer can deny service through a cryptographic parser before identity checks. The documented impact is CPU and memory exhaustion."
+  },
+  "affected": [
+    {
+      "product": "@libp2p/crypto",
+      "note": "Affected: <=5.1.21. Fixed: 5.1.22.",
+      "ecosystem": "npm"
+    }
+  ],
+  "exposure": "js-libp2p nodes processing untrusted Identify public keys can reach the decoder before peer identity or signature checks.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check @libp2p/crypto version and the documented exposure conditions against the cited advisory."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade to 5.1.22 or later.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-rvfr-cqwq-rc4j",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub Advisory Database",
+      "value": "High"
+    }
+  ],
+  "ghsa": [
+    "GHSA-rvfr-cqwq-rc4j"
+  ],
+  "cve": [
+    "CVE-2026-110789"
+  ]
+}

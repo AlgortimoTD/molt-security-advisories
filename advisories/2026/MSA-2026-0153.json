@@ -1,0 +1,104 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0153",
+  "title": "PHP startup timezone diagnostics can leave a stale cache pointer",
+  "summary": "A file-based PHP startup diagnostic can create a timezone cache that is freed before an early request diagnostic uses it. Crafted requests can crash fresh workers; code execution was demonstrated locally with known addresses.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "The flaw requires a non-thread-safe build, suitable startup logging and an early request diagnostic. Worker crashes are demonstrated; remote code execution still has additional unproven address requirements."
+  },
+  "affected": [
+    {
+      "product": "PHP date extension",
+      "note": "Affected supported lines: <8.2.36; >=8.3.0,<8.3.37; >=8.4.0,<8.4.28; >=8.5.0,<8.5.13."
+    }
+  ],
+  "exposure": "The startup diagnostic must use PHP file-based error_log; the FPM log alone is insufficient. The vulnerable window is before the worker completes its first normal request.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check PHP date extension version and the documented exposure conditions against the cited advisory."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade to 8.2.36, 8.3.37, 8.4.28 or 8.5.13. Until then, correct startup diagnostics or use a logging destination avoiding file timestamps, and restart the master and workers.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/php/php-src/security/advisories/GHSA-gr4f-wgx5-jpfv",
+      "publisher": "PHP",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://www.php.net/ChangeLog-8.php",
+      "publisher": "PHP",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "cve",
+        "ghsa",
+        "affected",
+        "remediation"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "PHP",
+      "value": "Critical"
+    }
+  ],
+  "ghsa": [
+    "GHSA-gr4f-wgx5-jpfv"
+  ],
+  "cve": [
+    "CVE-2026-129496"
+  ],
+  "discovery": [
+    {
+      "url": "https://radar.cloudflare.com/zero-wire/php-november-2026-security-release-phpaftershell",
+      "kind": "feed",
+      "seen": "2026-11-21"
+    }
+  ]
+}

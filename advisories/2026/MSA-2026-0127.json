@@ -1,0 +1,87 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0127",
+  "title": "Obsidian sync MCP no-auth HTTP mode permits browser access to vaults",
+  "summary": "Missing Host and Origin checks let a malicious website use DNS rebinding to read, create, edit, move and delete notes through the HTTP MCP endpoint.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "The documented no-auth local mode permits unauthorized vault access from a website. The impact is confined to the connected vault service."
+  },
+  "affected": [
+    {
+      "product": "obsidian-sync-mcp",
+      "ecosystem": "npm",
+      "fixed": "0.5.7",
+      "note": "Affected: <=0.5.6."
+    }
+  ],
+  "exposure": "The server must run without MCP_AUTH_TOKEN. Token-enabled deployments are not affected by the described browser attack. Filesystem and CouchDB-backed vaults share the vulnerable path.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check obsidian-sync-mcp version and whether the documented exposure conditions apply."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade to 0.5.7. Set MCP_AUTH_TOKEN on untrusted networks; Host and Origin checks alone do not authenticate non-browser clients.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-mx6p-3fg7-v6pj",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub Advisory Database",
+      "value": "High"
+    }
+  ],
+  "ghsa": [
+    "GHSA-mx6p-3fg7-v6pj"
+  ],
+  "cve": [
+    "CVE-2026-77283"
+  ]
+}

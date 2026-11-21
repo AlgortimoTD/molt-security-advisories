@@ -1,0 +1,86 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0147",
+  "title": "Effect template literal validation can block the event loop",
+  "summary": "Schema.TemplateLiteral patterns with multiple string spans compile into ambiguous regex wildcards. Non-matching untrusted input can cause cubic backtracking during decoding.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "The flaw causes denial of service during schema validation, including RPC and HTTP payloads. The affected schema shape must be used."
+  },
+  "affected": [
+    {
+      "product": "effect",
+      "note": "Affected: <=3.22.0. Fixed: 3.22.1.",
+      "ecosystem": "npm"
+    }
+  ],
+  "exposure": "Applications must decode untrusted input against a template containing two or more Schema.String spans.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check effect version, affected release line and the documented exposure conditions."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade to 3.22.1. If delayed, bound input before template decoding; adding maxLength after decoding does not prevent the expensive regex.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-7589-6fvf-x4pw",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub Advisory Database",
+      "value": "High"
+    }
+  ],
+  "ghsa": [
+    "GHSA-7589-6fvf-x4pw"
+  ],
+  "cve": [
+    "CVE-2026-121707"
+  ]
+}
