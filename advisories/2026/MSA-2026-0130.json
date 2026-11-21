@@ -1,0 +1,85 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0130",
+  "title": "containerd image manifest processing can crash the daemon",
+  "summary": "Malformed digests in subject-annotated descriptors cause an unrecovered panic during transfer-service pulls or imports. Repeated Kubernetes image-pull retries can repeatedly crash the daemon.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "A crafted image can disrupt container operations, but the documented impact is denial of service. Developer and CI image pulls can reach this path."
+  },
+  "affected": [
+    {
+      "product": "containerd",
+      "note": "Affected: >=2.2.0,<2.2.10; >=2.3.0,<2.3.7; >=2.4.0,<2.4.2."
+    }
+  ],
+  "exposure": "The affected transfer-service path includes default CRI PullImage requests. An attacker must get an untrusted image pulled or imported.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check containerd version and whether the documented exposure conditions apply."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade to containerd 2.2.10, 2.3.7 or 2.4.2 on the corresponding line. Until then, restrict image sources to trusted registries.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-vwhp-8p66-mq4f",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub Advisory Database",
+      "value": "High"
+    }
+  ],
+  "ghsa": [
+    "GHSA-vwhp-8p66-mq4f"
+  ],
+  "cve": [
+    "CVE-2026-95839"
+  ]
+}

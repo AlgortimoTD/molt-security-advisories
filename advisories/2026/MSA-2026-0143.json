@@ -1,0 +1,90 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0143",
+  "title": "AWS document loader MCP test-mode handling bypasses base-directory confinement",
+  "summary": "When DOCUMENT_BASE_DIR is unset or empty, test or CI environment variables can bypass file access checks. Crafted document content can lead the client to read outside the intended directory or write PNG slide images.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "The flaw needs a specific CI or test environment and missing base-directory configuration. Agent document processing can supply the untrusted content that reaches it."
+  },
+  "affected": [
+    {
+      "product": "awslabs.document-loader-mcp-server",
+      "note": "Affected: 1.0.10 through 1.0.20; PNG writing applies to 1.0.12 through 1.0.20. Fixed: 1.0.21. Earlier releases did not provide base-directory confinement.",
+      "ecosystem": "PyPI"
+    }
+  ],
+  "exposure": "DOCUMENT_BASE_DIR must be missing or empty and CI, GITHUB_ACTIONS or PYTEST_CURRENT_TEST must be present.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check awslabs.document-loader-mcp-server version, affected release line and the documented exposure conditions."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade to 1.0.21 or later. Until then, set DOCUMENT_BASE_DIR to the actual document directory, never the filesystem root.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/130xxx/CVE-2026-130901.json",
+      "publisher": "CVE Program, Amazon CNA",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "CVE Program, Amazon CNA",
+      "value": "Medium (CVSS v3.1 5.3; CVSS v4.0 5.8)"
+    }
+  ],
+  "cve": [
+    "CVE-2026-130901"
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/Rachidmarcil/status/2124061324439355572",
+      "kind": "social",
+      "seen": "2026-11-21"
+    }
+  ]
+}

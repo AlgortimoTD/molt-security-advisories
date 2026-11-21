@@ -1,0 +1,86 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0129",
+  "title": "fzf-tmux geometry arguments can execute commands",
+  "summary": "Attached layout-size arguments reach Bash arithmetic without validation. Popup geometry also permits injection of tmux options that can lead to command execution.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "Execution requires control of command-line geometry values rather than ordinary search results. This is a conditional local tool invocation issue."
+  },
+  "affected": [
+    {
+      "product": "fzf-tmux",
+      "fixed": "0.74.5",
+      "note": "Affected fzf releases: <=0.74.4."
+    }
+  ],
+  "exposure": "A wrapper or invocation must accept attacker-influenced geometry arguments. The arithmetic path triggers during option parsing, even outside tmux.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check fzf-tmux version and whether the documented exposure conditions apply."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade fzf and its bundled fzf-tmux script to 0.74.5 or later.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-w6x2-f5m4-xw82",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub Advisory Database",
+      "value": "High"
+    }
+  ],
+  "ghsa": [
+    "GHSA-w6x2-f5m4-xw82"
+  ],
+  "cve": [
+    "CVE-2026-121716"
+  ]
+}

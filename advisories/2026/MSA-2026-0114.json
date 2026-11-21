@@ -1,0 +1,113 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0114",
+  "title": "Exploited LiteLLM custom guardrail sandbox escape permits proxy code execution",
+  "summary": "The custom-code guardrail endpoint allows bytecode techniques to escape its Python sandbox and execute code in the proxy process. CISA added this flaw to KEV on November 18.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "critical",
+    "urgency": "24h",
+    "rationale": "CISA confirms exploitation of a flaw reaching code execution in a credential-bearing AI proxy. The administrator credential prerequisite remains relevant."
+  },
+  "affected": [
+    {
+      "product": "litellm",
+      "ecosystem": "PyPI",
+      "note": "The reviewed database lists >=1.81.8,<1.83.10 and patched 1.83.10, while its patch instructions say 1.83.11."
+    }
+  ],
+  "exposure": "Default configurations require a proxy-admin credential to reach POST /guardrails/test_custom_code. The default Docker image runs the proxy as root.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check litellm version and whether the documented exposure conditions apply."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Use 1.83.11 or later, following the more conservative patch instructions. If upgrading is delayed, block POST /guardrails/test_custom_code at the reverse proxy or gateway.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-wxxx-gvqv-xp7p",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json",
+      "publisher": "CISA",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "exploitation",
+        "summary",
+        "severity",
+        "remediation"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub Advisory Database",
+      "value": "High"
+    }
+  ],
+  "ghsa": [
+    "GHSA-wxxx-gvqv-xp7p"
+  ],
+  "cve": [
+    "CVE-2026-40217"
+  ],
+  "related": [
+    "MSA-2026-0096"
+  ],
+  "exploitation": {
+    "status": "exploited-in-the-wild",
+    "kev": true,
+    "note": "CISA KEV dateAdded: 2026-11-18."
+  },
+  "discovery": [
+    {
+      "url": "https://x.com/CyberRevealed/status/2123423295034806590",
+      "kind": "social",
+      "seen": "2026-11-21"
+    }
+  ]
+}

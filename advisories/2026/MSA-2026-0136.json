@@ -1,0 +1,106 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0136",
+  "title": "Mistune Markdown image and link parsing can exhaust CPU",
+  "summary": "Nested image openers and empty-label links trigger separate quadratic-time parsing paths in the default renderer without plugins. Small crafted Markdown documents can occupy a worker for extended periods.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "Untrusted documentation or model output can reach a denial of service in Markdown rendering. The documented flaws do not establish code execution."
+  },
+  "affected": [
+    {
+      "product": "mistune",
+      "note": "Affected: <3.3.4. Fixed: 3.3.4.",
+      "ecosystem": "PyPI"
+    }
+  ],
+  "exposure": "Applications rendering attacker-controlled Markdown with the affected inline image or link parser are exposed.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check mistune version, affected release line and the documented exposure conditions."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade to 3.3.4 or later.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-ww7q-mxrj-5ffg",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-phmp-hrw4-r36r",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub Advisory Database",
+      "value": "High"
+    }
+  ],
+  "ghsa": [
+    "GHSA-ww7q-mxrj-5ffg",
+    "GHSA-phmp-hrw4-r36r"
+  ],
+  "cve": [
+    "CVE-2026-97699",
+    "CVE-2026-97698"
+  ]
+}

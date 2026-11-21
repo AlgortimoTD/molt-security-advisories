@@ -1,0 +1,146 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0135",
+  "title": "NLTK regular expressions, graph traversal and XML corpora can exhaust workers",
+  "summary": "Untrusted regex patterns incur expensive compilation before match timeouts. Deep dependency or custom WordNet graphs can exhaust recursion. Large XML comments and CDATA sections cause quadratic CPU work.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "The documented impact is worker denial of service from untrusted patterns or corpora. Specialized APIs must process the crafted input."
+  },
+  "affected": [
+    {
+      "product": "nltk",
+      "note": "Regex compile: >=3.10.0,<=3.10.3. XML: >=3.6,<=3.10.3. Dependency and WordNet traversal: <=3.10.3. All fixed in 3.10.4.",
+      "ecosystem": "PyPI"
+    }
+  ],
+  "exposure": "WordNet traversal requires a custom or foreign lexical resource, not the bundled default corpus. Other paths require untrusted tokenizer/search patterns, dependency parses or XML corpus input.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check nltk version, affected release line and the documented exposure conditions."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade to 3.10.4 or later before processing untrusted patterns and corpora.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-32p6-cwhc-8r78",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-8846-p9w9-5frf",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-rh8m-wqhc-qmrf",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-j8g8-j4j7-8j54",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub Advisory Database",
+      "value": "High"
+    }
+  ],
+  "ghsa": [
+    "GHSA-32p6-cwhc-8r78",
+    "GHSA-8846-p9w9-5frf",
+    "GHSA-rh8m-wqhc-qmrf",
+    "GHSA-j8g8-j4j7-8j54"
+  ],
+  "cve": [
+    "CVE-2026-129229",
+    "CVE-2026-129223",
+    "CVE-2026-129222",
+    "CVE-2026-128139"
+  ]
+}

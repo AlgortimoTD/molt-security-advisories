@@ -1,0 +1,94 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0126",
+  "title": "Todoist MCP HTTP server permits browser DNS rebinding",
+  "summary": "A malicious website can rebind its origin to the local HTTP MCP server and invoke Todoist tools using the server-held API key, including write and delete operations.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "The attack needs optional HTTP mode and a malicious browser page. Documented impact is access to one connected Todoist service, including destructive data changes."
+  },
+  "affected": [
+    {
+      "product": "@doist/todoist-mcp",
+      "ecosystem": "npm",
+      "fixed": "10.3.3",
+      "note": "Affected: <=10.3.2."
+    }
+  ],
+  "exposure": "The optional todoist-mcp-http entrypoint must be running while an untrusted page is open. The stdio entrypoint is not browser-reachable.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check @doist/todoist-mcp version and whether the documented exposure conditions apply."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade @doist/todoist-mcp to 10.3.3 or later.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-833v-v58w-294h",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub Advisory Database",
+      "value": "Critical"
+    }
+  ],
+  "ghsa": [
+    "GHSA-833v-v58w-294h"
+  ],
+  "cve": [
+    "CVE-2026-76807"
+  ],
+  "discovery": [
+    {
+      "url": "https://x.com/theeventmonitor/status/2123580122422775916",
+      "kind": "social",
+      "seen": "2026-11-21"
+    }
+  ]
+}

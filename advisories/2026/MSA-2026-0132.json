@@ -1,0 +1,87 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0132",
+  "title": "k8s-mcp-server default SSE transport exposes unauthenticated Kubernetes tools",
+  "summary": "Default SSE/HTTP dispatch lacks caller authentication and Origin checks. Any reachable client can invoke tools with the configured cluster privileges, including destructive tools.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "high",
+    "urgency": "72h",
+    "rationale": "The MCP listener exposes privileged Kubernetes operations without credentials. Cluster credentials and workload integrity require urgent protection."
+  },
+  "affected": [
+    {
+      "product": "github.com/reza-gholizade/k8s-mcp-server",
+      "ecosystem": "Go",
+      "fixed": "1.1.0",
+      "note": "Affected: <1.1.0."
+    }
+  ],
+  "exposure": "Default SSE mode binds all interfaces and registers write tools unless read-only mode is selected. A client must reach the listener.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check github.com/reza-gholizade/k8s-mcp-server version and whether the documented exposure conditions apply."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade github.com/reza-gholizade/k8s-mcp-server to 1.1.0 or later.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-m932-63jc-4jqq",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub Advisory Database",
+      "value": "High"
+    }
+  ],
+  "ghsa": [
+    "GHSA-m932-63jc-4jqq"
+  ],
+  "cve": [
+    "CVE-2026-130007"
+  ]
+}

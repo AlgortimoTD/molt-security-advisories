@@ -1,0 +1,86 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0149",
+  "title": "OpenID4VP certificate chain building can trust forged credentials",
+  "summary": "Chain building stops on equality of subject distinguished names without verifying cryptographic closure to the trust anchor. An attacker can supply a self-signed certificate reusing that name.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "high",
+    "urgency": "72h",
+    "rationale": "Public credential verification can accept an attacker-controlled issuer as trusted. This undermines the authentication boundary of consumers using this security library."
+  },
+  "affected": [
+    {
+      "product": "@openeudi/openid4vp",
+      "note": "Affected: <=0.8.0. Fixed: 0.8.1.",
+      "ecosystem": "npm"
+    }
+  ],
+  "exposure": "A relying party must verify OpenID4VP presentations through the affected TrustEvaluator path. Other OpenID implementations are not established as affected.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check @openeudi/openid4vp version and the documented exposure conditions against the cited advisory."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade to 0.8.1 or later.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-4c2f-96cf-f5fc",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub Advisory Database",
+      "value": "High"
+    }
+  ],
+  "ghsa": [
+    "GHSA-4c2f-96cf-f5fc"
+  ],
+  "cve": [
+    "CVE-2026-75522"
+  ]
+}

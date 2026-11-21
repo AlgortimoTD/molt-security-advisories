@@ -1,0 +1,141 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0134",
+  "title": "NLTK launcher and file extraction paths permit code execution or overwrite",
+  "summary": "Relative prover9/mace4 locations can execute planted binaries. Unvalidated Java launcher tokens bypass JAR restrictions. ZIP extraction can follow pre-planted hardlinks and overwrite files outside the data root.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "The flaws require local planting or attacker control of specialized launcher configuration. They cross intended execution and file boundaries but are not unconditional remote execution."
+  },
+  "affected": [
+    {
+      "product": "nltk",
+      "note": "Prover9/Mace: <=3.10.3. Java bypass: >=3.10.3,<3.10.4. ZIP hardlinks: >=3.9.4,<=3.10.3. All fixed in 3.10.4.",
+      "ecosystem": "PyPI"
+    }
+  ],
+  "exposure": "Prover9 requires a relative binary_location and a writable resolved directory. Java requires control of launcher arguments and a JAR or argument file. Extraction requires a pre-existing hardlink inside the data root.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check nltk version, affected release line and the documented exposure conditions."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade to 3.10.4 before using these helpers or downloading corpora.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed release meets the corresponding fixed version and verify the affected workflow with harmless test inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-cc5r-64rf-75hg",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-x8q7-6c7m-52gw",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-wr3g-j6qj-xpgh",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    },
+    {
+      "date": "2026-11-21",
+      "change": "Added the published GitHub Advisory Database severity for each included advisory."
+    }
+  ],
+  "ghsa": [
+    "GHSA-cc5r-64rf-75hg",
+    "GHSA-x8q7-6c7m-52gw",
+    "GHSA-wr3g-j6qj-xpgh"
+  ],
+  "cve": [
+    "CVE-2026-129234",
+    "CVE-2026-128138",
+    "CVE-2026-128135"
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub Advisory Database",
+      "value": "High",
+      "applies_to": "GHSA-cc5r-64rf-75hg"
+    },
+    {
+      "source": "GitHub Advisory Database",
+      "value": "Critical",
+      "applies_to": "GHSA-x8q7-6c7m-52gw"
+    },
+    {
+      "source": "GitHub Advisory Database",
+      "value": "High",
+      "applies_to": "GHSA-wr3g-j6qj-xpgh"
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0123",
+  "title": "mssql-mcp tool arguments can bypass SQL safety controls",
+  "summary": "Unvalidated identifiers, predicates and stateFilter values are interpolated into SQL batches. Injection can execute during preview before confirmation and row-limit safeguards.",
+  "status": "published",
+  "published": "2026-11-21",
+  "updated": "2026-11-21",
+  "severity": {
+    "level": "high",
+    "urgency": "72h",
+    "rationale": "Agent-controlled inputs can modify or disclose data outside the intended tool restrictions. Reader-tier injection also defeats assumptions about read-only tooling."
+  },
+  "affected": [
+    {
+      "product": "@connorbritain/mssql-mcp-core",
+      "ecosystem": "npm",
+      "fixed": "0.6.0",
+      "note": "Affected core <=0.5.0; server <=0.5.2; reader/writer <=0.4.2. Fixed core/server 0.6.0; reader/writer 0.5.0."
+    }
+  ],
+  "exposure": "Attackers must influence MCP tool arguments. Database effects follow the configured login privileges; OS execution additionally requires privileged SQL configuration.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check @connorbritain/mssql-mcp-core version and whether the documented exposure conditions apply."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update or contain the affected component",
+      "details": "Upgrade core and server to 0.6.0, reader and writer to 0.5.0. Migrate free-form whereClause inputs to structured filters; this is a breaking interface change.",
+      "risk": "Medium. Updates can interrupt workflows and require compatibility checks."
+    }
+  ],
+  "verification": [
+    "Confirm the deployed component uses the patched release and test the affected workflow with harmless inputs."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-2m9m-6cr5-9x25",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-21",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "severity",
+        "exposure",
+        "detectors",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-21",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-21",
+      "change": "Initial record drafted from directly inspected primary sources for independent review."
+    }
+  ],
+  "vendor_severity": [
+    {
+      "source": "GitHub Advisory Database",
+      "value": "High"
+    }
+  ],
+  "ghsa": [
+    "GHSA-2m9m-6cr5-9x25"
+  ],
+  "cve": [
+    "CVE-2026-63129"
+  ]
+}
