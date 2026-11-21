@@ -492,6 +492,12 @@ test('author isolation checks features, MCP inventory and a sandbox probe with t
   assert.equal(seen.find(c => c.args[0] === 'mcp').env.CODEX_HOME, sandbox.env.CODEX_HOME);
   answers.features = AUTHOR_DISABLED_FEATURES.slice(1).map(n => `${n} stable false`).join('\n');
   await assert.rejects(verifyAuthorIsolation(input), /not disabled: apps/);
+  answers.features = AUTHOR_DISABLED_FEATURES.map(n => `${n} ${n === 'apps' ? 'removed true' : 'stable false'}`).join('\n');
+  assert.equal((await verifyAuthorIsolation(input)).sandbox, 'confined');
+  answers.features = AUTHOR_DISABLED_FEATURES.map(n => `${n} ${n === 'apps' ? 'stable true' : 'stable false'}`).join('\n');
+  await assert.rejects(verifyAuthorIsolation(input), /not disabled: apps/);
+  answers.features = AUTHOR_DISABLED_FEATURES.map(n => `${n} ${n === 'apps' ? 'under development true' : 'stable false'}`).join('\n');
+  await assert.rejects(verifyAuthorIsolation(input), /not disabled: apps/);
   answers.features = AUTHOR_DISABLED_FEATURES.map(n => `${n} stable false`).join('\n'); answers.mcp = '[{"name":"x"}]';
   await assert.rejects(verifyAuthorIsolation(input), /MCP servers remain/);
   answers.mcp = 'not json';
