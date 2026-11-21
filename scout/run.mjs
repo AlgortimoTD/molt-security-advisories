@@ -50,8 +50,10 @@ export function resolveCodexRoot(pathEnv = process.env.PATH || '') {
 // the author's credentials, resolve a host or see secret-looking environment variables.
 export async function verifyAuthorIsolation({ exec, worktree, runDir, codexRoot, profile }) {
   const features = await exec('codex', ['features', 'list', ...authorFeatureArgs()], { cwd: worktree, env: { ...process.env, CODEX_HOME: profile }, timeoutMs: 60_000 });
-  const state = Object.fromEntries(features.stdout.split('\n').map(line => line.trim().split(/\s+/)).filter(parts => parts.length >= 2).map(parts => [parts[0], parts.at(-1)]));
-  const loose = AUTHOR_DISABLED_FEATURES.filter(name => state[name] !== 'false');
+  // Codex ignores the override of a feature listed in stage `removed`, so its flag is a no-op that may
+  // still print `true`; only that stage is exempt. Unknown or enabled features still fail closed.
+  const state = Object.fromEntries(features.stdout.split('\n').map(line => line.trim().split(/\s+/)).filter(parts => parts.length >= 3).map(parts => [parts[0], { stage: parts.at(-2), value: parts.at(-1) }]));
+  const loose = AUTHOR_DISABLED_FEATURES.filter(name => state[name]?.value !== 'false' && state[name]?.stage !== 'removed');
   if (loose.length) throw Error(`Author features not disabled: ${loose.join(', ')}`);
   if (fs.existsSync(path.join(worktree, '.codex'))) throw Error('Worktree carries a project Codex configuration');
   const emptyHome = privateDir(path.join(runDir, 'codex-empty-home'));
