@@ -1,0 +1,91 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0161",
+  "title": "imagemeta PNG metadata decoding can exhaust memory",
+  "summary": "Crafted PNG metadata can make imagemeta.Decode allocate excessive memory from declared chunk lengths or unbounded zlib decompression. Untrusted images can exhaust a decoding worker.",
+  "status": "published",
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cve": [
+    "CVE-2026-103025"
+  ],
+  "ghsa": [
+    "GHSA-7hvw-3c2q-45qg"
+  ],
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "Attacker-controlled images reach memory allocations during metadata decoding. The documented impact is denial of service, without code execution or secret disclosure."
+  },
+  "vendor_severity": [
+    {
+      "source": "GitHub Advisory Database",
+      "value": "High"
+    }
+  ],
+  "affected": [
+    {
+      "product": "github.com/bep/imagemeta",
+      "ecosystem": "Go",
+      "note": "Versions before 0.17.3 are affected.",
+      "fixed": "0.17.3"
+    }
+  ],
+  "exposure": "Processing untrusted PNG images with IPTC metadata enabled reaches the affected decoding paths.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "Go",
+        "name": "github.com/bep/imagemeta",
+        "ranges": [
+          {
+            "fixed": "0.17.3"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update the affected dependency",
+      "details": "Upgrade to 0.17.3 or later. If IPTC metadata is unnecessary, the advisory offers clearing IPTC from Options.Sources as a workaround.",
+      "risk": "Low. Disabling IPTC removes that metadata from results."
+    }
+  ],
+  "verification": [
+    "Confirm the resolved library version and check ordinary PNG metadata extraction after updating."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-7hvw-3c2q-45qg",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-22",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "exposure",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-22",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-22",
+      "change": "Initial record from directly inspected primary evidence; independent review pending."
+    }
+  ]
+}

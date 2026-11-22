@@ -3,9 +3,9 @@
   "id": "MSR-2026-0012",
   "claim": "The @univerjs-pro/sheets-pivot-chart npm releases 1.5.0 and 1.5.1 were incorrectly flagged as malicious and removed.",
   "verdict": "unverifiable",
-  "explanation": "The inspected GitHub Reviewed Advisory Database record currently labels both versions as malware and lists no patched version. It supplies generic containment guidance rather than a package-specific technical explanation. That record does not establish that the classification was erroneous or that the releases are safe. No qualifying vendor correction or primary withdrawal was identified. This verdict records the evidence gap for the false-positive claim; it does not independently adjudicate the disputed package contents.",
+  "explanation": "Correction: the cited GitHub advisory is now marked withdrawn and explicitly states that further investigation found no security issue. It lists releases 1.5.0 and 1.5.1 and dates the withdrawal to November 17, 2026. This primary source supports the false-positive portion of the original claim, so the previous explanation that no primary withdrawal was identified is no longer valid. The combined claim remains unverifiable only as to the releases having been removed: this source does not establish registry removal or restoration. This record does not advise treating those releases as malware based on the withdrawn entry.",
   "published": "2026-11-17",
-  "updated": "2026-11-17",
+  "updated": "2026-11-22",
   "discovery": [
     {
       "url": "https://x.com/JFrogSecurity/status/2122282678359605484",
@@ -18,7 +18,7 @@
       "url": "https://github.com/advisories/GHSA-h6jf-g8cj-x4v3",
       "publisher": "GitHub Reviewed Advisory Database",
       "tier": 1,
-      "retrieved": "2026-11-17",
+      "retrieved": "2026-11-22",
       "supports": [
         "claim",
         "explanation",
@@ -27,9 +27,9 @@
     }
   ],
   "review": {
-    "author_model": "gpt-6.1-sol",
+    "author_model": "gpt-6.2-sol",
     "reviewer_model": "claude-opus-5-5",
-    "reviewed": "2026-11-17",
+    "reviewed": "2026-11-22",
     "verdict": "approve",
     "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
   },
@@ -37,6 +37,10 @@
     {
       "date": "2026-11-17",
       "change": "Recorded the false-positive claim as unverifiable against the current reviewed malware entry."
+    },
+    {
+      "date": "2026-11-22",
+      "change": "Corrected the previous explanation after directly reading the explicit GitHub withdrawal. The false-positive portion is supported; the unverifiable verdict now applies only to the unverified registry-removal portion of the combined claim."
     }
   ]
 }

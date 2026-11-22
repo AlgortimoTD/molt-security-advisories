@@ -1,0 +1,79 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0158",
+  "title": "Codex Linux seccomp checks did not cover x32 syscall numbers",
+  "summary": "The x32 ABI shares the x86-64 audit architecture, so an architecture check alone did not apply Codex syscall restrictions to x32 callers. A fix applies the existing syscall denials and socket-family conditions to x32 syscall numbers and legacy aliases.",
+  "status": "published",
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "The flaw weakens a coding assistant sandbox boundary for an alternate Linux ABI. It requires an environment capable of executing x32 calls; the inspected sources do not establish a complete sandbox escape."
+  },
+  "affected": [
+    {
+      "product": "OpenAI Codex CLI Linux sandbox",
+      "fixed": "0.171.0",
+      "note": "The 0.171.0 release includes the fix. The inspected sources do not establish the introduced version or a complete affected range."
+    }
+  ],
+  "exposure": "Linux x86-64 sandbox execution using x32 syscall numbers can evade checks that only consider native syscall numbers. The fix covers seccomp syscall and socket-family rules, not a demonstrated bypass of every sandbox layer.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check the Codex release and whether its Linux sandbox includes the x32 seccomp fix from the 0.171.0 release. Determine whether the kernel supports x32 execution; do not infer a full affected range from an older version alone."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update Codex",
+      "details": "Use release 0.171.0 or later containing the x32 seccomp fix.",
+      "risk": "Low. Check existing sandboxed workflows after upgrading."
+    }
+  ],
+  "verification": [
+    "Confirm the installed release includes the fix and run the vendor seccomp regression probes in an isolated development environment."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/openai/codex/releases/tag/rust-v0.171.0",
+      "publisher": "OpenAI",
+      "tier": 1,
+      "retrieved": "2026-11-22",
+      "supports": [
+        "affected",
+        "remediation"
+      ]
+    },
+    {
+      "url": "https://github.com/openai/codex/pull/61206",
+      "publisher": "OpenAI",
+      "tier": 1,
+      "retrieved": "2026-11-22",
+      "supports": [
+        "summary",
+        "affected",
+        "exposure",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-22",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-22",
+      "change": "Initial record of the vendor-documented x32 seccomp fix; affected-range and full-escape claims deliberately omitted."
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0159",
+  "title": "django-docutils unsafe rendering defaults expose worker files and raw HTML",
+  "summary": "django-docutils renders lower-trust reStructuredText with unsafe Docutils defaults. Directives can disclose worker-readable files, make server-side requests and emit raw HTML or JavaScript.",
+  "status": "published",
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cve": [
+    "CVE-2026-59988"
+  ],
+  "ghsa": [
+    "GHSA-86mf-q4h5-69gp"
+  ],
+  "severity": {
+    "level": "high",
+    "urgency": "72h",
+    "rationale": "Attacker-controlled text can disclose local files and inject browser content. Developer preview and document-processing integrations must treat lower-trust RST as an input boundary."
+  },
+  "vendor_severity": [
+    {
+      "source": "GitHub Advisory Database",
+      "value": "High"
+    }
+  ],
+  "affected": [
+    {
+      "product": "django-docutils",
+      "ecosystem": "PyPI",
+      "note": "Versions before 0.30.0 are affected.",
+      "fixed": "0.30.0"
+    }
+  ],
+  "exposure": "Applications rendering lower-trust RST without safe overrides are exposed. Trusted static content is outside this condition.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "PyPI",
+        "name": "django-docutils",
+        "ranges": [
+          {
+            "fixed": "0.30.0"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update the affected dependency",
+      "details": "Upgrade to 0.30.0 or later. Keep unsafe Docutils options disabled for lower-trust content; 0.30.0 also needs typing-extensions installed.",
+      "risk": "Medium. Safe defaults disable features that trusted documents may use."
+    }
+  ],
+  "verification": [
+    "Check the renderer version and confirm file insertion and raw directives remain disabled for lower-trust input."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-86mf-q4h5-69gp",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-22",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "exposure",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-22",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-22",
+      "change": "Initial record from directly inspected primary evidence; independent review pending."
+    }
+  ]
+}
