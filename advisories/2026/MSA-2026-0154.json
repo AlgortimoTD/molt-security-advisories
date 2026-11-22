@@ -1,0 +1,117 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0154",
+  "title": "Git LFS repository configuration can execute local commands during object transfers",
+  "summary": "Git LFS can run attacker-selected commands when fetching objects from a malicious repository. One flaw misparses line-ending characters in submodule configuration; another allows repository .lfsconfig keys to select custom transfer commands.",
+  "status": "published",
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cve": [
+    "CVE-2026-105802",
+    "CVE-2026-105803"
+  ],
+  "ghsa": [
+    "GHSA-xrgv-7vx6-5vx6",
+    "GHSA-x72p-hmqp-46hw"
+  ],
+  "severity": {
+    "level": "critical",
+    "urgency": "24h",
+    "rationale": "Repository content can trigger local code execution during normal LFS object fetching. Agents and CI routinely process untrusted repositories without a person inspecting each configuration value."
+  },
+  "vendor_severity": [
+    {
+      "source": "Git LFS",
+      "value": "High",
+      "applies_to": "GHSA-xrgv-7vx6-5vx6"
+    },
+    {
+      "source": "Git LFS",
+      "value": "High",
+      "applies_to": "GHSA-x72p-hmqp-46hw"
+    }
+  ],
+  "affected": [
+    {
+      "product": "Git LFS",
+      "introduced": "0.6.0",
+      "fixed": "3.8.1",
+      "note": "CVE-2026-105802 affects versions since 0.6.0. CVE-2026-105803 affects versions since 1.3.0. Both are fixed in 3.8.1."
+    }
+  ],
+  "exposure": "Fetching LFS objects from attacker-controlled repositories exposes local processes. The submodule flaw requires initialized submodules; the .lfsconfig flaw does not require them.",
+  "detectors": [
+    {
+      "type": "executable-version",
+      "params": {
+        "executable": "git-lfs",
+        "ranges": [
+          {
+            "introduced": "0.6.0",
+            "fixed": "3.8.1"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Upgrade Git LFS",
+      "details": "Install 3.8.1 or later. Until then, avoid untrusted repositories or disable Git LFS. Disabling submodule initialization addresses only the submodule flaw.",
+      "risk": "Medium. Disabling LFS or submodules interrupts dependent checkouts."
+    }
+  ],
+  "verification": [
+    "Confirm git-lfs reports 3.8.1 or later in each checkout worker; test an ordinary trusted LFS fetch."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/git-lfs/git-lfs/security/advisories/GHSA-xrgv-7vx6-5vx6",
+      "publisher": "Git LFS",
+      "tier": 1,
+      "retrieved": "2026-11-22",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "exposure",
+        "remediation"
+      ]
+    },
+    {
+      "url": "https://github.com/git-lfs/git-lfs/security/advisories/GHSA-x72p-hmqp-46hw",
+      "publisher": "Git LFS",
+      "tier": 1,
+      "retrieved": "2026-11-22",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "exposure",
+        "remediation"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-22",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-22",
+      "change": "Initial record from directly inspected primary sources; independent review pending."
+    }
+  ],
+  "related": [
+    "MSA-2026-0110",
+    "MSA-2026-0111"
+  ]
+}

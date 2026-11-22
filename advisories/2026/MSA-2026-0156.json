@@ -1,0 +1,91 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0156",
+  "title": "svglib nested SVG references can exhaust rendering resources",
+  "summary": "svglib expands nested SVG use references without a total expansion limit. Small untrusted SVG documents can consume excessive CPU and memory during rendering, including through xhtml2pdf.",
+  "status": "published",
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cve": [
+    "CVE-2026-132275"
+  ],
+  "ghsa": [
+    "GHSA-555j-qj3j-c8jv"
+  ],
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "Attacker-controlled documents can exhaust a rendering worker without special options. The documented impact is denial of service, rather than code execution or credential exposure."
+  },
+  "vendor_severity": [
+    {
+      "source": "svglib",
+      "value": "High",
+      "applies_to": "GHSA-555j-qj3j-c8jv"
+    }
+  ],
+  "affected": [
+    {
+      "product": "svglib",
+      "ecosystem": "PyPI",
+      "fixed": "2.3.1",
+      "note": "The advisory lists versions through 2.3.0 as affected."
+    }
+  ],
+  "exposure": "Workflows rendering untrusted SVG with svg2rlg are exposed. xhtml2pdf also reaches this dependency when converting HTML containing embedded SVG images.",
+  "detectors": [
+    {
+      "type": "package-version",
+      "params": {
+        "ecosystem": "PyPI",
+        "name": "svglib",
+        "ranges": [
+          {
+            "fixed": "2.3.1"
+          }
+        ]
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Upgrade svglib",
+      "details": "Install svglib 2.3.1 or later in the environment used for conversion.",
+      "risk": "Low. Check representative SVG and PDF output for compatibility."
+    }
+  ],
+  "verification": [
+    "Confirm the converter resolves svglib 2.3.1 or later; render a normal SVG and check its output."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/deeplook/svglib/security/advisories/GHSA-555j-qj3j-c8jv",
+      "publisher": "svglib",
+      "tier": 1,
+      "retrieved": "2026-11-22",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "exposure",
+        "remediation"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-22",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-22",
+      "change": "Initial record from directly inspected primary sources; independent review pending."
+    }
+  ]
+}

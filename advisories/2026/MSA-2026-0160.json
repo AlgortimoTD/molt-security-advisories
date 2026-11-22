@@ -1,0 +1,84 @@
+{
+  "schema": "msa/1",
+  "id": "MSA-2026-0160",
+  "title": "Legacy keystore-go accepts JKS truststores with missing integrity digests",
+  "summary": "Legacy keystore-go Decode accepts a JKS file with its trailing integrity digest removed. A writer can replace trusted CA certificates without the keystore password; certificate-only stores also lose password verification.",
+  "status": "published",
+  "published": "2026-11-22",
+  "updated": "2026-11-22",
+  "cve": [
+    "CVE-2026-76101"
+  ],
+  "ghsa": [
+    "GHSA-j282-pjg5-j643"
+  ],
+  "severity": {
+    "level": "medium",
+    "urgency": "30d",
+    "rationale": "Replacing trusted certificates can compromise TLS trust. Exploitation requires write access to the keystore or deployment artifact, so this is a conditional integrity failure."
+  },
+  "vendor_severity": [
+    {
+      "source": "GitHub Advisory Database",
+      "value": "High"
+    }
+  ],
+  "affected": [
+    {
+      "product": "github.com/pavel-v-chernykh/keystore-go",
+      "ecosystem": "Go",
+      "note": "Every legacy bare-module release through v2.1.0+incompatible is affected. No fixed release exists on that module path; v3 and v4 are not affected."
+    }
+  ],
+  "exposure": "Applications relying on Decode to detect changes to JKS truststores are exposed when attackers can modify the input.",
+  "detectors": [
+    {
+      "type": "manual",
+      "params": {
+        "instructions": "Check Go module dependencies for the legacy github.com/pavel-v-chernykh/keystore-go path. Every release there is affected; migration to an unaffected successor module is required."
+      },
+      "context": "any"
+    }
+  ],
+  "remediation": [
+    {
+      "action": "Update the affected dependency",
+      "details": "Migrate legacy imports to github.com/pavlo-v-chernykh/keystore-go/v4; the advisory identifies v3 and v4 as unaffected.",
+      "risk": "Medium. A major-version and import-path migration needs compatibility testing."
+    }
+  ],
+  "verification": [
+    "Confirm legacy imports are gone and a disposable truncated truststore is rejected."
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/advisories/GHSA-j282-pjg5-j643",
+      "publisher": "GitHub Advisory Database",
+      "tier": 1,
+      "retrieved": "2026-11-22",
+      "supports": [
+        "summary",
+        "affected",
+        "cve",
+        "ghsa",
+        "vendor_severity",
+        "exposure",
+        "remediation",
+        "verification"
+      ]
+    }
+  ],
+  "review": {
+    "author_model": "gpt-6.2-sol",
+    "reviewer_model": "claude-opus-5-5",
+    "reviewed": "2026-11-22",
+    "verdict": "approve",
+    "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+  },
+  "history": [
+    {
+      "date": "2026-11-22",
+      "change": "Initial record from directly inspected primary evidence; independent review pending."
+    }
+  ]
+}
