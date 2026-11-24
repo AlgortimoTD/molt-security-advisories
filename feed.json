@@ -2,7 +2,7 @@
   "schema": "msa-feed/1",
   "publisher": "MOLT Security Advisories",
   "homepage": "https://github.com/AlgortimoTD/molt-security-advisories",
-  "updated": "2026-11-23",
+  "updated": "2026-11-24",
   "advisories": [
     {
       "schema": "msa/1",
@@ -1277,7 +1277,7 @@
       "summary": "The IPv4 TCP connection setup flaw can lead to remote code execution. Ubuntu describes an unreleased exploit using MPTCP and warns that the underlying flaw is not specific to MPTCP.",
       "status": "published",
       "published": "2026-11-03",
-      "updated": "2026-11-13",
+      "updated": "2026-11-24",
       "severity": {
         "level": "critical",
         "urgency": "24h",
@@ -1287,12 +1287,27 @@
         {
           "product": "Linux kernel",
           "introduced": "4.4",
-          "note": "Affected branches require distribution-specific backports. Ubuntu 22.04 LTS and newer have fixes in the -updates pocket; fixes for 20.04 LTS, 18.04 LTS and 16.04 LTS are still pending in ESM according to the bulletin updated on 2026-11-09. Check the exact release and kernel flavor."
+          "note": "Affected branches require distribution-specific backports. Ubuntu 22.04 LTS and newer have archive fixes. USN-9170-1 documents broad Ubuntu Pro fix availability for Ubuntu 20.04 LTS and 18.04 LTS, including generic and cloud flavors; USN-9170-4 adds Azure FIPS and Azure 5.4 fixes. The November 9 bulletin still lists 20.04 and older as pending. Current 16.04 fix availability is unconfirmed here."
         },
         {
           "product": "Ubuntu 22.04 LTS linux-fips kernel",
           "fixed": "5.15.0-203.213+fips1",
           "note": "USN-9027-2 lists linux-image-5.15.0-203-fips at this package version through Ubuntu Pro FIPS Updates. This is not a generic upstream kernel threshold."
+        },
+        {
+          "product": "Ubuntu 20.04 LTS linux-azure-fips kernel",
+          "fixed": "5.4.0-1174.180+fips1",
+          "note": "USN-9170-4 lists linux-image-5.4.0-1174-azure-fips at this package version through Ubuntu Pro FIPS Updates."
+        },
+        {
+          "product": "Ubuntu 18.04 LTS linux-azure-5.4 kernel",
+          "fixed": "5.4.0-1174.180~18.04.1",
+          "note": "USN-9170-4 lists linux-image-5.4.0-1174-azure at this package version through Ubuntu Pro."
+        },
+        {
+          "product": "Ubuntu 22.04 LTS linux-nvidia-6.8 kernel",
+          "fixed": "6.8.0-1068.71~22.04.1",
+          "note": "USN-9192-1 lists linux-image-6.8.0-1068-nvidia and linux-image-6.8.0-1068-nvidia-64k at this package version. These package thresholds do not apply to other kernel flavors."
         }
       ],
       "exposure": "Relevant to exposed IPv4 TCP handling. Disabling MPTCP alone is not a complete fix for the underlying vulnerability.",
@@ -1308,7 +1323,7 @@
       "remediation": [
         {
           "action": "Apply the distribution security update",
-          "details": "Install the fixed package for the exact distribution release and kernel flavor, then reboot. Ubuntu 22.04 LTS and newer have fixes in -updates; enabling -proposed is no longer necessary. Fixes for 20.04 LTS, 18.04 LTS and 16.04 LTS are still pending in ESM according to the bulletin updated on 2026-11-09; check the vendor CVE tracker for availability. FIPS Updates require the matching Ubuntu Pro channel.",
+          "details": "Install the fixed package for the exact distribution release and kernel flavor, then reboot. Ubuntu 22.04 LTS and newer have archive fixes; enabling -proposed is unnecessary. For Ubuntu 20.04 and 18.04, use the Ubuntu Pro package mappings in USN-9170-1, supplemented by USN-9170-4 for Azure FIPS and Azure 5.4. FIPS Updates require the matching channel. USN-9192-1 lists the Ubuntu 22.04 NVIDIA 6.8 fix. The November 9 bulletin predates these older-release notices; current Ubuntu 16.04 availability is unconfirmed here, so check the vendor CVE tracker.",
           "risk": "Medium. Reboot interrupts workloads; kernel ABI changes can require rebuilding third-party modules."
         }
       ],
@@ -1320,7 +1335,7 @@
           "url": "https://ubuntu.com/blog/fixes-available-in-proposed-pocket-for-cve-2026-98432",
           "publisher": "Canonical Ubuntu",
           "tier": 1,
-          "retrieved": "2026-11-13",
+          "retrieved": "2026-11-24",
           "supports": [
             "affected",
             "cve",
@@ -1337,7 +1352,43 @@
           "url": "https://ubuntu.com/security/notices/USN-9027-2",
           "publisher": "Canonical Ubuntu",
           "tier": 1,
-          "retrieved": "2026-11-13",
+          "retrieved": "2026-11-24",
+          "supports": [
+            "affected",
+            "cve",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://ubuntu.com/security/notices/USN-9170-4",
+          "publisher": "Canonical Ubuntu",
+          "tier": 1,
+          "retrieved": "2026-11-24",
+          "supports": [
+            "affected",
+            "cve",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://ubuntu.com/security/notices/USN-9192-1",
+          "publisher": "Canonical Ubuntu",
+          "tier": 1,
+          "retrieved": "2026-11-24",
+          "supports": [
+            "affected",
+            "cve",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://ubuntu.com/security/notices/USN-9170-1",
+          "publisher": "Canonical Ubuntu",
+          "tier": 1,
+          "retrieved": "2026-11-24",
           "supports": [
             "affected",
             "cve",
@@ -1347,9 +1398,9 @@
         }
       ],
       "review": {
-        "author_model": "gpt-6.1-sol",
+        "author_model": "gpt-6.2-sol",
         "reviewer_model": "claude-opus-5-5",
-        "reviewed": "2026-11-13",
+        "reviewed": "2026-11-24",
         "verdict": "approve",
         "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
       },
@@ -1369,6 +1420,14 @@
         {
           "date": "2026-11-13",
           "change": "Clarified that Ubuntu 20.04 LTS and older ESM fixes remain pending in the updated bulletin; limited the FIPS notice evidence mapping to the fields it supports."
+        },
+        {
+          "date": "2026-11-24",
+          "change": "Re-read the existing primary sources and added Azure FIPS, Azure 5.4 and NVIDIA 6.8 fixed packages from November 24 Ubuntu notices. Replaced blanket pending-fix guidance for older Ubuntu releases with release- and flavor-specific availability."
+        },
+        {
+          "date": "2026-11-24",
+          "change": "Corrected understated Ubuntu 20.04 and 18.04 fix availability after reading USN-9170-1. Distinguished its broad Ubuntu Pro coverage from the additional Azure fixes and the older bulletin; left current Ubuntu 16.04 availability unconfirmed."
         }
       ],
       "cve": [
@@ -16723,6 +16782,133 @@
         {
           "date": "2026-11-23",
           "change": "Initial record from the merged vendor fix, release notes and directly inspected vulnerable and patched tagged source. No CVE, vendor severity or exploitation status asserted."
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0163",
+      "title": "Chrome Variations input validation can permit code execution outside the sandbox",
+      "summary": "Google identifies CVE-2026-134401 as improper input validation in Chrome Variations. A remote attacker could potentially execute code outside the sandbox through crafted HTML. Google released fixes for desktop Stable and Windows/macOS Extended Stable.",
+      "status": "published",
+      "published": "2026-11-24",
+      "updated": "2026-11-24",
+      "cve": [
+        "CVE-2026-134401"
+      ],
+      "severity": {
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "Crafted web content can potentially execute code outside the browser sandbox. Agents routinely load untrusted pages without a person reviewing each page, so this meets the critical threshold for agent browsing."
+      },
+      "vendor_severity": [
+        {
+          "source": "Google Chrome Releases and Google CNA",
+          "value": "Critical (Chromium security severity)"
+        }
+      ],
+      "affected": [
+        {
+          "product": "Google Chrome Stable desktop",
+          "fixed": "158.0.8127.88",
+          "note": "Google lists Stable 158.0.8127.88/.89 for Windows and Mac and 158.0.8127.88 for Linux. The CNA describes Chrome before 158.0.8127.88 as affected."
+        },
+        {
+          "product": "Google Chrome Extended Stable desktop",
+          "fixed": "156.0.8078.114",
+          "note": "Google lists this security fix in Extended Stable 156.0.8078.114 for Windows and Mac. This is a separate channel threshold."
+        }
+      ],
+      "exposure": "Chrome processing untrusted HTML is exposed, including agent-driven browsing with the sandbox enabled. Browsers used only against trusted applications have lower exposure. Other Chromium-derived products need their own vendor fix mappings.",
+      "detectors": [
+        {
+          "type": "manual",
+          "context": "browsing",
+          "params": {
+            "instructions": "Read the browser executable version and release channel. Chrome Stable needs 158.0.8127.88 or later; Windows/macOS Extended Stable needs 156.0.8078.114 or later. Check derived browsers against their own vendor advisories."
+          }
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Update Chrome for its release channel",
+          "details": "Install the patched Stable or Extended Stable release listed for the platform, then restart browser processes. Evaluate other channels and Chromium-derived products using their vendor fix mappings.",
+          "risk": "Medium. Restarting the browser interrupts active automation; check workflow compatibility after updating."
+        }
+      ],
+      "verification": [
+        "Read the version from the executable actually used by automation and compare it with the fixed version for that channel.",
+        "After restarting browser processes, run a harmless browsing workflow to check compatibility."
+      ],
+      "sources": [
+        {
+          "url": "https://chromereleases.googleblog.com/2026/11/stable-channel-update-for-desktop_01734282054.html",
+          "publisher": "Google Chrome Releases",
+          "tier": 1,
+          "retrieved": "2026-11-24",
+          "supports": [
+            "summary",
+            "cve",
+            "vendor_severity",
+            "affected",
+            "remediation",
+            "detectors",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://chromereleases.googleblog.com/2026/11/extended-stable-update-for-desktop_01590513949.html",
+          "publisher": "Google Chrome Releases",
+          "tier": 1,
+          "retrieved": "2026-11-24",
+          "supports": [
+            "summary",
+            "cve",
+            "vendor_severity",
+            "affected",
+            "remediation",
+            "detectors",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/134xxx/CVE-2026-134401.json",
+          "publisher": "CVE Program, Google CNA",
+          "tier": 1,
+          "retrieved": "2026-11-24",
+          "supports": [
+            "summary",
+            "cve",
+            "vendor_severity",
+            "affected",
+            "exposure",
+            "severity"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://chromereleases.googleblog.com/2026/11/stable-channel-update-for-desktop_01734282054.html",
+          "kind": "feed",
+          "seen": "2026-11-24"
+        },
+        {
+          "url": "https://chromereleases.googleblog.com/2026/11/extended-stable-update-for-desktop_01590513949.html",
+          "kind": "feed",
+          "seen": "2026-11-24"
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-24",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-24",
+          "change": "Initial record drafted from directly inspected Google release notices and the Google CNA CVE record for independent review."
         }
       ]
     }
