@@ -2,7 +2,7 @@
   "schema": "msa-feed/1",
   "publisher": "MOLT Security Advisories",
   "homepage": "https://github.com/AlgortimoTD/molt-security-advisories",
-  "updated": "2026-11-24",
+  "updated": "2026-11-25",
   "advisories": [
     {
       "schema": "msa/1",
@@ -16909,6 +16909,136 @@
         {
           "date": "2026-11-24",
           "change": "Initial record drafted from directly inspected Google release notices and the Google CNA CVE record for independent review."
+        }
+      ]
+    },
+    {
+      "schema": "msa/1",
+      "id": "MSA-2026-0164",
+      "title": "ruflo default Compose MCP bridge permits unauthenticated code execution",
+      "summary": "The ruflo MCP bridge lacks authentication in affected default Docker Compose deployments. Network attackers can execute commands in the bridge container, read provider credentials and poison AgentDB patterns used by later agent runs. Version 3.16.3 fixes the deployment defaults and tool authorization.",
+      "status": "published",
+      "published": "2026-11-25",
+      "updated": "2026-11-25",
+      "cve": [
+        "CVE-2026-59726"
+      ],
+      "ghsa": [
+        "GHSA-c4hm-4h84-2cf3"
+      ],
+      "severity": {
+        "level": "critical",
+        "urgency": "24h",
+        "rationale": "The default Compose deployment exposes command execution without authentication to reachable network attackers. Provider credentials and persistent agent learning data are also at risk, meeting the critical threshold for agent infrastructure."
+      },
+      "vendor_severity": [
+        {
+          "source": "ruflo security advisory",
+          "value": "Critical, CVSS 3.1 10.0",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H"
+        }
+      ],
+      "affected": [
+        {
+          "product": "ruflo",
+          "ecosystem": "npm",
+          "fixed": "3.16.3",
+          "note": "The advisory lists versions below 3.16.3. The vulnerable configuration is the default Docker Compose MCP bridge and MongoDB deployment."
+        }
+      ],
+      "exposure": "An attacker needs network access to the deployed bridge. Affected Compose defaults publish the bridge and MongoDB on all interfaces; the autopilot tool blocklist does not protect the MCP routes. Package presence alone does not establish this exposure.",
+      "detectors": [
+        {
+          "type": "manual",
+          "context": "any",
+          "params": {
+            "instructions": "Check the deployed ruflo version and Compose configuration. For versions below 3.16.3, determine whether the MCP bridge or MongoDB is reachable from untrusted networks and whether MCP requests require authentication."
+          }
+        }
+      ],
+      "remediation": [
+        {
+          "action": "Contain access and deploy the fixed configuration",
+          "details": "Immediately firewall bridge port 3001 and MongoDB port 27017. Upgrade to 3.16.3 or later and apply the patched Compose defaults. Public bridge binding requires MCP_AUTH_TOKEN; terminal execution requires explicit opt-in.",
+          "risk": "Medium. Redeployment interrupts agents. The patched Compose configuration requires MONGO_INITDB_ROOT_PASSWORD and otherwise refuses to start."
+        },
+        {
+          "action": "Recover credentials and persistent state after exposure",
+          "details": "For exposed instances, rotate provider credentials, audit AgentDB for injected patterns and remove poisoned entries, and audit MongoDB for tampering. Updating alone does not remove poisoned patterns.",
+          "risk": "Medium. Credential rotation interrupts integrations; removing patterns changes stored agent learning data."
+        }
+      ],
+      "verification": [
+        "Confirm the running deployment uses 3.16.3 or later and the patched Compose configuration.",
+        "Check network restrictions and confirm unauthenticated MCP requests cannot invoke tools. Confirm terminal execution remains disabled unless explicitly enabled.",
+        "For previously exposed deployments, confirm credential rotation and review the AgentDB and MongoDB audit results."
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/ruvnet/ruflo/security/advisories/GHSA-c4hm-4h84-2cf3",
+          "publisher": "ruflo maintainers",
+          "tier": 1,
+          "retrieved": "2026-11-25",
+          "supports": [
+            "title",
+            "summary",
+            "cve",
+            "ghsa",
+            "severity",
+            "vendor_severity",
+            "affected",
+            "exposure",
+            "detectors",
+            "remediation",
+            "verification"
+          ]
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-c4hm-4h84-2cf3",
+          "publisher": "GitHub Reviewed Advisory Database",
+          "tier": 1,
+          "retrieved": "2026-11-25",
+          "supports": [
+            "summary",
+            "cve",
+            "ghsa",
+            "affected",
+            "exposure",
+            "remediation"
+          ]
+        },
+        {
+          "url": "https://github.com/ruvnet/ruflo/releases/tag/v3.16.3",
+          "publisher": "ruflo maintainers",
+          "tier": 1,
+          "retrieved": "2026-11-25",
+          "supports": [
+            "summary",
+            "affected",
+            "remediation",
+            "verification",
+            "detectors"
+          ]
+        }
+      ],
+      "discovery": [
+        {
+          "url": "https://github.com/advisories/GHSA-c4hm-4h84-2cf3",
+          "kind": "feed",
+          "seen": "2026-11-25"
+        }
+      ],
+      "review": {
+        "author_model": "gpt-6.2-sol",
+        "reviewer_model": "claude-opus-5-5",
+        "reviewed": "2026-11-25",
+        "verdict": "approve",
+        "notes": "Independent reviewer re-read every tier 1 source and checked every field. No open findings."
+      },
+      "history": [
+        {
+          "date": "2026-11-25",
+          "change": "Initial record drafted from the directly inspected maintainer advisory, security release and reviewed GitHub advisory for independent review."
         }
       ]
     }
